@@ -10,10 +10,10 @@
     <h1 class="text-xl font-bold mb-2">Welcome to Home Station</h1>
     <span class="text-sm font-semibold">Get started by creating an account</span>
     <form method="post" action="?/signup" class="flex flex-col gap-2 p-4">
-        <Input type="email" name="email" label="Email" />
+        <Input type="text" name="username" label="Username" />
         <Input type="password" name="password" label="Password" />
-        {#if form?.email && form.exists}
-            <p class="text-red-500 text-sm">Email {form?.email} already exists</p>
+        {#if form?.username && form.exists}
+            <p class="text-red-500 text-sm">Username {form?.username} already exists</p>
         {/if}
         <div class="mt-6">
             <Button type="submit">Sign up</Button>

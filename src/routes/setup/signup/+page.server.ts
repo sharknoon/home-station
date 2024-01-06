@@ -15,11 +15,11 @@ export const actions = {
 	signup: async ({ request }) => {
 		const data = await request.formData();
 
-		const email = data.get('email')?.toString();
+		const username = data.get('username')?.toString();
 		let password = data.get('password')?.toString();
 
-		if (!email) {
-			return fail(400, { email, missing: true });
+		if (!username) {
+			return fail(400, { username, missing: true });
 		}
 		if (!password) {
 			return fail(400, { password: 'password', missing: true });
@@ -27,19 +27,19 @@ export const actions = {
 
 		password = await hash(password, 10);
 
-		const emailExists =
+		const usernameExists =
 			(await prisma.user.count({
 				where: {
-					email
+					username
 				}
 			})) > 0;
-		if (emailExists) {
-			return fail(400, { email, exists: true });
+		if (usernameExists) {
+			return fail(400, { username, exists: true });
 		}
 
 		await prisma.user.create({
 			data: {
-				email,
+				username,
 				password
 			}
 		});
