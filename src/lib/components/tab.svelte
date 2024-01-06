@@ -1,19 +1,21 @@
-<script lang="ts">
-	import { getContext, onMount } from 'svelte';
-	import type { TabsContext } from './tabs.svelte';
-
-	const { registerTab, selectTab, activeTab } = getContext<TabsContext>('tabs');
-
-	let self: HTMLElement;
-	
-	$: isActive = $activeTab === self;
-
-	onMount(() => {
-		registerTab(self);
-	});
+<script lang="ts" context="module">
+	let id = 0;
 </script>
 
-<button bind:this={self} on:click={() => selectTab(self)} class="relative group px-2 py-4">
+<script lang="ts">
+	import { getContext } from 'svelte';
+	import type { TabsContext } from './tabs.svelte';
+
+	const { idPrefix, registerTab, selectTab, activeTab } = getContext<TabsContext>('tabs');
+
+	let self = `${idPrefix}t${id++}`;
+
+	$: isActive = $activeTab === self;
+
+	registerTab(self);
+</script>
+
+<button id={self} on:click={() => selectTab(self)} class="relative group px-2 py-4">
 	<div
 		class="text-sm font-semibold transition {isActive
 			? 'text-emerald-700'

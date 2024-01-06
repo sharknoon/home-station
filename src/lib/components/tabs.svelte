@@ -1,10 +1,11 @@
 <script lang="ts" context="module">
 	export type TabsContext = {
-		activeTab: Readable<HTMLElement>;
-		activePanel: Readable<HTMLElement>;
-		registerTab: (tab: HTMLElement) => void;
-		registerPanel: (panel: HTMLElement) => void;
-		selectTab: (tab: HTMLElement) => void;
+		idPrefix: string;
+		activeTab: Readable<string>;
+		activePanel: Readable<string>;
+		registerTab: (tab: string) => void;
+		registerPanel: (panel: string) => void;
+		selectTab: (tab: string) => void;
 	};
 </script>
 
@@ -12,8 +13,11 @@
 	import { setContext } from 'svelte';
 	import { derived, writable, type Readable } from 'svelte/store';
 
-	let tabs = writable<HTMLElement[]>([]);
-	let panels = writable<HTMLElement[]>([]);
+	// Random ID prefix to avoid collisions
+	let idPrefix = Math.random().toString(36).substring(2, 7);
+
+	let tabs = writable<string[]>([]);
+	let panels = writable<string[]>([]);
 
 	let activeIndex = writable(0);
 	let activeTab = derived([activeIndex, tabs], ([$activeIndex, $tabs]) => $tabs[$activeIndex]);
@@ -23,15 +27,16 @@
 	);
 
 	setContext<TabsContext>('tabs', {
+		idPrefix,
 		activeTab,
 		activePanel,
-		registerTab: (tab: HTMLElement) => {
+		registerTab: (tab: string) => {
 			tabs.update((t) => [...t, tab]);
 		},
-		registerPanel: (panel: HTMLElement) => {
+		registerPanel: (panel: string) => {
 			panels.update((p) => [...p, panel]);
 		},
-		selectTab: (tab: HTMLElement) => {
+		selectTab: (tab: string) => {
 			activeIndex.set($tabs.indexOf(tab));
 		}
 	});

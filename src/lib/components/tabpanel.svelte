@@ -1,19 +1,21 @@
+<script lang="ts" context="module">
+	let id = 0;
+</script>
+
 <script lang="ts">
-	import { getContext, onMount } from 'svelte';
+	import { getContext } from 'svelte';
 	import type { TabsContext } from './tabs.svelte';
 
-	const { registerPanel, activePanel } = getContext<TabsContext>('tabs');
+	const { idPrefix, registerPanel, activePanel } = getContext<TabsContext>('tabs');
 
-	let self: HTMLElement;
+	let self = `${idPrefix}p${id++}`;
 
 	$: isActive = $activePanel === self;
 	
-	onMount(() => {
-		registerPanel(self);
-	});
+	registerPanel(self);
 </script>
 
-<div bind:this={self}>
+<div id={self}>
 	{#if isActive}
 		<slot />
 	{/if}
