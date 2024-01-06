@@ -4,6 +4,10 @@ import prisma from '$lib/server/prisma';
 import { hash } from 'bcrypt';
 
 export const load = (async () => {
+	const system = await prisma.system.findFirst();
+	if (system?.currentSetupStep !== 0) {
+		return redirect(303, '/setup');
+	}
 	return {};
 }) satisfies PageServerLoad;
 
@@ -18,8 +22,10 @@ export const actions = {
 			return fail(400, { email, missing: true });
 		}
 		if (!password) {
-			return fail(400, { password, missing: true });
+			return fail(400, { password: 'password', missing: true });
 		}
+
+		password = await hash(password, 10);
 
 		const emailExists =
 			(await prisma.user.count({
@@ -30,8 +36,6 @@ export const actions = {
 		if (emailExists) {
 			return fail(400, { email, exists: true });
 		}
-
-		password = await hash(password, 10);
 
 		await prisma.user.create({
 			data: {
