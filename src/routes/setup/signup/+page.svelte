@@ -1,7 +1,8 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
+	import type { ActionData } from './$types';
 	import Input from '$lib/components/input.svelte';
     import Button from '$lib/components/button.svelte';
-	import type { ActionData } from './$types';
     
 	export let form: ActionData;
 </script>
@@ -9,7 +10,7 @@
 <div class="p-4 flex flex-col text-center">
     <h1 class="text-xl font-bold mb-2">Welcome to Home Station</h1>
     <span class="text-sm font-semibold">Get started by creating an account</span>
-    <form method="post" action="?/signup" class="flex flex-col gap-2 p-4">
+    <form method="post" action="?/signup" class="flex flex-col gap-2 p-4" use:enhance>
         <Input type="text" name="username" label="Username" />
         <Input type="password" name="password" label="Password" />
         {#if form?.username && form.exists}

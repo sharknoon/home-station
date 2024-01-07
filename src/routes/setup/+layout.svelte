@@ -9,7 +9,7 @@
 			path: '/setup/signup'
 		},
 		{
-			title: 'Connect Docker',
+			title: 'Connect to Docker',
 			path: '/setup/container'
 		},
 		{
