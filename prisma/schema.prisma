@@ -16,6 +16,17 @@ model System {
   currentSetupStep Int     @default(0)
 }
 
+model ContainerEngine {
+  id         Int     @id @default(autoincrement())
+  name       String  @unique
+  type       String // "local" or "remote"
+  socketPath String? // Only when type is "local"
+  host       String? // Only when type is "remote"
+  ca         String? // Only when type is "remote"
+  cert       String? // Only when type is "remote"
+  key        String? // Only when type is "remote"
+}
+
 model User {
   id       Int    @id @default(autoincrement())
   username String @unique

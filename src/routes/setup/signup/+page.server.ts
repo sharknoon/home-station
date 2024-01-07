@@ -44,13 +44,10 @@ export const actions = {
 			}
 		});
 
-		await prisma.system.update({
-			where: {
-				id: 1
-			},
-			data: {
-				currentSetupStep: 1
-			}
+		await prisma.system.upsert({
+			where: { id: 1 },
+			create: { currentSetupStep: 1 },
+			update: { currentSetupStep: 1 }
 		});
 
 		return redirect(303, '/setup/container');

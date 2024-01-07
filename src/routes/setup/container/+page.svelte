@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { Network, Plug2, Unplug } from 'lucide-svelte';
+	import { Network, Plug2, RefreshCcw, Unplug } from 'lucide-svelte';
 	import Button from '$lib/components/button.svelte';
-	import Code from '$lib/components/code.svelte';
+	import CodeBlock from '$lib/components/codeblock.svelte';
 	import Tabs from '$lib/components/tabs.svelte';
 	import TabList from '$lib/components/tablist.svelte';
 	import Tab from '$lib/components/tab.svelte';
@@ -10,57 +10,167 @@
 	import Accordion from '$lib/components/accordion.svelte';
 	import AccordionItem from '$lib/components/accordionitem.svelte';
 	import type { ActionData } from './$types';
+	import Input from '$lib/components/input.svelte';
+	import Collapse from '$lib/components/collapse.svelte';
 
 	export let form: ActionData;
+
+	$: connecting = false;
 </script>
 
 <div class="p-4">
 	<h1 class="text-xl font-bold text-center mb-2">Connect your Docker engine</h1>
-	<div class="text-sm font-semibold text-center mb-2">
+	<div class="text-sm font-semibold text-center mb-4">
 		You can either use your local Docker installation or connect to a remote one
 	</div>
 	<Accordion>
 		<AccordionItem>
-			<div slot="header">
-				<div class="flex gap-2 items-center">
-					<Plug2 class="h-6 w-6" />
-					<h1 class="text-xl font-bold">Local Docker Engine</h1>
-				</div>
-				<div class="text-gray-400 text-sm">Connect to Docker via Socket</div>
+			<div class="flex gap-2 items-center" slot="header">
+				<Plug2 class="h-4 w-4" />
+				<div class="text-sm">Local Docker Engine</div>
 			</div>
-			<form method="post" action="?/connectLocally" slot="body" use:enhance>
-				<div class="flex gap-2 items-center">
-					<Button type="submit" variant="secondary"><Unplug /> Connect</Button>
-					{#if form?.error}
+			<form
+				method="post"
+				action="?/connectLocal"
+				slot="body"
+				use:enhance={() => {
+					const timeout = setTimeout(() => (connecting = true), 100);
+					return async ({ update }) => {
+						clearTimeout(timeout);
+						connecting = false;
+						update();
+					};
+				}}
+			>
+				<p class="text-sm mb-4 text-gray-400">
+					Connect to your local Docker Engine (via Socket) to continue.
+				</p>
+				<Input name="name" label="Name" required placeholder="e.g. docker-prod01"></Input>
+				<div class="mt-2">
+					<Collapse>
+						<span slot="header">More settings</span>
+						<div slot="body">
+							<Input
+								name="socketPath"
+								label="Override default socket path"
+								placeholder="e.g. /var/run/docker.sock (on Linux) or //./pipe/docker_engine (on Windows)"
+							></Input>
+						</div>
+					</Collapse>
+				</div>
+				<div class="flex gap-4 items-center mt-4">
+					<Button type="submit" variant="secondary">
+						{#if !connecting}
+							<Unplug />
+							Connect
+						{:else}
+							<RefreshCcw class="animate-spin" />
+							Connecting...
+						{/if}
+					</Button>
+					{#if form?.type === 'local' && form?.error}
 						<div class="text-red-500 text-sm font-semibold">{form.error}</div>
-					{:else if form?.success}
+					{:else if form?.type === 'local' && form?.success}
 						<div class="text-green-500 text-sm font-semibold">Successfully connected 🎉</div>
 					{/if}
 				</div>
-				<Tabs>
-					<TabList>
-						<Tab>Docker CLI</Tab>
-						<Tab>Docker Compose</Tab>
-					</TabList>
-					<TabPanel>
-						<Code>-v "/var/run/docker.sock:/var/run/docker.sock"</Code>
-					</TabPanel>
-					<TabPanel>
-						<pre><Code>    volumes:<br />      - /var/run/docker.sock:/var/run/docker.sock</Code
-							></pre>
-					</TabPanel>
-				</Tabs>
+				<hr class="border-gray-600 my-4" />
+				<Collapse>
+					<span slot="header" class="text-sm">Troubleshooting</span>
+					<div slot="body">
+						<p class="test-sm">
+							If you are encountering issues with the connection, please make sure that the Docker
+							Engine is running and that the Docker socket is mounted into this container.
+						</p>
+						<Tabs>
+							<TabList>
+								<Tab>Docker CLI</Tab>
+								<Tab>Docker Compose</Tab>
+							</TabList>
+							<TabPanel>
+								<CodeBlock>-v "/var/run/docker.sock:/var/run/docker.sock"</CodeBlock>
+							</TabPanel>
+							<TabPanel>
+								<pre><CodeBlock>    volumes:<br
+										/>      - /var/run/docker.sock:/var/run/docker.sock</CodeBlock
+									></pre>
+							</TabPanel>
+						</Tabs>
+					</div>
+				</Collapse>
 			</form>
 		</AccordionItem>
 		<AccordionItem>
-			<div slot="header">
-				<div class="flex gap-2 items-center">
-					<Network class="h-6 w-6" />
-					<h1 class="text-xl font-bold">Remote Docker Engine</h1>
-				</div>
-				<span class="text-gray-400 text-sm">Connect to Docker via API</span>
+			<div class="flex gap-2 items-center" slot="header">
+				<Network class="h-4 w-4" />
+				<div class="text-sm">Remote Docker Engine</div>
 			</div>
-			<div slot="body">TODO</div>
+			<form
+				enctype="multipart/form-data"
+				method="post"
+				action="?/connectRemote"
+				slot="body"
+				use:enhance={() => {
+					const timeout = setTimeout(() => (connecting = true), 100);
+					return async ({ update }) => {
+						clearTimeout(timeout);
+						connecting = false;
+						update();
+					};
+				}}
+			>
+				<p class="text-sm mb-4 text-gray-400">
+					Connect to a remote Docker Engine (via API) to continue.
+				</p>
+				<Input name="name" label="Name" required placeholder="e.g. docker-prod01"></Input>
+				<div class="my-4"></div>
+				<Input
+					name="host"
+					label="Docker API URL"
+					required
+					placeholder="e.g. 10.0.0.10:2375 or mydocker.mydomain.com:2375"
+				></Input>
+				<div class="mt-2">
+					<Collapse>
+						<span slot="header">More settings</span>
+						<div slot="body">
+							<Input name="ca" type="file" label="TLS CA certificate"></Input>
+							<Input name="cert" type="file" label="TLS certificate"></Input>
+							<Input name="key" type="file" label="TLS key"></Input>
+						</div>
+					</Collapse>
+				</div>
+				<div class="flex gap-4 items-center mt-4">
+					<Button type="submit" variant="secondary">
+						{#if !connecting}
+							<Unplug />
+							Connect
+						{:else}
+							<RefreshCcw class="animate-spin" />
+							Connecting...
+						{/if}
+					</Button>
+					{#if form?.type === 'remote' && form?.error}
+						<div class="text-red-500 text-sm font-semibold">{form.error}</div>
+					{:else if form?.type === 'remote' && form?.success}
+						<div class="text-green-500 text-sm font-semibold">Successfully connected 🎉</div>
+					{/if}
+				</div>
+			</form>
 		</AccordionItem>
 	</Accordion>
+	<form
+		method="post"
+		action="?/proceed"
+		class=" flex items-center gap-4 mt-4 justify-end"
+		use:enhance
+	>
+		<input type="hidden" name="type" value="local" />
+		{#if form?.containerEngine && form?.missing}
+			<span class="text-red-600 text-sm">
+				Please connect to a container engine first before proceeding.
+			</span>
+		{/if}
+		<Button type="submit" disabled={!form?.success}>Continue</Button>
+	</form>
 </div>

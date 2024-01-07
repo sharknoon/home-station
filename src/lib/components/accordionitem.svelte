@@ -25,21 +25,24 @@
 		class="bg-slate-900 w-full text-left relative {isFirst ? 'rounded-t-lg' : ''} {isLast &&
 		!isActive
 			? 'rounded-b-lg'
-			: ''} p-2"
+			: ''} {isActive ? 'text-emerald-700' : ''} p-2"
 		on:click={() => selectItem(self)}
 	>
 		<slot name="header" />
 		<ChevronDown
-			class="absolute w-6 h-6 right-4 top-1/2 -translate-y-1/2 bottom-0 transition {isActive
+			class="absolute w-6 h-6 right-4 top-1/2 -translate-y-1/2 bottom-0 transition duration-[400ms] {isActive
 				? '-rotate-180'
 				: ''}"
 		></ChevronDown>
 	</button>
-    {#if isActive}
-	<div class="bg-black/20 transition-all {isLast && isActive ? 'rounded-b-lg' : ''}" transition:slide>
-		<div class="p-2">
-			<slot name="body" />
+	{#if isActive}
+		<div
+			class="bg-black/20 transition-all {isLast && isActive ? 'rounded-b-lg' : ''}"
+			transition:slide={{ duration: 400 }}
+		>
+			<div class="p-4">
+				<slot name="body" />
+			</div>
 		</div>
-	</div>
-    {/if}
+	{/if}
 </div>

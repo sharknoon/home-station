@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import type { HTMLInputTypeAttribute } from 'svelte/elements';
 
 	export let label: string | null | undefined = undefined;
@@ -14,12 +13,25 @@
 	{#if label}
 		<label for={id} class="font-semibold text-gray-300 text-sm">{label}</label>
 	{/if}
-	<input
-		{type}
-		{name}
-		{id}
-		{required}
-		{placeholder}
-		class="border border-gray-400 rounded bg-gray-600 h-10"
-	/>
+	{#if type === 'file'}
+		<input
+			{type}
+			{name}
+			{id}
+			{required}
+			{placeholder}
+			class="h-10 file:rounded file:px-4 file:py-2 file:border file:text-sm file:font-semibold file:hover:brightness-125
+			 file:transition file:disabled:opacity-50 file:bg-emerald-700 file:border-emerald-600
+			 file:active:border-emerald-800 file:text-gray-300"
+		/>
+	{:else}
+		<input
+			{type}
+			{name}
+			{id}
+			{required}
+			{placeholder}
+			class="border border-gray-400 rounded bg-gray-600 h-10"
+		/>
+	{/if}
 </div>
