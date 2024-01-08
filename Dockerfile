@@ -12,6 +12,9 @@ FROM node:${NODE_VERSION}-slim as base
 # Set working directory for all build stages.
 WORKDIR /app
 
+# Set the default values for environment variables that are used in all stages.
+ENV DATABASE_URL=file:/app/data/db.sqlite
+
 # Install necessary apt packages needed in all stages.
 RUN --mount=type=cache,target=/var/cache/apt \
     apt-get update && \
