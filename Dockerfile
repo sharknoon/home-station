@@ -73,6 +73,9 @@ USER node
 # Copy package.json so that package manager commands can be used.
 COPY package.json .
 
+# Copy the entrypoint script into the image.
+COPY entrypoint.sh .
+
 # Copy the production dependencies from the deps stage and also
 # the built application from the build stage into the image.
 COPY --from=deps /app/node_modules node_modules
@@ -80,9 +83,11 @@ COPY --from=build /app/node_modules/.prisma node_modules/.prisma
 COPY --from=build /app/prisma prisma
 COPY --from=build /app/build build
 
+# Hide update notifications from npm.
+RUN npm config set update-notifier false
 
 # Expose the port that the application listens on.
 EXPOSE 3000
 
 # Run the application.
-CMD ["npm", "run", "start:prod" ]
+ENTRYPOINT [ "/app/entrypoint.sh" ]
