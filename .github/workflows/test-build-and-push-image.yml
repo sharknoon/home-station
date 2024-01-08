@@ -1,5 +1,6 @@
 name: Test, build and push image
 on:
+  workflow_dispatch:
   release:
     types: [published]
 
