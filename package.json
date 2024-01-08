@@ -6,6 +6,7 @@
 		"dev": "vite dev",
 		"build": "vite build",
 		"preview": "vite preview",
+		"start:prod": "prisma migrate deploy && node ./build/index.js",
 		"test": "npm run test:integration && npm run test:unit",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
@@ -16,7 +17,7 @@
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.28.1",
-		"@sveltejs/adapter-auto": "^3.0.0",
+		"@sveltejs/adapter-node": "^2.0.2",
 		"@sveltejs/kit": "^2.0.0",
 		"@sveltejs/vite-plugin-svelte": "^3.0.0",
 		"@tailwindcss/forms": "^0.5.7",

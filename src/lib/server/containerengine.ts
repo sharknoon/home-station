@@ -1,5 +1,22 @@
 import Docker from 'dockerode';
+//import prisma from './prisma';
 
+/*async function loadDocker(): Promise<Docker> {
+	const ce = await prisma.containerEngine.findFirst();
+	if (ce?.socketPath) {
+		return new Docker({ socketPath: ce.socketPath });
+	}
+	if (ce?.host) {
+		return new Docker({
+			host: ce.host,
+			ca: ce.ca ?? undefined,
+			cert: ce.cert ?? undefined,
+			key: ce.key ?? undefined
+		});
+	}
+	return new Docker();
+}
+*/
 export async function testLocalConnection(socketPath?: string): Promise<void> {
 	try {
 		const docker = socketPath ? new Docker({ socketPath }) : new Docker();

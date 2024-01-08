@@ -1,0 +1,13 @@
+# If you need help, visit the Docker compose reference guide at
+# https://docs.docker.com/compose/compose-file/
+
+services:
+  home-station:
+    image: ghcr.io/sharknoon/home-station:latest
+    ports:
+      - 3000:3000
+    volumes:
+      - data:/app/data
+
+volumes:
+  data:
