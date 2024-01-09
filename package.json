@@ -6,14 +6,14 @@
 		"dev": "vite dev",
 		"build": "vite build",
 		"preview": "vite preview",
-		"start:prod": "prisma migrate deploy && node ./build/index.js",
 		"test": "npm run test:integration && npm run test:unit",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"test:integration": "playwright test",
-		"test:unit": "vitest run"
+		"test:unit": "vitest run",
+		"drizzle:gen": "drizzle-kit generate:sqlite"
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.28.1",
@@ -22,18 +22,19 @@
 		"@sveltejs/vite-plugin-svelte": "^3.0.0",
 		"@tailwindcss/forms": "^0.5.7",
 		"@types/bcrypt": "^5.0.2",
+		"@types/better-sqlite3": "^7.6.8",
 		"@types/dockerode": "^3.3.23",
 		"@types/eslint": "8.56.0",
 		"@typescript-eslint/eslint-plugin": "^6.0.0",
 		"@typescript-eslint/parser": "^6.0.0",
 		"autoprefixer": "^10.4.16",
+		"drizzle-kit": "^0.20.10",
 		"eslint": "^8.56.0",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-svelte": "^2.35.1",
 		"postcss": "^8.4.33",
 		"prettier": "^3.1.1",
 		"prettier-plugin-svelte": "^3.1.2",
-		"prisma": "^5.7.1",
 		"svelte": "^4.2.7",
 		"svelte-check": "^3.6.0",
 		"tailwindcss": "^3.4.1",
@@ -44,10 +45,13 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@prisma/client": "^5.7.1",
 		"bcrypt": "^5.1.1",
+		"better-sqlite3": "^9.2.2",
+		"clsx": "^2.1.0",
 		"dockerode": "^4.0.2",
+		"drizzle-orm": "^0.29.3",
 		"lucide-svelte": "^0.306.0",
-		"sqlite3": "^5.1.7"
+		"tailwind-merge": "^2.2.0",
+		"tailwind-variants": "^0.1.20"
 	}
 }

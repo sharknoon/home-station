@@ -4,4 +4,12 @@
     export let data: PageData;
 </script>
 
-{data.detectedDomains}
+Domains: {data.detectedDomains}
+<br>
+Version: {data.version}
+<br>
+Containers: {data.containers}
+<br>
+Images: {data.images}
+<br>
+Volumes: {data.volumes}

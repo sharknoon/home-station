@@ -1,10 +1,12 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
-import prisma from '$lib/server/prisma';
+import db from '$lib/server/db';
 import { hash } from 'bcrypt';
+import { systems, users } from '$lib/server/schema';
+import { eq } from 'drizzle-orm';
 
 export const load = (async () => {
-	const system = await prisma.system.findFirst();
+	const system = await db.query.systems.findFirst();
 	if (system?.currentSetupStep !== 0) {
 		return redirect(303, '/setup');
 	}
@@ -16,7 +18,11 @@ export const actions = {
 		const data = await request.formData();
 
 		const username = data.get('username')?.toString();
-		let password = data.get('password')?.toString();
+		let password = data.get('password1')?.toString();
+		const password2 = data.get('password2')?.toString();
+		if (password !== password2) {
+			return fail(400, { password: 'password', mismatch: true });
+		}
 
 		if (!username) {
 			return fail(400, { username, missing: true });
@@ -27,28 +33,17 @@ export const actions = {
 
 		password = await hash(password, 10);
 
-		const usernameExists =
-			(await prisma.user.count({
-				where: {
-					username
-				}
-			})) > 0;
+		const usernameExists = !!(await db.query.users.findFirst({ where: eq(users.username, username) }))
 		if (usernameExists) {
 			return fail(400, { username, exists: true });
 		}
 
-		await prisma.user.create({
-			data: {
-				username,
-				password
-			}
-		});
+		await db.insert(users).values({ username, password });
 
-		await prisma.system.upsert({
-			where: { id: 1 },
-			create: { currentSetupStep: 1 },
-			update: { currentSetupStep: 1 }
-		});
+		await db
+			.insert(systems)
+			.values({ id: 1, currentSetupStep: 1 })
+			.onConflictDoUpdate({ target: systems.id, set: { currentSetupStep: 1 } });
 
 		return redirect(303, '/setup/container');
 	}

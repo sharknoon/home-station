@@ -11,7 +11,12 @@
 
 <div class="flex flex-col gap-1 text-left">
 	{#if label}
-		<label for={id} class="font-semibold text-gray-300 text-sm">{label}</label>
+		<label for={id} class="font-semibold text-gray-300 text-sm">
+			{label}
+			{#if required}
+				<span class="text-red-500">*</span>
+			{/if}
+		</label>
 	{/if}
 	{#if type === 'file'}
 		<input

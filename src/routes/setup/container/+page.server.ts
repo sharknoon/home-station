@@ -1,10 +1,15 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { testLocalConnection, testRemoteConnection } from '$lib/server/containerengine';
-import prisma from '$lib/server/prisma';
+import {
+	refreshEngines,
+	testLocalConnection,
+	testRemoteConnection
+} from '$lib/server/containerengine';
+import db from '$lib/server/db';
+import { containerEngines, systems } from '$lib/server/schema';
 
 export const load = (async () => {
-	const system = await prisma.system.findFirst();
+	const system = await db.query.systems.findFirst();
 	if (system?.currentSetupStep !== 1) {
 		return redirect(303, '/setup');
 	}
@@ -25,9 +30,9 @@ export const actions = {
 			if (!socketPath) socketPath = undefined;
 
 			await testLocalConnection(socketPath);
-			await prisma.containerEngine.upsert({
-				where: { id: 1 },
-				create: {
+			await db
+				.insert(containerEngines)
+				.values({
 					id: 1,
 					name,
 					type: 'local',
@@ -36,17 +41,19 @@ export const actions = {
 					ca: undefined,
 					cert: undefined,
 					key: undefined
-				},
-				update: {
-					name,
-					type: 'local',
-					socketPath,
-					host: undefined,
-					ca: undefined,
-					cert: undefined,
-					key: undefined
-				}
-			});
+				})
+				.onConflictDoUpdate({
+					target: containerEngines.id,
+					set: {
+						name,
+						type: 'local',
+						socketPath,
+						host: undefined,
+						ca: undefined,
+						cert: undefined,
+						key: undefined
+					}
+				});
 			return { type: 'local', success: true };
 		} catch (e) {
 			return { type: 'local', error: String(e) };
@@ -73,26 +80,45 @@ export const actions = {
 			if (!key) key = undefined;
 
 			await testRemoteConnection(host, ca, cert, key);
-			await prisma.containerEngine.upsert({
-				where: { id: 1 },
-				create: { id: 1, name, type: 'remote', socketPath: undefined, host, ca, cert, key },
-				update: { name, type: 'remote', socketPath: undefined, host, ca, cert, key }
-			});
+			await db
+				.insert(containerEngines)
+				.values({
+					id: 1,
+					name,
+					type: 'remote',
+					socketPath: undefined,
+					host,
+					ca,
+					cert,
+					key
+				})
+				.onConflictDoUpdate({
+					target: containerEngines.id,
+					set: {
+						name,
+						type: 'remote',
+						socketPath: undefined,
+						host,
+						ca,
+						cert,
+						key
+					}
+				});
 			return { type: 'remote', success: true };
 		} catch (e) {
 			return { type: 'remote', error: String(e) };
 		}
 	},
 	async proceed() {
-		const containerEngine = await prisma.containerEngine.findFirst();
+		const containerEngine = await db.query.containerEngines.findFirst();
 		if (!containerEngine) {
 			return fail(400, { containerEngine: 'containerEngine', missing: true });
 		}
-		await prisma.system.upsert({
-			where: { id: 1 },
-			create: { currentSetupStep: 2 },
-			update: { currentSetupStep: 2 }
-		});
+		await refreshEngines();
+		await db
+			.insert(systems)
+			.values({ id: 1, currentSetupStep: 2 })
+			.onConflictDoUpdate({ target: systems.id, set: { currentSetupStep: 2 } });
 		return redirect(303, '/setup/finish');
 	}
 } satisfies Actions;

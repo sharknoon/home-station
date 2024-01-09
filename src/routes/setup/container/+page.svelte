@@ -12,6 +12,7 @@
 	import type { ActionData } from './$types';
 	import Input from '$lib/components/input.svelte';
 	import Collapse from '$lib/components/collapse.svelte';
+	import Pill from '$lib/components/pill.svelte';
 
 	export let form: ActionData;
 
@@ -19,15 +20,15 @@
 </script>
 
 <div class="p-4">
-	<h1 class="text-xl font-bold text-center mb-2">Connect your Docker engine</h1>
+	<h1 class="text-xl font-bold text-center mb-1">Connect your container engine</h1>
 	<div class="text-sm font-semibold text-center mb-4">
-		You can either use your local Docker installation or connect to a remote one
+		Docker and Podman are supported. Please add your container engine below.
 	</div>
 	<Accordion>
 		<AccordionItem>
 			<div class="flex gap-2 items-center" slot="header">
 				<Plug2 class="h-4 w-4" />
-				<div class="text-sm">Local Docker Engine</div>
+				<div class="text-sm">Local container engine (socket)</div>
 			</div>
 			<form
 				method="post"
@@ -42,9 +43,6 @@
 					};
 				}}
 			>
-				<p class="text-sm mb-4 text-gray-400">
-					Connect to your local Docker Engine (via Socket) to continue.
-				</p>
 				<Input name="name" label="Name" required placeholder="e.g. docker-prod01"></Input>
 				<div class="mt-2">
 					<Collapse>
@@ -74,36 +72,12 @@
 						<div class="text-green-500 text-sm font-semibold">Successfully connected 🎉</div>
 					{/if}
 				</div>
-				<hr class="border-gray-600 my-4" />
-				<Collapse>
-					<span slot="header" class="text-sm">Troubleshooting</span>
-					<div slot="body">
-						<p class="test-sm">
-							If you are encountering issues with the connection, please make sure that the Docker
-							Engine is running and that the Docker socket is mounted into this container.
-						</p>
-						<Tabs>
-							<TabList>
-								<Tab>Docker CLI</Tab>
-								<Tab>Docker Compose</Tab>
-							</TabList>
-							<TabPanel>
-								<CodeBlock>-v "/var/run/docker.sock:/var/run/docker.sock"</CodeBlock>
-							</TabPanel>
-							<TabPanel>
-								<pre><CodeBlock>    volumes:<br
-										/>      - /var/run/docker.sock:/var/run/docker.sock</CodeBlock
-									></pre>
-							</TabPanel>
-						</Tabs>
-					</div>
-				</Collapse>
 			</form>
 		</AccordionItem>
 		<AccordionItem>
 			<div class="flex gap-2 items-center" slot="header">
 				<Network class="h-4 w-4" />
-				<div class="text-sm">Remote Docker Engine</div>
+				<div class="text-sm">Remote container engine (API)</div>
 			</div>
 			<form
 				enctype="multipart/form-data"
@@ -119,9 +93,6 @@
 					};
 				}}
 			>
-				<p class="text-sm mb-4 text-gray-400">
-					Connect to a remote Docker Engine (via API) to continue.
-				</p>
 				<Input name="name" label="Name" required placeholder="e.g. docker-prod01"></Input>
 				<div class="my-4"></div>
 				<Input
@@ -159,18 +130,15 @@
 			</form>
 		</AccordionItem>
 	</Accordion>
-	<form
-		method="post"
-		action="?/proceed"
-		class=" flex items-center gap-4 mt-4 justify-end"
-		use:enhance
-	>
+	<form method="post" action="?/proceed" class=" flex items-center gap-2 mt-4" use:enhance>
 		<input type="hidden" name="type" value="local" />
 		{#if form?.containerEngine && form?.missing}
 			<span class="text-red-600 text-sm">
 				Please connect to a container engine first before proceeding.
 			</span>
 		{/if}
+		<Pill variant="secondary">Tip</Pill>
+		<span class="grow text-sm">You can add additional container engines in the settings</span>
 		<Button type="submit" disabled={!form?.success}>Continue</Button>
 	</form>
 </div>

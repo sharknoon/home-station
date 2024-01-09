@@ -1,9 +1,9 @@
-import prisma from '$lib/server/prisma';
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
+import db from '$lib/server/db';
 
 export const load = (async () => {
-	const system = await prisma.system.findFirst();
+	const system = await db.query.systems.findFirst();
 	switch (system?.currentSetupStep) {
 		case 2:
 			return redirect(303, '/setup/finish');

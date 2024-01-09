@@ -1,6 +1,3 @@
-# If you need help, visit the Docker compose reference guide at
-# https://docs.docker.com/compose/compose-file/
-
 services:
   home-station:
     image: ghcr.io/sharknoon/home-station:latest
