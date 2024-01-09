@@ -39,12 +39,7 @@ export const actions = {
 		}
 
 		await db.insert(users).values({ username, password });
-
-		await db
-			.insert(systems)
-			.values({ id: 1, currentSetupStep: 1 })
-			.onConflictDoUpdate({ target: systems.id, set: { currentSetupStep: 1 } });
-
+		await db.update(systems).set({ currentSetupStep: 1 }).where(eq(systems.id, 1));
 		return redirect(303, '/setup/container');
 	}
 } satisfies Actions;

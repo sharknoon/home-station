@@ -1,15 +1,20 @@
 <script lang="ts">
-    import type { PageData } from './$types';
-    
-    export let data: PageData;
+	import type { PageData } from './$types';
+	import Button from '$lib/components/button.svelte';
+
+	export let data: PageData;
 </script>
 
 Domains: {data.detectedDomains}
-<br>
+<br />
 Version: {data.version}
-<br>
+<br />
 Containers: {data.containers}
-<br>
+<br />
 Images: {data.images}
-<br>
+<br />
 Volumes: {data.volumes}
+
+<form action="?/proceed" method="post">
+	<Button type="submit">Continue</Button>
+</form>

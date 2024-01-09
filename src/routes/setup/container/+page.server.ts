@@ -7,6 +7,7 @@ import {
 } from '$lib/server/containerengine';
 import db from '$lib/server/db';
 import { containerEngines, systems } from '$lib/server/schema';
+import { eq } from 'drizzle-orm';
 
 export const load = (async () => {
 	const system = await db.query.systems.findFirst();
@@ -115,10 +116,7 @@ export const actions = {
 			return fail(400, { containerEngine: 'containerEngine', missing: true });
 		}
 		await refreshEngines();
-		await db
-			.insert(systems)
-			.values({ id: 1, currentSetupStep: 2 })
-			.onConflictDoUpdate({ target: systems.id, set: { currentSetupStep: 2 } });
+		await db.update(systems).set({ currentSetupStep: 2 }).where(eq(systems.id, 1));
 		return redirect(303, '/setup/finish');
 	}
 } satisfies Actions;
