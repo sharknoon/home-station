@@ -1,6 +1,7 @@
 <script>
 	import { HardDrive, LayoutGrid, Settings, Sparkles } from 'lucide-svelte';
 	import { page } from '$app/stores';
+	import SearchBar from '$lib/components/searchbar.svelte';
 
 	const sidebarItems = [
 		{
@@ -47,6 +48,7 @@
 		</div>
 	</button>
 </div>
-<div class="ml-64">
+<div class="ml-64 bg-gray-900 text-gray-100 h-full p-4 flex flex-col gap-4">
+	<SearchBar placeholder="Search for apps" />
 	<slot />
 </div>

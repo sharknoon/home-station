@@ -1,4 +1,3 @@
-Searchbar<br>
 <!-- sort by creation time newest to oldest -->
 <h1>Recently Added</h1>
 <!-- sort by fastest grow this week -->
