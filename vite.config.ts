@@ -7,6 +7,6 @@ export default defineConfig({
 		include: ['src/**/*.{test,spec}.{js,ts}']
 	},
 	define: {
-		APP_VERSION: JSON.stringify(process.env.npm_package_version)
+		NPM_PACKAGE_VERSION: JSON.stringify(process.env.npm_package_version)
 	}
 });

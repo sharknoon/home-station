@@ -43,7 +43,7 @@
 		<div class="text-left">
 			<div class="text-xs font-bold leading-3">Home Station</div>
 			<!-- svelte-ignore missing-declaration -->
-			<code class="text-xs leading-3">{APP_VERSION}</code>
+			<code class="text-xs leading-3">{NPM_PACKAGE_VERSION}</code>
 		</div>
 	</button>
 </div>
