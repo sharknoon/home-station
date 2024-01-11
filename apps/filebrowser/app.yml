@@ -1,3 +1,4 @@
+id: "filebrowser"
 name: "File Browser"
 description: "File Browser provides a file managing interface within a specified directory and it can be used to upload, delete, preview, rename and edit your files. It allows the creation of multiple users and each user can have its own directory. It can be used as a standalone app."
 icon: "icon.svg"
@@ -6,11 +7,11 @@ links:
   repository: "https://github.com/filebrowser/filebrowser"
   website: "https://filebrowser.org/" # optional
   custom:
-    name: "Demo"
-    icon: "lucide:computer"
-    url: "https://demo.filebrowser.org/login?redirect=%2Ffiles%2F"
+    - name: "Demo"
+      icon: "lucide:computer"
+      url: "https://demo.filebrowser.org/login?redirect=%2Ffiles%2F"
 config: # User facing config during setup, optional
-  api-key:
+  - id: "api-key"
     name: "API key"
     description: "You need an api key to use this service"
     type: "String" # Other types: Boolean, Number, Select, Range, Color, Date, Datetime, Email, month, password, tel, time, url, week
@@ -20,8 +21,7 @@ config: # User facing config during setup, optional
     form-validation: "[0-9a-bA-Z]+" # optional
     value-validation: "myscript.js" # optional
 http: # optional, one of http, tcp or udp is required
-  webui:
-    port: 80
+  - port: 80
     description: "Web-UI"
     subdomain: "filebrowser"
 messages:
