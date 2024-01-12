@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "sqlite",
-  "id": "24f01e46-0167-4b0a-b451-1d1797c3ed0d",
+  "id": "2f502a8f-638c-471a-b301-5ff39c794aaa",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "app_repositories": {
@@ -272,6 +272,13 @@
           "notNull": true,
           "autoincrement": false
         },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
         "password": {
           "name": "password",
           "type": "text",
@@ -285,6 +292,13 @@
           "name": "users_username_unique",
           "columns": [
             "username"
+          ],
+          "isUnique": true
+        },
+        "users_email_unique": {
+          "name": "users_email_unique",
+          "columns": [
+            "email"
           ],
           "isUnique": true
         }

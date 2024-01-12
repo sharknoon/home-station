@@ -40,9 +40,11 @@ CREATE TABLE `systems` (
 CREATE TABLE `users` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`username` text NOT NULL,
+	`email` text NOT NULL,
 	`password` text NOT NULL
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `app_repositories_url_unique` ON `app_repositories` (`url`);--> statement-breakpoint
 CREATE UNIQUE INDEX `container_engines_name_unique` ON `container_engines` (`name`);--> statement-breakpoint
-CREATE UNIQUE INDEX `users_username_unique` ON `users` (`username`);
+CREATE UNIQUE INDEX `users_username_unique` ON `users` (`username`);--> statement-breakpoint
+CREATE UNIQUE INDEX `users_email_unique` ON `users` (`email`);
