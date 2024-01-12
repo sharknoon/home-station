@@ -11,7 +11,7 @@ links:
       icon: "lucide:computer"
       url: "https://demo.filebrowser.org/login?redirect=%2Ffiles%2F"
 publishedAt: "2021-01-01T00:00:00Z"
-# developer: "John Doe" # Optional
+developer: "filebrowser"
 category: "File Transfer - Web-based File Managers"
 config: # User facing config during setup, optional
   - id: "api-key"
