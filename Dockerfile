@@ -72,5 +72,8 @@ RUN npm config set update-notifier false
 # Expose the port that the application listens on.
 EXPOSE 3000
 
+# Create a volume for the app data.
+VOLUME /app/data
+
 # Run the application.
 CMD [ "node", "./build/index.js" ]

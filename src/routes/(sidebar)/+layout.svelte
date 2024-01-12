@@ -1,7 +1,12 @@
-<script>
+<script lang="ts">
 	import { HardDrive, LayoutGrid, Settings, Sparkles } from 'lucide-svelte';
 	import { page } from '$app/stores';
+	import type { LayoutData } from './$types';
 	import SearchBar from '$lib/components/searchbar.svelte';
+	import Alert from '$lib/components/alert.svelte';
+	import Code from '$lib/components/code.svelte';
+
+	export let data: LayoutData;
 
 	const sidebarItems = [
 		{
@@ -49,6 +54,14 @@
 	</button>
 </div>
 <div class="ml-64 bg-gray-900 text-gray-100 h-full p-4 flex flex-col gap-4">
+	{#if !data.dataVolumeMounted}
+		<Alert variant="warning">
+			<p>
+				The <Code>{data.appDataPath}</Code> volume was not configured property. All data will be cleared when
+				the container is stopped or restarted.
+			</p>
+		</Alert>
+	{/if}
 	<SearchBar placeholder="Search for apps" />
 	<slot />
 </div>

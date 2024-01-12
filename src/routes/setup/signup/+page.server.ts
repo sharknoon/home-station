@@ -18,6 +18,7 @@ export const actions = {
 		const data = await request.formData();
 
 		const username = data.get('username')?.toString();
+		const email = data.get('email')?.toString();
 		let password = data.get('password1')?.toString();
 		const password2 = data.get('password2')?.toString();
 		if (password !== password2) {
@@ -27,18 +28,27 @@ export const actions = {
 		if (!username) {
 			return fail(400, { username, missing: true });
 		}
+		if (!email) {
+			return fail(400, { email, missing: true });
+		}
 		if (!password) {
 			return fail(400, { password: 'password', missing: true });
 		}
 
 		password = await hash(password, 10);
 
-		const usernameExists = !!(await db.query.users.findFirst({ where: eq(users.username, username) }))
+		const usernameExists = !!(await db.query.users.findFirst({
+			where: eq(users.username, username)
+		}));
 		if (usernameExists) {
 			return fail(400, { username, exists: true });
 		}
+		const emailExists = !!(await db.query.users.findFirst({ where: eq(users.email, email) }));
+		if (emailExists) {
+			return fail(400, { email, exists: true });
+		}
 
-		await db.insert(users).values({ username, password });
+		await db.insert(users).values({ username, email, password });
 		await db.update(systems).set({ currentSetupStep: 1 }).where(eq(systems.id, 1));
 		return redirect(303, '/setup/container');
 	}

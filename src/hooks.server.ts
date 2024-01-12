@@ -1,5 +1,9 @@
+import { scheduleTasks } from '$lib/server/tasks';
 import db from '$lib/server/db';
 import { redirect, type Handle } from '@sveltejs/kit';
+
+// These functions run on Startup
+await scheduleTasks();
 
 export const handle: Handle = async ({ event, resolve }) => {
 	// Check if the initial setup is completed

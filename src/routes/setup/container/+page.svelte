@@ -2,11 +2,6 @@
 	import { enhance } from '$app/forms';
 	import { Network, Plug2, RefreshCcw, Unplug } from 'lucide-svelte';
 	import Button from '$lib/components/button.svelte';
-	import CodeBlock from '$lib/components/codeblock.svelte';
-	import Tabs from '$lib/components/tabs.svelte';
-	import TabList from '$lib/components/tablist.svelte';
-	import Tab from '$lib/components/tab.svelte';
-	import TabPanel from '$lib/components/tabpanel.svelte';
 	import Accordion from '$lib/components/accordion.svelte';
 	import AccordionItem from '$lib/components/accordionitem.svelte';
 	import type { ActionData } from './$types';

@@ -8,7 +8,6 @@ links:
   website: "https://filebrowser.org/" # optional
   custom:
     - name: "Demo"
-      icon: "lucide:computer"
       url: "https://demo.filebrowser.org/login?redirect=%2Ffiles%2F"
 publishedAt: "2021-01-01T00:00:00Z"
 developer: "filebrowser"
