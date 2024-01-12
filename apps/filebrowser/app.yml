@@ -10,11 +10,14 @@ links:
     - name: "Demo"
       icon: "lucide:computer"
       url: "https://demo.filebrowser.org/login?redirect=%2Ffiles%2F"
+publishedAt: "2021-01-01T00:00:00Z"
+# developer: "John Doe" # Optional
+category: "File Transfer - Web-based File Managers"
 config: # User facing config during setup, optional
   - id: "api-key"
     name: "API key"
     description: "You need an api key to use this service"
-    type: "String" # Other types: Boolean, Number, Select, Range, Color, Date, Datetime, Email, month, password, tel, time, url, week
+    type: "string" # Other types: Boolean, Number, Select, Range, Color, Date, Datetime, Email, month, password, tel, time, url, week
     required: false
     default: "sadf" # Optional if required = true
     environment: "API_KEY"
