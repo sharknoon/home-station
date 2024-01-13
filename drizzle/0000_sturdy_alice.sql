@@ -31,6 +31,21 @@ CREATE TABLE `container_engines` (
 	`key` text
 );
 --> statement-breakpoint
+CREATE TABLE `user_keys` (
+	`id` text PRIMARY KEY NOT NULL,
+	`user_id` text NOT NULL,
+	`hashed_password` text,
+	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action
+);
+--> statement-breakpoint
+CREATE TABLE `user_sessions` (
+	`id` text PRIMARY KEY NOT NULL,
+	`user_id` text NOT NULL,
+	`active_expires` blob NOT NULL,
+	`idle_expires` blob NOT NULL,
+	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action
+);
+--> statement-breakpoint
 CREATE TABLE `systems` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`setup_complete` integer DEFAULT false NOT NULL,
@@ -38,13 +53,13 @@ CREATE TABLE `systems` (
 );
 --> statement-breakpoint
 CREATE TABLE `users` (
-	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`id` text PRIMARY KEY NOT NULL,
 	`username` text NOT NULL,
-	`email` text NOT NULL,
-	`password` text NOT NULL
+	`password` text NOT NULL,
+	`language` text DEFAULT 'en' NOT NULL,
+	`theme` text DEFAULT 'system' NOT NULL
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `app_repositories_url_unique` ON `app_repositories` (`url`);--> statement-breakpoint
 CREATE UNIQUE INDEX `container_engines_name_unique` ON `container_engines` (`name`);--> statement-breakpoint
-CREATE UNIQUE INDEX `users_username_unique` ON `users` (`username`);--> statement-breakpoint
-CREATE UNIQUE INDEX `users_email_unique` ON `users` (`email`);
+CREATE UNIQUE INDEX `users_username_unique` ON `users` (`username`);

@@ -14,8 +14,8 @@ export default {
 			colors: {
 				muted: 'var(--muted)',
 				border: colors.gray[600],
-				primary: 'rgb(var(--color-primary) / <alpha-value>)',//colors.emerald[700],
-				secondary: 'rgb(var(--color-secondary) / <alpha-value>)',//colors.gray[800],
+				primary: 'rgb(var(--color-primary) / <alpha-value>)', //colors.emerald[700],
+				secondary: 'rgb(var(--color-secondary) / <alpha-value>)', //colors.gray[800],
 				accent: '',
 				destructive: ''
 			}

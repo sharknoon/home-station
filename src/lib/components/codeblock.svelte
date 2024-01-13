@@ -3,7 +3,7 @@
 
 	export let copy = true;
 
-    let code: HTMLElement;
+	let code: HTMLElement;
 </script>
 
 <div class="bg-gray-800 rounded p-2 border border-gray-600 relative">

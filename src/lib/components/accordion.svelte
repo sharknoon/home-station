@@ -2,8 +2,8 @@
 	export type AccordionContext = {
 		idPrefix: string;
 		activeItem: Readable<string>;
-        firstItem: Readable<string>;
-        lastItem: Readable<string>;
+		firstItem: Readable<string>;
+		lastItem: Readable<string>;
 		registerItem: (id: string) => void;
 		selectItem: (id: string) => void;
 	};
@@ -20,20 +20,20 @@
 
 	let activeIndex = writable(0);
 	let activeItem = derived([activeIndex, items], ([$activeIndex, $items]) => $items[$activeIndex]);
-    let firstItem = derived(items, ($items) => $items[0]);
-    let lastItem = derived(items, ($items) => $items[$items.length - 1]);
+	let firstItem = derived(items, ($items) => $items[0]);
+	let lastItem = derived(items, ($items) => $items[$items.length - 1]);
 
 	setContext<AccordionContext>('accordion', {
 		idPrefix,
 		activeItem,
-        firstItem,
-        lastItem,
+		firstItem,
+		lastItem,
 		registerItem: (item: string) => {
 			items.update((items) => [...items, item]);
 		},
 		selectItem: (item: string) => {
 			activeIndex.set($items.indexOf(item));
-		},
+		}
 	});
 </script>
 

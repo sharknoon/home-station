@@ -3,7 +3,8 @@ services:
   filebrowser:
     image: filebrowser/filebrowser
     container_name: filebrowser
-    entrypoint: [ "/filebrowser", "-c", "/etc/filebrowser/.filebrowser.json", "-d", "/database/filebrowser.db" ]
+    entrypoint:
+      ['/filebrowser', '-c', '/etc/filebrowser/.filebrowser.json', '-d', '/database/filebrowser.db']
     restart: always
     volumes:
       - 'data:/srv'
@@ -18,11 +19,11 @@ services:
       traefik.http.services.filebrowser.loadbalancer.server.port: 80
     networks:
       - traefik_net
-      
+
 networks:
   traefik_net:
     external: true
-      
+
 volumes:
   data:
   db:

@@ -21,7 +21,7 @@
 	{:else if variant === 'info'}
 		<Info class="h-5 w-5" />
 	{/if}
-    <div>
-        <slot />
-    </div>
+	<div>
+		<slot />
+	</div>
 </div>

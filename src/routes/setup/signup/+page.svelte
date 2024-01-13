@@ -12,14 +12,21 @@
 	<span class="text-sm font-semibold">Get started by creating an account</span>
 	<form method="post" action="?/signup" class="flex flex-col gap-2 p-4" use:enhance>
 		<Input type="text" name="username" label="Username" />
-		<Input type="password" name="password1" label="Password" />
+		<Input type="password" name="password" label="Password" />
 		<Input type="password" name="password2" label="Confirm password" />
-		<input type="hidden" name="theme">
-		{#if form?.username && form.exists}
-			<p class="text-red-500 text-sm">Username {form?.username} already exists</p>
+		<input type="hidden" name="theme" value="dark" /><!-- TODO -->
+		<input type="hidden" name="language" value="en" /><!-- TODO -->
+		{#if form?.username}
+			{#if form.exists}
+				<p class="text-red-500 text-sm">Username {form?.username} already exists</p>
+			{:else if form?.invalid}
+				<p class="text-red-500 text-sm">
+					Username must be at least 3 characters and at most 31 characters long
+				</p>
+			{/if}
 		{/if}
-		{#if form?.password && form?.mismatch}
-			<p class="text-red-500 text-sm">Passwords doesn't match</p>
+		{#if form?.password && form?.invalid}
+			<p class="text-red-500 text-sm">Password must be at least 6 characters long</p>
 		{/if}
 		<div class="mt-6">
 			<Button type="submit">Sign up</Button>

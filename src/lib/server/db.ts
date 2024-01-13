@@ -5,8 +5,8 @@ import * as schema from '$lib/server/schema';
 import { systems } from '$lib/server/schema';
 import { appDataPath, isAppDataVolumeMounted } from '$lib/server/utils';
 
-let sqlite: Database;
-let db: BetterSQLite3Database<typeof schema>;
+export let sqlite: Database;
+export let db: BetterSQLite3Database<typeof schema>;
 
 // Create the connection to the better-sqlite3 database and run migrations
 try {

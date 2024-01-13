@@ -1,4 +1,34 @@
-import { sqliteTable, text, integer, primaryKey } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, integer, primaryKey, blob } from 'drizzle-orm/sqlite-core';
+
+export const users = sqliteTable('users', {
+	id: text('id').primaryKey(),
+	username: text('username').notNull().unique(),
+	language: text('language').notNull().default('en'),
+	theme: text('theme', { enum: ['light', 'dark', 'system'] })
+		.notNull()
+		.default('system')
+});
+
+export const sessions = sqliteTable('user_sessions', {
+	id: text('id').primaryKey(),
+	userId: text('user_id')
+		.notNull()
+		.references(() => users.id),
+	activeExpires: blob('active_expires', {
+		mode: 'bigint'
+	}).notNull(),
+	idleExpires: blob('idle_expires', {
+		mode: 'bigint'
+	}).notNull()
+});
+
+export const keys = sqliteTable('user_keys', {
+	id: text('id').primaryKey(),
+	userId: text('user_id')
+		.notNull()
+		.references(() => users.id),
+	hashedPassword: text('hashed_password')
+});
 
 export const systems = sqliteTable('systems', {
 	id: integer('id').primaryKey({ autoIncrement: true }),
@@ -15,16 +45,6 @@ export const containerEngines = sqliteTable('container_engines', {
 	ca: text('ca'),
 	cert: text('cert'),
 	key: text('key')
-});
-
-export const users = sqliteTable('users', {
-	id: integer('id').primaryKey({ autoIncrement: true }),
-	username: text('username').notNull().unique(),
-	password: text('password').notNull(),
-	language: text('language').notNull().default('en'),
-	theme: text('theme', { enum: ['light', 'dark', 'system'] })
-		.notNull()
-		.default('system')
 });
 
 export const appRepositories = sqliteTable('app_repositories', {

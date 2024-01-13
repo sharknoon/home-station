@@ -12,13 +12,13 @@
 		@apply h-screen;
 	}
 
-  :root {
-    --color-primary: 100 100 100;
-    --color-secondary: 111 114 185;
-  }
+	:root {
+		--color-primary: 100 100 100;
+		--color-secondary: 111 114 185;
+	}
 
-  .dark {
-    --color-primary: 200 200 200;
-    --color-secondary: 111 114 185;
-  }
+	.dark {
+		--color-primary: 200 200 200;
+		--color-secondary: 111 114 185;
+	}
 }

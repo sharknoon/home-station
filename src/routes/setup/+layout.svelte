@@ -35,8 +35,8 @@
 		{#if !data.dataVolumeMounted}
 			<Alert variant="warning">
 				<p>
-					The <Code>{data.appDataPath}</Code> volume was not configured property. All data will be cleared when
-					the container is stopped or restarted.
+					The <Code>{data.appDataPath}</Code> volume was not configured property. All data will be cleared
+					when the container is stopped or restarted.
 				</p>
 			</Alert>
 		{/if}

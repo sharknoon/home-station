@@ -11,7 +11,7 @@
 	let self = `${idPrefix}p${id++}`;
 
 	$: isActive = $activePanel === self;
-	
+
 	registerPanel(self);
 </script>
 

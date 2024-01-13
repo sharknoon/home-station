@@ -5,6 +5,7 @@
 	import SearchBar from '$lib/components/searchbar.svelte';
 	import Alert from '$lib/components/alert.svelte';
 	import Code from '$lib/components/code.svelte';
+	import { enhance } from '$app/forms';
 
 	export let data: LayoutData;
 
@@ -51,6 +52,7 @@
 		<div class="text-left">
 			<div class="text-xs font-bold leading-3">Home Station</div>
 			<!-- svelte-ignore missing-declaration -->
+			<!-- eslint-disable-next-line no-undef -->
 			<code class="text-xs leading-3">{NPM_PACKAGE_VERSION}</code>
 		</div>
 	</button>
@@ -59,11 +61,18 @@
 	{#if !data.dataVolumeMounted}
 		<Alert variant="warning">
 			<p>
-				The <Code>{data.appDataPath}</Code> volume was not configured property. All data will be cleared when
-				the container is stopped or restarted.
+				The <Code>{data.appDataPath}</Code> volume was not configured property. All data will be cleared
+				when the container is stopped or restarted.
 			</p>
 		</Alert>
 	{/if}
-	<SearchBar placeholder="Search for apps" />
+	<div class="flex">
+		<SearchBar placeholder="Search for apps" />
+		<p>User id: {data.userId}</p>
+		<p>Username: {data.username}</p>
+		<form method="post" action="?/logout" use:enhance>
+			<input type="submit" value="Sign out" />
+		</form>
+	</div>
 	<slot />
 </div>

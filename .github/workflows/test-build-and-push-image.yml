@@ -1,6 +1,6 @@
 name: Test, build and push image
 
-permissions: 
+permissions:
   contents: read
   packages: write
 

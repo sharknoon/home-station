@@ -1,4 +1,4 @@
-import Docker from "dockerode";
+import Docker from 'dockerode';
 import db from '$lib/server/db';
 
 let engines: Docker[] = await loadEngines();
@@ -13,7 +13,7 @@ async function loadEngines() {
 					return new Docker({ socketPath: e.socketPath });
 				case 'remote':
 					return new Docker({
-						host: e.host ?? "", // Is required for type remote
+						host: e.host ?? '', // Is required for type remote
 						ca: e.ca ?? undefined,
 						cert: e.cert ?? undefined,
 						key: e.key ?? undefined
