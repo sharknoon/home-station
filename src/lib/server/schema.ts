@@ -20,8 +20,11 @@ export const containerEngines = sqliteTable('container_engines', {
 export const users = sqliteTable('users', {
 	id: integer('id').primaryKey({ autoIncrement: true }),
 	username: text('username').notNull().unique(),
-	email: text('email').notNull().unique(),
-	password: text('password').notNull()
+	password: text('password').notNull(),
+	language: text('language').notNull().default('en'),
+	theme: text('theme', { enum: ['light', 'dark', 'system'] })
+		.notNull()
+		.default('system')
 });
 
 export const appRepositories = sqliteTable('app_repositories', {
@@ -51,7 +54,7 @@ export const availableApps = sqliteTable(
 			}[];
 		}>(),
 		publishedAt: text('published_at').notNull(),
-    developer: text('developer').notNull(),
+		developer: text('developer').notNull(),
 		category: text('category', { enum: ['File Transfer - Web-based File Managers'] }).notNull() //TODO: Add more categories from awesome-selfhosted
 	},
 	(table) => {

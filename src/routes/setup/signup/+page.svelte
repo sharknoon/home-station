@@ -12,15 +12,12 @@
 	<span class="text-sm font-semibold">Get started by creating an account</span>
 	<form method="post" action="?/signup" class="flex flex-col gap-2 p-4" use:enhance>
 		<Input type="text" name="username" label="Username" />
-		<Input type="email" name="email" label="Email" />
 		<Input type="password" name="password1" label="Password" />
 		<Input type="password" name="password2" label="Confirm password" />
+		<input type="hidden" name="theme">
 		{#if form?.username && form.exists}
 			<p class="text-red-500 text-sm">Username {form?.username} already exists</p>
 		{/if}
-		{#if form?.email && form.exists}
-		<p class="text-red-500 text-sm">Email {form?.email} already exists</p>
-	{/if}
 		{#if form?.password && form?.mismatch}
 			<p class="text-red-500 text-sm">Passwords doesn't match</p>
 		{/if}

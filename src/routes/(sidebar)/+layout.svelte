@@ -30,6 +30,8 @@
 <div
 	class="fixed top-0 left-0 bottom-0 w-64 flex flex-col gap-4 bg-gradient-to-b from-slate-800 to-slate-900 text-gray-100 p-4 border-r border-gray-700"
 >
+	<h1 class="text-xl">Home Station</h1>
+
 	{#each sidebarItems as item}
 		<a
 			href={item.href}

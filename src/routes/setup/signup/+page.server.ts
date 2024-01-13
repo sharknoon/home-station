@@ -2,11 +2,13 @@ import { fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 import db from '$lib/server/db';
 import { hash } from 'bcrypt';
-import { systems, users } from '$lib/server/schema';
+import { system, users } from '$lib/server/schema';
 import { eq } from 'drizzle-orm';
 
+type Theme = typeof users.$inferSelect["theme"];
+
 export const load = (async () => {
-	const system = await db.query.systems.findFirst();
+	const system = await db.query.system.findFirst();
 	if (system?.currentSetupStep !== 0) {
 		return redirect(303, '/setup');
 	}
@@ -18,24 +20,22 @@ export const actions = {
 		const data = await request.formData();
 
 		const username = data.get('username')?.toString();
-		const email = data.get('email')?.toString();
-		let password = data.get('password1')?.toString();
+		const password1 = data.get('password1')?.toString();
 		const password2 = data.get('password2')?.toString();
-		if (password !== password2) {
+		const theme = (data.get('theme')?.toString() ?? "system") as Theme;
+
+		if (password1 !== password2) {
 			return fail(400, { password: 'password', mismatch: true });
 		}
 
 		if (!username) {
 			return fail(400, { username, missing: true });
 		}
-		if (!email) {
-			return fail(400, { email, missing: true });
-		}
-		if (!password) {
+		if (!password1) {
 			return fail(400, { password: 'password', missing: true });
 		}
 
-		password = await hash(password, 10);
+		const password = await hash(password1, 10);
 
 		const usernameExists = !!(await db.query.users.findFirst({
 			where: eq(users.username, username)
@@ -43,13 +43,9 @@ export const actions = {
 		if (usernameExists) {
 			return fail(400, { username, exists: true });
 		}
-		const emailExists = !!(await db.query.users.findFirst({ where: eq(users.email, email) }));
-		if (emailExists) {
-			return fail(400, { email, exists: true });
-		}
 
-		await db.insert(users).values({ username, email, password });
-		await db.update(systems).set({ currentSetupStep: 1 }).where(eq(systems.id, 1));
+		await db.insert(users).values({ username, password, theme });
+		await db.update(system).set({ currentSetupStep: 1 }).where(eq(system.id, 1));
 		return redirect(303, '/setup/container');
 	}
 } satisfies Actions;
