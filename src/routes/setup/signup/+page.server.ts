@@ -2,13 +2,13 @@ import { fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 import db from '$lib/server/db';
 import { hash } from 'bcrypt';
-import { system, users } from '$lib/server/schema';
+import { systems, users } from '$lib/server/schema';
 import { eq } from 'drizzle-orm';
 
 type Theme = typeof users.$inferSelect["theme"];
 
 export const load = (async () => {
-	const system = await db.query.system.findFirst();
+	const system = await db.query.systems.findFirst();
 	if (system?.currentSetupStep !== 0) {
 		return redirect(303, '/setup');
 	}
@@ -45,7 +45,7 @@ export const actions = {
 		}
 
 		await db.insert(users).values({ username, password, theme });
-		await db.update(system).set({ currentSetupStep: 1 }).where(eq(system.id, 1));
+		await db.update(systems).set({ currentSetupStep: 1 }).where(eq(systems.id, 1));
 		return redirect(303, '/setup/container');
 	}
 } satisfies Actions;
