@@ -1,0 +1,12 @@
+{
+  "brand": {
+    "title": ""
+  },
+  "login": {
+    "login-to-continue": "",
+    "username": "",
+    "password": "",
+    "incorrect-password": "",
+    "login": ""
+  }
+}

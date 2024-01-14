@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import type { LayoutData } from './$types';
+	import i18n from '$lib/i18n';
 	import Box from '$lib/components/box.svelte';
 	import Stepper from '$lib/components/stepper.svelte';
 	import Alert from '$lib/components/alert.svelte';
@@ -30,7 +31,7 @@
 </div>
 <div class="absolute inset-0 flex flex-col gap-4 justify-center items-center p-12">
 	<img src="/logo.png" alt="logo" class="h-20 w-20" />
-	<h1>Home Station</h1>
+	<h1>{$i18n.t('brand.title')}</h1>
 	<div class="max-w-4xl w-full">
 		{#if !data.dataVolumeMounted}
 			<Alert variant="warning">

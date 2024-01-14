@@ -4,7 +4,7 @@ import { eq } from 'drizzle-orm';
 import { db } from '$lib/server/db';
 import { systems, users } from '$lib/server/schema';
 import { auth } from '$lib/server/auth';
-import type { SystemTheme } from '$lib/theme';
+import type { Theme } from '$lib/theme';
 
 export const load = (async () => {
 	const system = await db.query.systems.findFirst();
@@ -21,14 +21,19 @@ export const actions = {
 		const username = data.get('username')?.toString();
 		const password = data.get('password')?.toString();
 		const language = data.get('language')?.toString() ?? 'en';
-		const theme = (data.get('theme')?.toString() ?? 'system') as SystemTheme;
+		let theme = (data.get('theme')?.toString() ?? 'system') as Theme;
 
 		if (!username || username.length < 4 || username.length > 31) {
 			return fail(400, { username, invalid: true });
 		}
-
 		if (!password || password.length < 6 || password.length > 255) {
 			return fail(400, { password: 'password', invalid: true });
+		}
+		if (!language || !['en', 'de'].includes(language)) {
+			return fail(400, { language, invalid: true });
+		}
+		if (!theme || !['light', 'dark'].includes(theme)) {
+			theme = "system";
 		}
 
 		const usernameExists = !!(await db.query.users.findFirst({
