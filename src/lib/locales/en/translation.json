@@ -1,12 +1,12 @@
 {
   "brand": {
-    "title": ""
+    "title": "Home Station"
   },
   "login": {
-    "login-to-continue": "",
-    "username": "",
-    "password": "",
-    "incorrect-password": "",
-    "login": ""
+    "login-to-continue": "Login to continue",
+    "username": "Username",
+    "password": "Password",
+    "incorrect-password": "Incorrect password",
+    "login": "Login"
   }
 }
