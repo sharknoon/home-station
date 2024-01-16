@@ -55,6 +55,7 @@
 	"dependencies": {
 		"@floating-ui/dom": "^1.5.4",
 		"@lucia-auth/adapter-sqlite": "^2.0.1",
+		"@sveltejs/adapter-auto": "^3.1.0",
 		"better-sqlite3": "^9.2.2",
 		"cron": "^3.1.6",
 		"date-fns": "^3.2.0",
