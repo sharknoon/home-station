@@ -3,6 +3,6 @@ import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floati
 import { storePopup } from '@skeletonlabs/skeleton';
 
 export function init() {
-    initializeStores();
-    storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
+	initializeStores();
+	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
 }

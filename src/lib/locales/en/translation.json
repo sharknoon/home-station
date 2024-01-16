@@ -1,45 +1,45 @@
 {
-  "brand": {
-    "title": "Home Station"
-  },
-  "login": {
-    "login-to-continue": "Login to continue",
-    "username": "Username",
-    "password": "Password",
-    "incorrect-password": "Incorrect password",
-    "login": "Login"
-  },
-  "setup": {
-    "step": "Step",
-    "back": "← Back",
-    "next": "Next →",
-    "complete": "Complete",
-    "welcome": "Welcome to Home Station",
-    "get-started-account": "Get started by creating an account",
-    "username": "Username",
-    "username-requirements": "The username must be at least 4 characters long and can only contain letters, numbers, and underscores",
-    "password": "Password",
-    "password-requirements": "The password must be at least 8 characters long",
-    "repeat-password": "Repeat password",
-    "username-already-exists": "Username \"{{username}}\" already exists",
-    "connect-container-engine": "Connect your container engine",
-    "container-engine-explanation": "Docker and Podman are supported. You can either add an local or remote container engine.",
-    "local-container-engine": "Local container engine (socket)",
-    "container-engine-name": "Name",
-    "container-engine-name-placeholder": "e.g. docker-prod01",
-    "more-settings": "More settings",
-    "override-socket": "Override default socket path",
-    "override-socket-placeholder": "e.g. /var/run/docker.sock (on Linux) or //./pipe/docker_engine (on Windows)",
-    "test-connection": "Test connection",
-    "connecting": "Connecting...",
-    "successfully-connected": "Successfully connected 🎉",
-    "remote-container-engine": "Remote container engine (API)",
-    "container-engine-api-url": "Container engine API URL",
-    "container-engine-api-url-placeholder": "e.g. 10.0.0.10:2375 or mydocker.mydomain.com:2375",
-    "tls-ca-certificate": "TLS CA certificate",
-    "tls-certificate": "TLS certificate",
-    "tls-key": "TLS key",
-    "tip": "Tip",
-    "additional-container-engines": "You can add additional container engines in the settings"
-  }
+	"brand": {
+		"title": "Home Station"
+	},
+	"login": {
+		"login-to-continue": "Login to continue",
+		"username": "Username",
+		"password": "Password",
+		"incorrect-password": "Incorrect password",
+		"login": "Login"
+	},
+	"setup": {
+		"step": "Step",
+		"back": "← Back",
+		"next": "Next →",
+		"complete": "Complete",
+		"welcome": "Welcome to Home Station",
+		"get-started-account": "Get started by creating an account",
+		"username": "Username",
+		"username-requirements": "The username must be at least 4 characters long and can only contain letters, numbers, and underscores",
+		"password": "Password",
+		"password-requirements": "The password must be at least 8 characters long",
+		"repeat-password": "Repeat password",
+		"username-already-exists": "Username \"{{username}}\" already exists",
+		"connect-container-engine": "Connect your container engine",
+		"container-engine-explanation": "Docker and Podman are supported. You can either add an local or remote container engine.",
+		"local-container-engine": "Local container engine (socket)",
+		"container-engine-name": "Name",
+		"container-engine-name-placeholder": "e.g. docker-prod01",
+		"more-settings": "More settings",
+		"override-socket": "Override default socket path",
+		"override-socket-placeholder": "e.g. /var/run/docker.sock (on Linux) or //./pipe/docker_engine (on Windows)",
+		"test-connection": "Test connection",
+		"connecting": "Connecting...",
+		"successfully-connected": "Successfully connected 🎉",
+		"remote-container-engine": "Remote container engine (API)",
+		"container-engine-api-url": "Container engine API URL",
+		"container-engine-api-url-placeholder": "e.g. 10.0.0.10:2375 or mydocker.mydomain.com:2375",
+		"tls-ca-certificate": "TLS CA certificate",
+		"tls-certificate": "TLS certificate",
+		"tls-key": "TLS key",
+		"tip": "Tip",
+		"additional-container-engines": "You can add additional container engines in the settings"
+	}
 }

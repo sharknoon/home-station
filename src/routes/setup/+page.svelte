@@ -30,8 +30,8 @@
 	let remoteError = '';
 
 	// values for the connection testing
-    let name = '';
-    let type = '';
+	let name = '';
+	let type = '';
 	let socketPath = '';
 	let host = '';
 	let ca = '';
@@ -48,7 +48,12 @@
 		</span>
 	</h1>
 
-	<form method="post" enctype="multipart/form-data" class="card max-w-[35rem] p-4 overflow-y-auto" use:enhance>
+	<form
+		method="post"
+		enctype="multipart/form-data"
+		class="card max-w-[35rem] p-4 overflow-y-auto"
+		use:enhance
+	>
 		<Stepper
 			stepTerm={$i18n.t('setup.step')}
 			buttonBackLabel={$i18n.t('setup.back')}
@@ -109,12 +114,12 @@
 			<Step locked={!localSuccess && !remoteSuccess}>
 				<svelte:fragment slot="header">{$i18n.t('setup.connect-container-engine')}</svelte:fragment>
 				<p>{$i18n.t('setup.container-engine-explanation')}</p>
-                <!-- Repeat all previous step inputs here, because the stepper deletes them from the DOM -->
-                <input type="hidden" name="username" bind:value={username}>
-                <input type="hidden" name="password" bind:value={password1}>
-                <input type="hidden" name="theme" value={$systemTheme} />
-                <input type="hidden" name="language" value={$i18n.language} />
-                <input type="hidden" name="type" bind:value={type}>
+				<!-- Repeat all previous step inputs here, because the stepper deletes them from the DOM -->
+				<input type="hidden" name="username" bind:value={username} />
+				<input type="hidden" name="password" bind:value={password1} />
+				<input type="hidden" name="theme" value={$systemTheme} />
+				<input type="hidden" name="language" value={$i18n.language} />
+				<input type="hidden" name="type" bind:value={type} />
 				<Accordion autocollapse>
 					<AccordionItem open>
 						<svelte:fragment slot="lead"><Plug2 /></svelte:fragment>
@@ -131,7 +136,7 @@
 										name="name"
 										required
 										placeholder={$i18n.t('setup.container-engine-name-placeholder')}
-                                        bind:value={name}
+										bind:value={name}
 									/>
 								</label>
 								<div class="mt-2">
@@ -175,7 +180,7 @@
 											const data = await result.json();
 											if (data.success) {
 												localSuccess = true;
-                                                type = 'local';
+												type = 'local';
 											} else {
 												localError = data.error;
 											}
@@ -257,7 +262,7 @@
 								<button
 									type="button"
 									class="btn variant-filled-secondary"
-                                    disabled={!host}
+									disabled={!host}
 									on:click={async () => {
 										const timeout = setTimeout(() => (connecting = true), 100);
 										const result = await fetch('', {
@@ -276,7 +281,7 @@
 										const data = await result.json();
 										if (data.success) {
 											remoteSuccess = true;
-                                            type = 'remote';
+											type = 'remote';
 										} else {
 											remoteError = data.error;
 										}

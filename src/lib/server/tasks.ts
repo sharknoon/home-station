@@ -60,7 +60,5 @@ export async function executeTask(task: Task): Promise<void> {
 	lastDuration.set(new Date().getTime() - lastExecutionDate.getTime());
 	nextExecution.set(cron.sendAt(schedule).toJSDate());
 	// TODO switch to Intl version as soon as it is released: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DurationFormat/format
-	console.info(
-		`Completed task "${name}" in ${get(lastDuration)}ms`
-	);
+	console.info(`Completed task "${name}" in ${get(lastDuration)}ms`);
 }
