@@ -7,8 +7,8 @@
 	export let form: ActionData;
 </script>
 
-<div class="absolute inset-0 flex flex-col gap-12 justify-center items-center p-12">
-	<h1 class="h1 leading-8">
+<div class="h-full flex flex-col gap-12 justify-center items-center p-12">
+	<h1 class="h1">
 		<span
 			class="bg-gradient-to-br from-primary-500 to-secondary-500 bg-clip-text text-transparent box-decoration-clone font-bold"
 		>
@@ -35,7 +35,7 @@
 			</label>
 			<input type="hidden" name="theme" value={$systemTheme} />
 			{#if form?.password && form?.invalid}
-				<p class="text-red-500 text-sm">{$i18n.t('login.incorrect-password')}</p>
+				<p class="text-error-500-400-token text-sm">{$i18n.t('login.incorrect-password')}</p>
 			{/if}
 			<button type="submit" class="btn variant-filled-primary">{$i18n.t('login.login')}</button>
 		</form>
