@@ -1,6 +1,6 @@
 import { sqliteTable, text, integer, primaryKey, blob } from 'drizzle-orm/sqlite-core';
 
-// Party managed by Lucia, added lanugage and theme
+// Partly managed by Lucia, added lanugage and theme
 export const users = sqliteTable('users', {
 	id: text('id').primaryKey(),
 	username: text('username').notNull().unique(),

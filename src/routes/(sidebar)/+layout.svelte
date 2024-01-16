@@ -82,7 +82,7 @@
 	// Toast
 
 	const toastStore = getToastStore();
-	if (data.dataVolumeMounted) {
+	if (!data.dataVolumeMounted) {
 		toastStore.trigger({
 			message: `The ${data.appDataPath} was not mounted properly. All data will be lost when the container is stopped or restarted.`,
 			background: 'variant-filled-warning',
