@@ -1,5 +1,6 @@
 import { sqliteTable, text, integer, primaryKey, blob } from 'drizzle-orm/sqlite-core';
 
+// Partly managed by Lucia, added lanugage and theme
 export const users = sqliteTable('users', {
 	id: text('id').primaryKey(),
 	username: text('username').notNull().unique(),
@@ -9,6 +10,7 @@ export const users = sqliteTable('users', {
 		.default('system')
 });
 
+// Managed by Lucia
 export const sessions = sqliteTable('user_sessions', {
 	id: text('id').primaryKey(),
 	userId: text('user_id')
@@ -22,6 +24,7 @@ export const sessions = sqliteTable('user_sessions', {
 	}).notNull()
 });
 
+// Managed by Lucia
 export const keys = sqliteTable('user_keys', {
 	id: text('id').primaryKey(),
 	userId: text('user_id')
@@ -30,12 +33,7 @@ export const keys = sqliteTable('user_keys', {
 	hashedPassword: text('hashed_password')
 });
 
-export const systems = sqliteTable('systems', {
-	id: integer('id').primaryKey({ autoIncrement: true }),
-	setupComplete: integer('setup_complete', { mode: 'boolean' }).notNull().default(false),
-	currentSetupStep: integer('current_setup_step').notNull().default(0)
-});
-
+// The container engines (remote or local) for deploying the apps
 export const containerEngines = sqliteTable('container_engines', {
 	id: integer('id').primaryKey({ autoIncrement: true }),
 	name: text('name').notNull().unique(),
@@ -47,6 +45,7 @@ export const containerEngines = sqliteTable('container_engines', {
 	key: text('key')
 });
 
+// Git repositores that host apps
 export const appRepositories = sqliteTable('app_repositories', {
 	id: integer('id').primaryKey({ autoIncrement: true }),
 	url: text('url').notNull().unique(),
@@ -54,6 +53,7 @@ export const appRepositories = sqliteTable('app_repositories', {
 	password: text('password')
 });
 
+// Apps for the app store (this is the result of the app repositories)
 export const availableApps = sqliteTable(
 	'available_apps',
 	{
