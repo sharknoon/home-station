@@ -163,7 +163,7 @@
 					<nav class="list-nav">
 						<ul>
 							<li>
-								<button formaction="?/logout">
+								<button formaction="/?/logout">
 									<LogOut class="h-6" />
 									<span>Ausloggen</span>
 								</button>

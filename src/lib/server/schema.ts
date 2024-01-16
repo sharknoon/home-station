@@ -33,13 +33,6 @@ export const keys = sqliteTable('user_keys', {
 	hashedPassword: text('hashed_password')
 });
 
-// Only one system row is allowed. Checks if the setup is completed and tracks its current step
-export const systems = sqliteTable('systems', {
-	id: integer('id').primaryKey({ autoIncrement: true }),
-	setupComplete: integer('setup_complete', { mode: 'boolean' }).notNull().default(false),
-	currentSetupStep: integer('current_setup_step').notNull().default(0)
-});
-
 // The container engines (remote or local) for deploying the apps
 export const containerEngines = sqliteTable('container_engines', {
 	id: integer('id').primaryKey({ autoIncrement: true }),

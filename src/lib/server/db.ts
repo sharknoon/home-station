@@ -2,7 +2,6 @@ import { drizzle, type BetterSQLite3Database } from 'drizzle-orm/better-sqlite3'
 import DatabaseConstructor, { type Database } from 'better-sqlite3';
 import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
 import * as schema from '$lib/server/schema';
-import { systems } from '$lib/server/schema';
 import { appDataPath, isAppDataVolumeMounted } from '$lib/server/utils';
 
 export let sqlite: Database;
@@ -33,9 +32,6 @@ try {
 
 // Seed the database
 try {
-	if (!(await db.query.systems.findFirst())) {
-		await db.insert(systems).values({});
-	}
 	if (!(await db.query.appRepositories.findFirst())) {
 		await db
 			.insert(schema.appRepositories)
