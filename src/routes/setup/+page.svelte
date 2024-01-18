@@ -1,11 +1,11 @@
 <script lang="ts">
-	import type { ActionData } from './$types';
+	import type { ActionData, PageData } from './$types';
 	import { Stepper, Step, Accordion, AccordionItem } from '@skeletonlabs/skeleton';
-	import { Network, Plug2, RefreshCw, Unplug } from 'lucide-svelte';
+	import { Minus, Network, Plug2, Plus, RefreshCw, Unplug } from 'lucide-svelte';
 	import i18n from '$lib/i18n';
 	import { enhance } from '$app/forms';
-	import { systemTheme } from '$lib/theme';
 
+	export let data: PageData;
 	export let form: ActionData;
 
 	// Step 1 Signup
@@ -21,22 +21,18 @@
 	// Step 2 Connect container engine
 
 	// Loading state for the "Connect" button to test the connection to the container engines
-	let connecting = false;
+	let loading = false;
 
-	// Error / Success messages next to the "Connect" button
-	let localSuccess = false;
-	let localError = '';
-	let remoteSuccess = false;
-	let remoteError = '';
-
-	// values for the connection testing
 	let name = '';
-	let type = '';
-	let socketPath = '';
 	let host = '';
-	let ca = '';
-	let cert = '';
-	let key = '';
+
+	// Step 3 Add domains and hostnames
+
+	let hostname: string;
+	let domains = data.detectedDomains.map((domain) => ({ domain, autoDetected: true }));
+	$: if (form?.hostname && form?.success && !domains.some((d) => d.domain === form?.hostname)) {
+		domains = [...domains, { domain: form.hostname, autoDetected: true }];
+	}
 </script>
 
 <div class="h-full flex flex-col gap-12 items-center justify-center p-12">
@@ -50,9 +46,18 @@
 
 	<form
 		method="post"
+		action="?/signup"
 		enctype="multipart/form-data"
 		class="card max-w-[35rem] p-4 overflow-y-auto"
-		use:enhance
+		use:enhance={() => {
+			// Skip loading animations if the duration is under 100ms to prevent flickering
+			const timeout = setTimeout(() => (loading = true), 100);
+			return async ({ update }) => {
+				clearTimeout(timeout);
+				loading = false;
+				update({ reset: false });
+			};
+		}}
 	>
 		<Stepper
 			stepTerm={$i18n.t('setup.step')}
@@ -111,16 +116,10 @@
 				<!-- This is to remove the first "Back" button -->
 				<svelte:fragment slot="navigation">{''}</svelte:fragment>
 			</Step>
-			<Step locked={!localSuccess && !remoteSuccess}>
+			<Step locked={!form?.success || name?.length === 0}>
 				<svelte:fragment slot="header">{$i18n.t('setup.connect-container-engine')}</svelte:fragment>
 				<p>{$i18n.t('setup.container-engine-explanation')}</p>
-				<!-- Repeat all previous step inputs here, because the stepper deletes them from the DOM -->
-				<input type="hidden" name="username" bind:value={username} />
-				<input type="hidden" name="password" bind:value={password1} />
-				<input type="hidden" name="theme" value={$systemTheme} />
-				<input type="hidden" name="language" value={$i18n.language} />
-				<input type="hidden" name="type" bind:value={type} />
-				<Accordion autocollapse>
+				<Accordion autocollapse class="bg-surface-200-700-token rounded-container-token">
 					<AccordionItem open>
 						<svelte:fragment slot="lead"><Plug2 /></svelte:fragment>
 						<svelte:fragment slot="summary">
@@ -153,7 +152,6 @@
 														type="text"
 														name="socketPath"
 														placeholder={$i18n.t('setup.override-socket-placeholder')}
-														bind:value={socketPath}
 													/>
 												</label>
 											</svelte:fragment>
@@ -164,31 +162,10 @@
 								<div class="flex gap-4 items-center mt-4">
 									<button
 										type="submit"
+										formaction="?/connectLocal"
 										class="btn variant-filled-secondary"
-										on:click={async () => {
-											const timeout = setTimeout(() => (connecting = true), 100);
-											const result = await fetch('', {
-												method: 'POST',
-												headers: {
-													'Content-Type': 'application/json'
-												},
-												body: JSON.stringify({
-													type: 'local',
-													socketPath
-												})
-											});
-											const data = await result.json();
-											if (data.success) {
-												localSuccess = true;
-												type = 'local';
-											} else {
-												localError = data.error;
-											}
-											clearTimeout(timeout);
-											connecting = false;
-										}}
 									>
-										{#if !connecting}
+										{#if !loading}
 											<span><Unplug /></span>
 											<span>{$i18n.t('setup.test-connection')}</span>
 										{:else}
@@ -196,9 +173,9 @@
 											<span>{$i18n.t('setup.connecting')}</span>
 										{/if}
 									</button>
-									{#if localError}
-										<div class="text-error-500-400-token text-sm font-semibold">{localError}</div>
-									{:else if localSuccess}
+									{#if form?.type === 'local' && form?.error}
+										<div class="text-error-500-400-token text-sm font-semibold">{form.error}</div>
+									{:else if form?.type === 'local' && form?.success}
 										<div class="text-success-800-100-token text-sm font-semibold">
 											{$i18n.t('setup.successfully-connected')}
 										</div>
@@ -221,6 +198,7 @@
 									name="name"
 									required
 									placeholder={$i18n.t('setup.container-engine-name-placeholder')}
+									bind:value={name}
 								/>
 							</label>
 							<div class="my-4"></div>
@@ -244,15 +222,15 @@
 										<svelte:fragment slot="content">
 											<label class="label">
 												<span>{$i18n.t('setup.tls-ca-certificate')}</span>
-												<input class="input" type="file" name="ca" bind:value={ca} />
+												<input class="input" type="file" name="ca" />
 											</label>
 											<label class="label">
 												<span>{$i18n.t('setup.tls-certificate')}</span>
-												<input class="input" type="file" name="cert" bind:value={cert} />
+												<input class="input" type="file" name="cert" />
 											</label>
 											<label class="label">
 												<span>{$i18n.t('setup.tls-key')}</span>
-												<input class="input" type="file" name="key" bind:value={key} />
+												<input class="input" type="file" name="key" />
 											</label>
 										</svelte:fragment>
 									</AccordionItem>
@@ -260,36 +238,12 @@
 							</div>
 							<div class="flex gap-4 items-center mt-4">
 								<button
-									type="button"
+									type="submit"
+									formaction="?/connectRemote"
 									class="btn variant-filled-secondary"
 									disabled={!host}
-									on:click={async () => {
-										const timeout = setTimeout(() => (connecting = true), 100);
-										const result = await fetch('', {
-											method: 'POST',
-											headers: {
-												'Content-Type': 'application/json'
-											},
-											body: JSON.stringify({
-												type: 'remote',
-												host,
-												ca,
-												cert,
-												key
-											})
-										});
-										const data = await result.json();
-										if (data.success) {
-											remoteSuccess = true;
-											type = 'remote';
-										} else {
-											remoteError = data.error;
-										}
-										clearTimeout(timeout);
-										connecting = false;
-									}}
 								>
-									{#if !connecting}
+									{#if !loading}
 										<span><Unplug /></span>
 										<span>{$i18n.t('setup.test-connection')}</span>
 									{:else}
@@ -297,9 +251,9 @@
 										<span>{$i18n.t('setup.connecting')}</span>
 									{/if}
 								</button>
-								{#if remoteError}
-									<div class="text-error-500-400-token text-sm font-semibold">{remoteError}</div>
-								{:else if remoteSuccess}
+								{#if form?.type === 'remote' && form?.error}
+									<div class="text-error-500-400-token text-sm font-semibold">{form.error}</div>
+								{:else if form?.type === 'remote' && form?.success}
 									<div class="text-success-800-100-token text-sm font-semibold">
 										{$i18n.t('setup.successfully-connected')}
 									</div>
@@ -310,6 +264,62 @@
 				</Accordion>
 				<span class="badge variant-filled">{$i18n.t('setup.tip')}</span>
 				<span class="grow text-sm">{$i18n.t('setup.additional-container-engines')}</span>
+			</Step>
+			<Step>
+				<svelte:fragment slot="header">{$i18n.t('setup.add-domains-and-hostnames')}</svelte:fragment
+				>
+				<!-- Repeat all previous step inputs here, because the stepper deletes them from the DOM -->
+				<input type="hidden" name="username" bind:value={username} />
+				<input type="hidden" name="password" bind:value={password1} />
+				<input type="hidden" name="language" value={$i18n.language} />
+				<input type="hidden" name="hostnames" bind:value={domains} />
+				<ul class="list">
+					{#each domains as { domain, autoDetected }}
+						<li>
+							<code class="code text-base">{domain}</code>
+							{#if autoDetected}
+								<span class="badge variant-filled">{$i18n.t('setup.auto-detected')}</span>
+							{/if}
+							<span class="flex-auto"></span>
+							{#if !autoDetected}
+								<button
+									type="button"
+									class="btn btn-sm variant-filled-error"
+									on:click={() => (domains = domains.filter((d) => d.domain !== domain))}
+								>
+									<Minus />
+								</button>
+							{/if}
+						</li>
+					{/each}
+				</ul>
+				<div>
+					<p>{$i18n.t('setup.add-domain')}</p>
+					<div class="input-group input-group-divider grid-cols-[1fr_auto]">
+						<input
+							type="text"
+							placeholder={$i18n.t('setup.domain-name-placeholder')}
+							bind:value={hostname}
+						/>
+						<button
+							type="button"
+							class="variant-filled-secondary"
+							on:click={() => {
+								if (!domains.some((d) => d.domain === hostname)) {
+									domains = [...domains, { domain: hostname, autoDetected: false }];
+								}
+							}}
+						>
+							{#if loading}
+								<RefreshCw class="animate-spin" />
+							{:else}
+								<Plus />
+							{/if}
+						</button>
+					</div>
+				</div>
+				<span class="badge variant-filled">{$i18n.t('setup.tip')}</span>
+				<span class="grow text-sm">{$i18n.t('setup.additional-domains')}</span>
 			</Step>
 		</Stepper>
 	</form>

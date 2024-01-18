@@ -28,7 +28,13 @@ CREATE TABLE `container_engines` (
 	`host` text,
 	`ca` text,
 	`cert` text,
-	`key` text
+	`key` text,
+	`number_of_cpus` integer NOT NULL,
+	`total_memory` integer NOT NULL,
+	`number_of_stacks` integer NOT NULL,
+	`number_of_containers` integer NOT NULL,
+	`number_of_images` integer NOT NULL,
+	`number_of_volumes` integer NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE `user_keys` (
@@ -46,18 +52,11 @@ CREATE TABLE `user_sessions` (
 	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
-CREATE TABLE `systems` (
-	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
-	`setup_complete` integer DEFAULT false NOT NULL,
-	`current_setup_step` integer DEFAULT 0 NOT NULL
-);
---> statement-breakpoint
 CREATE TABLE `users` (
 	`id` text PRIMARY KEY NOT NULL,
 	`username` text NOT NULL,
-	`password` text NOT NULL,
 	`language` text DEFAULT 'en' NOT NULL,
-	`theme` text DEFAULT 'system' NOT NULL
+	`theme` text DEFAULT 'skeleton' NOT NULL
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `app_repositories_url_unique` ON `app_repositories` (`url`);--> statement-breakpoint

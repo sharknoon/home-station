@@ -33,7 +33,7 @@ export function getEngines(): Docker[] {
 	return engines;
 }
 
-export async function testLocalConnection(socketPath?: string): Promise<void> {
+export async function testLocalConnection(socketPath?: string): Promise<Docker> {
 	try {
 		const docker = socketPath ? new Docker({ socketPath }) : new Docker();
 		const result: Buffer = await docker.ping();
@@ -41,6 +41,7 @@ export async function testLocalConnection(socketPath?: string): Promise<void> {
 		if (ping !== 'OK') {
 			return Promise.reject('Docker ping did not return OK: ' + ping);
 		}
+		return docker;
 	} catch (err) {
 		if (err instanceof AggregateError) {
 			const errors = err.errors.map((e) => String(e)).join(', ');
@@ -58,7 +59,7 @@ export async function testRemoteConnection(
 	ca?: string,
 	cert?: string,
 	key?: string
-): Promise<void> {
+): Promise<Docker> {
 	try {
 		const docker = new Docker({ host: url, ca, cert, key });
 		const result: Buffer = await docker.ping();
@@ -66,6 +67,7 @@ export async function testRemoteConnection(
 		if (ping !== 'OK') {
 			return Promise.reject('Docker ping did not return OK: ' + ping);
 		}
+		return docker;
 	} catch (err) {
 		if (err instanceof AggregateError) {
 			const errors = err.errors.map((e) => String(e)).join(', ');

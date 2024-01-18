@@ -14,7 +14,10 @@
 		AppRailAnchor,
 		AppRail,
 		getToastStore,
-		AppRailTile
+		AppRailTile,
+
+		LightSwitch
+
 	} from '@skeletonlabs/skeleton';
 	import type { SvelteComponent } from 'svelte';
 	import { goto } from '$app/navigation';
@@ -56,7 +59,8 @@
 					title: 'General',
 					list: [
 						{ label: 'Apps', href: '/settings/apps' },
-						{ label: 'Users', href: '/settings/users' }
+						{ label: 'Users', href: '/settings/users' },
+						{ label: 'Container engines', href: '/settings/container-engines' }
 					]
 				},
 				{ title: 'System', list: [{ label: 'Tasks', href: '/settings/tasks' }] }
@@ -122,7 +126,7 @@
 	<svelte:fragment slot="header">
 		<AppBar class="shadow-2xl">
 			<svelte:fragment slot="lead">
-				<h1 class="h1 leading-8">
+				<h1 class="h1 leading-8 -translate-y-1">
 					<span
 						class="bg-gradient-to-br from-primary-500 to-secondary-500 bg-clip-text text-transparent box-decoration-clone font-bold"
 					>
@@ -152,12 +156,13 @@
 				</div>
 			</div>
 			<svelte:fragment slot="trail">
+				<LightSwitch />
 				<button
 					class="btn variant-soft-primary"
 					use:popup={{ event: 'click', target: 'avatarClick' }}
 				>
-					<span>{data.username}</span>
-					<ChevronDown class="translate-y-[0.1rem]" />
+					<span class="-translate-y-[0.1rem]">{data.username}</span>
+					<ChevronDown />
 				</button>
 				<form method="post" class="card p-4 shadow-xl" data-popup="avatarClick" use:enhance>
 					<nav class="list-nav">

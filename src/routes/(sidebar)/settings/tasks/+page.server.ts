@@ -5,16 +5,20 @@ import { fail } from '@sveltejs/kit';
 
 export const load = (async () => {
 	return {
-		tasks: tasks.map((task) => ({
-			id: task.id,
-			name: task.name,
-			schedule: task.schedule,
-			scheduleDescription: task.scheduleDescription,
-			running: get(task.running),
-			lastExecution: get(task.lastExecution),
-			lastDuration: get(task.lastDuration),
-			nextExecution: get(task.nextExecution)
-		}))
+		tasks: tasks.map((task) => {
+			const stats = get(task.stats);
+			return {
+				id: task.id,
+				schedule: task.schedule,
+				stats: {
+					progress: stats.progress,
+					running: stats.running,
+					lastExecution: stats.lastExecution,
+					lastDuration: stats.lastDuration,
+					nextExecution: stats.nextExecution
+				}
+			};
+		})
 	};
 }) satisfies PageServerLoad;
 

@@ -1,40 +1,41 @@
-import { get, writable, type Writable } from 'svelte/store';
+import { writable, type Writable } from 'svelte/store';
 import cron, { CronJob } from 'cron';
 import { updateAvailableApps } from '$lib/server/apprepositories';
 
 export type Task = {
-	id: 'update-available-apps'; // Never change this ID, it is used to identify the task in the database
-	name: string;
+	id: 'update-available-apps' | 'test'; // Never change this ID, it is used to identify the task in the database
 	schedule: string;
-	scheduleDescription: string;
 	runImmediately?: boolean;
-	handler: (progress?: Writable<number>) => Promise<void>;
-	progress: Writable<number>;
-	running: Writable<boolean>;
-	lastExecution: Writable<Date | undefined>;
-	lastDuration: Writable<number | undefined>;
-	nextExecution: Writable<Date>;
+	handler: (progressCallback?: (progress: number) => void) => Promise<void>;
+	stats: Writable<{
+		progress: number;
+		running: boolean;
+		lastExecution: Date | undefined;
+		lastDuration: number | undefined;
+		nextExecution: Date;
+	}>;
 };
 
 export const tasks: Task[] = [
 	{
+		// t('tasks.update-available-apps') This is for i18next to automatically create a locale file entry
 		id: 'update-available-apps', // Never change this ID, it is used to identify the task in the database
-		name: 'Update available apps from app repositories',
 		schedule: '*/30 * * * *',
-		scheduleDescription: 'every 30 minutes',
 		runImmediately: true,
 		handler: updateAvailableApps, // Do not call this directly, use executeTask() instead
-		progress: writable(0),
-		running: writable(false),
-		lastExecution: writable(),
-		lastDuration: writable(),
-		nextExecution: writable(cron.sendAt('*/30 * * * *').toJSDate())
+		stats: writable({
+			progress: 0,
+			running: false,
+			lastExecution: undefined,
+			lastDuration: undefined,
+			nextExecution: cron.sendAt('*/30 * * * *').toJSDate()
+		})
 	}
 ];
 
 export async function scheduleTasks(): Promise<void> {
 	for (const task of tasks) {
-		console.info(`Scheduling task "${task.name}" to run on schedule "${task.schedule}"`);
+		console.info(`Scheduling task "${task.id}" to run on schedule "${task.schedule}"`);
 		const job = new CronJob(task.schedule, async () => await executeTask(task));
 		job.start();
 		if (task.runImmediately) {
@@ -44,21 +45,24 @@ export async function scheduleTasks(): Promise<void> {
 }
 
 export async function executeTask(task: Task): Promise<void> {
-	const { name, schedule, handler, progress, running, lastExecution, lastDuration, nextExecution } =
-		task;
-	console.info(`Starting task "${name}"`);
-	running.set(true);
-	const lastExecutionDate = new Date();
+	const { id, schedule, handler, stats } = task;
+	console.info(`Starting task "${id}"`);
+	stats.update((stats) => ({ ...stats, running: true }));
+	const lastExecution = new Date();
 	try {
 		// Remove the await to run tasks in parallel
-		await handler(progress);
+		await handler((p) => stats.update((s) => ({ ...s, progress: p })));
 	} catch (error) {
-		console.error(`Error running task "${name}":`, error);
+		console.error(`Error running task "${id}":`, error);
 	}
-	running.set(false);
-	lastExecution.set(lastExecutionDate);
-	lastDuration.set(new Date().getTime() - lastExecutionDate.getTime());
-	nextExecution.set(cron.sendAt(schedule).toJSDate());
+	const lastDuration = new Date().getTime() - lastExecution.getTime();
+	stats.update((stats) => ({
+		...stats,
+		running: false,
+		lastExecution,
+		lastDuration,
+		nextExecution: cron.sendAt(schedule).toJSDate()
+	}));
 	// TODO switch to Intl version as soon as it is released: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DurationFormat/format
-	console.info(`Completed task "${name}" in ${get(lastDuration)}ms`);
+	console.info(`Completed task "${id}" in ${lastDuration}ms`);
 }

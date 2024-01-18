@@ -1,3 +1,5 @@
+import { users } from '$lib/server/schema';
+
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
 declare global {
@@ -18,8 +20,7 @@ declare global {
 		type Auth = import('$lib/server/auth').Auth;
 		type DatabaseUserAttributes = {
 			username: string;
-			language: (typeof import('$lib/server/schema').users.$inferSelect)['language'];
-			theme: import('$lib/theme').Theme;
+			language: users.$inferSelect['language'];
 		};
 		type DatabaseSessionAttributes = Record<string, never>;
 	}

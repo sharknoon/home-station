@@ -1,18 +1,31 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import { intlFormatDistance, intervalToDuration, formatDuration } from 'date-fns';
-
+	import { intlFormatDistance } from 'date-fns';
 	import { i18n } from '$lib/i18n';
 	import { RefreshCw } from 'lucide-svelte';
+	import cronstrue from 'cronstrue';
+	import { enhance } from '$app/forms';
+	import { onMount } from 'svelte';
+	import { invalidateAll } from '$app/navigation';
+	import { ProgressBar } from '@skeletonlabs/skeleton';
 
 	export let data: PageData;
+
+	onMount(() => {
+		const evtSource = new EventSource('/settings/tasks/events');
+		evtSource.onerror = (e) => console.error(e);
+		evtSource.addEventListener('updateStats', () => invalidateAll());
+	});
+
+	setInterval(() => {
+		data.tasks = data.tasks;
+	}, 1000);
 </script>
 
-<h2 class="h2 font-semibold mb-4">Scheduled Tasks</h2>
+<h2 class="h2 mb-4">Scheduled Tasks</h2>
 
 <div class="table-container">
-	<!-- Native Table Element -->
-	<table class="table table-hover">
+	<table class="table table-hover [&_td]:!align-middle">
 		<thead>
 			<tr>
 				<th>Name</th>
@@ -26,31 +39,39 @@
 		<tbody>
 			{#each data.tasks as task}
 				<tr>
-					<td>{task.name}</td>
-					<td class="capitalize">{task.scheduleDescription}</td>
+					<td>{$i18n.t('tasks.' + task.id)}</td>
 					<td class="capitalize">
-						{task.lastExecution
-							? intlFormatDistance(task.lastExecution, new Date(), { locale: $i18n.language })
-							: 'Never'}
+						{cronstrue.toString(task.schedule, { locale: $i18n.language })}
+					</td>
+					<td class="capitalize">
+						{task.stats.lastExecution
+							? intlFormatDistance(task.stats.lastExecution, new Date(), { locale: $i18n.language })
+							: '-'}
 					</td>
 					<td>
 						<!-- TODO switch to Intl version as soon as it is released: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DurationFormat/format -->
-						{task.lastDuration ? task.lastDuration + ' Milliseconds' : 'N/A'}
+						{task.stats.lastDuration
+							? `${task.stats.lastDuration} ${$i18n.t('tasks.milliseconds')}`
+							: '-'}
 					</td>
 					<td class="capitalize">
-						{task.nextExecution
-							? intlFormatDistance(task.nextExecution, new Date(), { locale: $i18n.language })
-							: 'Never'}
+						{task.stats.nextExecution
+							? intlFormatDistance(task.stats.nextExecution, new Date(), { locale: $i18n.language })
+							: '-'}
 					</td>
-					<td>
-						<form method="post">
+					<td class="flex items-center justify-end gap-2">
+						{#if task.stats.running}
+							<ProgressBar value={task.stats.progress * 100} max={100} />
+						{/if}
+						<form method="post" use:enhance>
+							<input type="hidden" name="id" value={task.id} />
 							<button
 								type="submit"
 								formaction="?/runTask"
 								class="btn btn-sm variant-filled bg-initial"
-								disabled={task.running}
+								disabled={task.stats.running}
 							>
-								<RefreshCw class="h-4 w-4 {task.running ? 'animate-spin' : ''}" />
+								<RefreshCw class="h-4 w-4 {task.stats.running ? 'animate-spin' : ''}" />
 							</button>
 						</form>
 					</td>

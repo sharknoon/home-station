@@ -2,7 +2,6 @@
 	import { enhance } from '$app/forms';
 	import type { ActionData } from './$types';
 	import i18n from '$lib/i18n';
-	import { systemTheme } from '$lib/theme';
 
 	export let form: ActionData;
 </script>
@@ -33,7 +32,6 @@
 					placeholder={$i18n.t('login.password')}
 				/>
 			</label>
-			<input type="hidden" name="theme" value={$systemTheme} />
 			{#if form?.password && form?.invalid}
 				<p class="text-error-500-400-token text-sm">{$i18n.t('login.incorrect-password')}</p>
 			{/if}

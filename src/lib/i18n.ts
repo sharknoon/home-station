@@ -4,6 +4,8 @@ import en from '$lib/locales/en/translation.json';
 import def, { type i18n as I18n } from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import { writable } from 'svelte/store';
+import 'cronstrue/locales/en';
+import 'cronstrue/locales/de';
 
 export const i18n = writable<I18n>();
 

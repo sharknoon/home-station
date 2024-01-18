@@ -5,9 +5,22 @@ export const users = sqliteTable('users', {
 	id: text('id').primaryKey(),
 	username: text('username').notNull().unique(),
 	language: text('language').notNull().default('en'),
-	theme: text('theme', { enum: ['light', 'dark', 'system'] })
+	theme: text('theme', {
+		enum: [
+			'skeleton',
+			'wintry',
+			'modern',
+			'rocket',
+			'seafoam',
+			'vintage',
+			'sahara',
+			'hamlindigo',
+			'gold-nouveau',
+			'crimson'
+		]
+	})
 		.notNull()
-		.default('system')
+		.default('skeleton')
 });
 
 // Managed by Lucia
@@ -42,7 +55,7 @@ export const containerEngines = sqliteTable('container_engines', {
 	host: text('host'),
 	ca: text('ca'),
 	cert: text('cert'),
-	key: text('key')
+	key: text('key'),
 });
 
 // Git repositores that host apps

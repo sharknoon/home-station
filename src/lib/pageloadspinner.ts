@@ -1,7 +1,7 @@
 import { navigating } from '$app/stores';
 import { derived, type Readable } from 'svelte/store';
 import { getModalStore, type ModalSettings } from '@skeletonlabs/skeleton';
-import ProgressModal from '$lib/components/progressmodal.svelte';
+import PageLoadModal from '$lib/components/pageloadmodal.svelte';
 import { browser } from '$app/environment';
 
 export function init() {
@@ -20,7 +20,7 @@ export function init() {
 
 	const modal: ModalSettings = {
 		type: 'component',
-		component: { ref: ProgressModal }
+		component: { ref: PageLoadModal }
 	};
 
 	if (browser) {
