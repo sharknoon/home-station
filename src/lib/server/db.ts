@@ -2,22 +2,20 @@ import { drizzle, type BetterSQLite3Database } from 'drizzle-orm/better-sqlite3'
 import DatabaseConstructor, { type Database } from 'better-sqlite3';
 import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
 import * as schema from '$lib/server/schema';
-import { appDataPath, isAppDataVolumeMounted } from '$lib/server/utils';
+import { getAppDataPath, isAppDataPersistent } from '$lib/server/utils';
 
 export let sqlite: Database;
 export let db: BetterSQLite3Database<typeof schema>;
 
 // Create the connection to the better-sqlite3 database and run migrations
 try {
-	if (await isAppDataVolumeMounted()) {
-		console.info('Connecting to the database');
-		sqlite = new DatabaseConstructor(`${appDataPath}/db.sqlite`);
+	const appDataDirectory = await getAppDataPath();
+	if (await isAppDataPersistent()) {
+		console.info(`Connecting to the database "${appDataDirectory}/db.sqlite"`);
+		sqlite = new DatabaseConstructor(`${appDataDirectory}/db.sqlite`);
 	} else {
 		sqlite = new DatabaseConstructor(':memory:');
-		console.warn(`"${appDataPath}" is not mounted, using in-memory database instead`);
-		console.warn('-----------------------------------------------');
-		console.warn('| All data will be lost when the server stops |');
-		console.warn('-----------------------------------------------');
+		console.warn("Connecting to the database in memory. All data will be lost when the server stops!");
 	}
 	db = drizzle(sqlite, { schema });
 	console.info('Successfully connected to the database');

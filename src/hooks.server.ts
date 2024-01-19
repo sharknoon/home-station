@@ -12,10 +12,6 @@ export const handle: Handle = async ({ event, resolve }) => {
 	if (!hasUsers && !event.url.pathname.startsWith('/setup')) {
 		return redirect(303, '/setup');
 	}
-	// Don't allow the user to access the setup pages if the setup is already completed
-	if (hasUsers && event.url.pathname.startsWith('/setup')) {
-		return redirect(303, '/');
-	}
 
 	// we can pass `event` because we used the SvelteKit middleware
 	event.locals.auth = auth.handleRequest(event);

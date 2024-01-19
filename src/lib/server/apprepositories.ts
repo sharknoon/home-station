@@ -5,7 +5,7 @@ import path from 'node:path';
 import yaml from 'js-yaml';
 import db from '$lib/server/db';
 import { appRepositories, availableApps } from '$lib/server/schema';
-import { exists, getAppDataDirectory, isValidUrl } from './utils';
+import { exists, getAppDataPath, isValidUrl } from './utils';
 
 export type App = {
 	id: string;
@@ -60,7 +60,7 @@ export type App = {
 	};
 };
 
-const appReposPath = path.join(await getAppDataDirectory(), 'appRepositories');
+const appReposPath = path.join(await getAppDataPath(), 'appRepositories');
 await fs.mkdir(appReposPath, { recursive: true });
 
 export async function createAppRepository(

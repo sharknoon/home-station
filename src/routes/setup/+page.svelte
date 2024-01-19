@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { ActionData, PageData } from './$types';
 	import { Stepper, Step, Accordion, AccordionItem } from '@skeletonlabs/skeleton';
-	import { Minus, Network, Plug2, Plus, RefreshCw, Unplug } from 'lucide-svelte';
+	import { Minus, Network, Plug2, Plus, RefreshCw, Unplug, AlertTriangle } from 'lucide-svelte';
 	import i18n from '$lib/i18n';
 	import { enhance } from '$app/forms';
 
@@ -43,6 +43,15 @@
 			{$i18n.t('brand.title')}
 		</span>
 	</h1>
+
+	{#if !data.appDataPersistent}
+		<aside class="alert variant-filled-warning">
+			<div><AlertTriangle /></div>
+			<div class="alert-message">
+				<p>The <code>{data.appDataPath}</code> was not mounted properly. All data will be lost when the container is stopped or restarted.</p>
+			</div>
+		</aside>
+	{/if}
 
 	<form
 		method="post"

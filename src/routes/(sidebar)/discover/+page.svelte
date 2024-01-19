@@ -17,7 +17,7 @@
 	$: appInfoModalComponent = { ref: AppInfoModal, props: { app: currentApp } };
 </script>
 
-<div class="mx-auto container grid grid-cols-4 gap-4 m-4">
+<div class="mx-auto container grid grid-cols-4 gap-4 p-4">
 	{#each data.apps as app}
 		<a href="/" class="card card-hover overflow-hidden">
 			<header class="h-24 max-h-24 p-2 bg-white">

@@ -47,6 +47,9 @@ RUN --mount=type=bind,source=package.json,target=package.json \
 # Copy the rest of the source files into the image.
 COPY . .
 
+# Public static environment variable to tell the build that we are running in a container.
+ENV PUBLIC_CONTAINERIZED=true
+
 # Run the build script.
 RUN npm run build
 

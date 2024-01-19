@@ -1,12 +1,13 @@
 import type { LayoutServerLoad } from './$types';
-import { appDataPath, isAppDataVolumeMounted } from '$lib/server/utils';
+import { getAppDataPath, isAppDataPersistent } from '$lib/server/utils';
 
 // Yes this is a global state for all requests from any user
-const dataVolumeMounted = await isAppDataVolumeMounted();
+const appDataPersistent = await isAppDataPersistent();
 
 export const load = (async ({ locals }) => {
 	const session = await locals.auth.validate();
 	const language = session?.user?.language;
 	const theme = session?.user?.theme;
-	return { language, theme, dataVolumeMounted, appDataPath };
+	const appDataPath = await getAppDataPath();
+	return { language, theme, appDataPersistent, appDataPath };
 }) satisfies LayoutServerLoad;
