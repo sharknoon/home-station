@@ -1,53 +1,54 @@
 {
-  "tasks": {
-    "update-available-apps": "Abrufen von Apps aus App-Repositories",
-    "milliseconds": "Millisekunden"
-  },
-  "brand": {
-    "title": "Home Station"
-  },
-  "login": {
-    "login-to-continue": "Anmelden um fortzufahren",
-    "username": "Benutzername",
-    "password": "Passwort",
-    "incorrect-password": "Falsches Passwort",
-    "login": "Anmelden"
-  },
-  "setup": {
-    "step": "Schritt",
-    "back": "← Zurück",
-    "next": "Weiter →",
-    "complete": "Fertigstellen",
-    "welcome": "Willkommen bei Home Station",
-    "get-started-account": "Um loszulegen, erstellen Sie ein Konto",
-    "username": "Benutzername",
-    "username-requirements": "Der Benutzername muss mindestens 4 Zeichen lang sein und darf nur Buchstaben, Zahlen und Unterstriche enthalten",
-    "password": "Passwort",
-    "password-requirements": "Das Passwort muss mindestens 8 Zeichen lang sein",
-    "repeat-password": "Passwort wiederholen",
-    "connect-container-engine": "Verbinden Sie Ihre Container-Engine",
-    "container-engine-explanation": "Docker und Podman werden unterstützt. Sie können entweder eine lokale oder eine ferngesteuerte Container-Engine verwenden.",
-    "local-container-engine": "Lokale Container-Engine (Socket)",
-    "container-engine-name": "Name",
-    "container-engine-name-placeholder": "z.B. docker-prod01",
-    "more-settings": "Weitere Einstellungen",
-    "override-socket": "Standard-Socketpfad überschreiben",
-    "override-socket-placeholder": "z.B. /var/run/docker.sock (für Linux) oder //./pipe/docker_engine (für Windows)",
-    "test-connection": "Verbindung prüfen",
-    "connecting": "Verbinde...",
-    "successfully-connected": "Verbindung erfolgreich hergestellt 🎉",
-    "remote-container-engine": "Ferngesteuerte Container-Engine (API)",
-    "container-engine-api-url": "Container-Engine API-URL",
-    "container-engine-api-url-placeholder": "z.B. 10.0.0.10:2375 oder meindocker.meinedomain.de:2375",
-    "tls-ca-certificate": "TLS CA Zertifikat",
-    "tls-certificate": "TLS Zertifikat",
-    "tls-key": "TLS Schlüssel (key)",
-    "tip": "Tipp",
-    "additional-container-engines": "Sie können in den Einstellungen weitere Container-Engines hinzufügen",
-    "add-domains-and-hostnames": "Fügen Sie Ihre Domains hinzu",
-    "auto-detected": "Automatisch erkannt",
-    "add-domain": "Domain oder Hostname hinzufügen",
-    "domain-name-placeholder": "z.B. meinedomain.de oder meinhostname",
-    "additional-domains": "Sie können in den Einstellungen weitere Domains und Hostnamen hinzufügen"
-  }
+	"tasks": {
+		"update-available-apps": "Abrufen von Apps aus App-Repositories",
+		"milliseconds": "Millisekunden"
+	},
+	"brand": {
+		"title": "Home Station"
+	},
+	"login": {
+		"login-to-continue": "Anmelden um fortzufahren",
+		"username": "Benutzername",
+		"password": "Passwort",
+		"incorrect-password": "Falsches Passwort",
+		"login": "Anmelden"
+	},
+	"setup": {
+		"missing-mount": "Der Pfad {{path}} wurde nicht richtig gemounted. Wenn der Container gestoppt oder neu gestartet wird, gehen alle Daten verloren.",
+		"step": "Schritt",
+		"back": "← Zurück",
+		"next": "Weiter →",
+		"complete": "Fertigstellen",
+		"welcome": "Willkommen bei Home Station",
+		"get-started-account": "Um loszulegen, erstellen Sie ein Konto",
+		"username": "Benutzername",
+		"username-requirements": "Der Benutzername muss mindestens 4 Zeichen lang sein und darf nur Buchstaben, Zahlen und Unterstriche enthalten",
+		"password": "Passwort",
+		"password-requirements": "Das Passwort muss mindestens 8 Zeichen lang sein",
+		"repeat-password": "Passwort wiederholen",
+		"connect-container-engine": "Verbinden Sie Ihre Container-Engine",
+		"container-engine-explanation": "Docker und Podman werden unterstützt. Sie können entweder eine lokale oder eine ferngesteuerte Container-Engine verwenden.",
+		"local-container-engine": "Lokale Container-Engine (Socket)",
+		"container-engine-name": "Name",
+		"container-engine-name-placeholder": "z.B. docker-prod01",
+		"more-settings": "Weitere Einstellungen",
+		"override-socket": "Standard-Socketpfad überschreiben",
+		"override-socket-placeholder": "z.B. /var/run/docker.sock (für Linux) oder //./pipe/docker_engine (für Windows)",
+		"test-connection": "Verbindung prüfen",
+		"connecting": "Verbinde...",
+		"successfully-connected": "Verbindung erfolgreich hergestellt 🎉",
+		"remote-container-engine": "Ferngesteuerte Container-Engine (API)",
+		"container-engine-api-url": "Container-Engine API-URL",
+		"container-engine-api-url-placeholder": "z.B. 10.0.0.10:2375 oder meindocker.meinedomain.de:2375",
+		"tls-ca-certificate": "TLS CA Zertifikat",
+		"tls-certificate": "TLS Zertifikat",
+		"tls-key": "TLS Schlüssel (key)",
+		"tip": "Tipp",
+		"additional-container-engines": "Sie können in den Einstellungen weitere Container-Engines hinzufügen",
+		"add-domains-and-hostnames": "Fügen Sie Ihre Domains hinzu",
+		"auto-detected": "Automatisch erkannt",
+		"add-domain-or-hostname": "Domain oder Hostname hinzufügen",
+		"domain-hostname-placeholder": "z.B. meinedomain.de oder meinhostname",
+		"additional-domains-or-hostnames": "Sie können in den Einstellungen weitere Domains und Hostnamen hinzufügen"
+	}
 }

@@ -21,6 +21,7 @@ declare global {
 		type DatabaseUserAttributes = {
 			username: string;
 			language: users.$inferSelect['language'];
+			theme: users.$inferSelect['theme'];
 		};
 		type DatabaseSessionAttributes = Record<string, never>;
 	}

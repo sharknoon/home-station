@@ -7,5 +7,5 @@
 </script>
 
 <div class="card variant-filled shadow-2xl p-4">
-    ID: {app?.appId}
+	ID: {app?.appId}
 </div>

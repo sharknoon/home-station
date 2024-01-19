@@ -1,5 +1,13 @@
 <script lang="ts">
-	import { LayoutGrid, Settings, Sparkles, ChevronDown, LogOut, Search } from 'lucide-svelte';
+	import {
+		LayoutGrid,
+		Settings,
+		Sparkles,
+		ChevronDown,
+		LogOut,
+		Search,
+		type Icon
+	} from 'lucide-svelte';
 	import Brand from '$lib/components/brand.svelte';
 	import type { LayoutData } from './$types';
 	import { enhance } from '$app/forms';
@@ -15,11 +23,9 @@
 		AppRail,
 		getToastStore,
 		AppRailTile,
-
 		LightSwitch
-
 	} from '@skeletonlabs/skeleton';
-	import type { SvelteComponent } from 'svelte';
+	import type { ComponentType } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { slide } from 'svelte/transition';
 
@@ -30,7 +36,7 @@
 	let currentItem = 0;
 	const appRailItems: {
 		title: string;
-		icon: typeof SvelteComponent<any, any, any>;
+		icon: ComponentType<Icon>;
 		href?: string;
 		submenu?: {
 			title: string;
@@ -88,7 +94,7 @@
 	const toastStore = getToastStore();
 	if (!data.appDataPersistent) {
 		toastStore.trigger({
-			message: `The ${data.appDataPath} was not mounted properly. All data will be lost when the container is stopped or restarted.`,
+			message: `The path ${data.appDataPath} was not mounted properly. All data will be lost when the container is stopped or restarted.`,
 			background: 'variant-filled-warning',
 			hideDismiss: true,
 			timeout: 2147483647 // This is an important warning and should never disappear, until the user has fixed the issue

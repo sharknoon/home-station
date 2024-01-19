@@ -67,7 +67,7 @@ if (PUBLIC_CONTAINERIZED === 'true') {
 }
 
 /**
- * Checks if the app data is stored in a persistent manner. This is the case when the app 
+ * Checks if the app data is stored in a persistent manner. This is the case when the app
  * is running in a container and the data directory is mounted as a volume. If this is not
  * running in a container, the data is always persistent.
  * @returns true if the app data is persistent, false otherwise

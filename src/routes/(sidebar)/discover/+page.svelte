@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { HardDriveDownload, Info } from 'lucide-svelte';
 	import type { PageData } from './$types';
-	import ColorThief from 'colorthief/dist/color-thief.modern.mjs';
+	//import ColorThief from 'colorthief/dist/color-thief.modern.mjs';
 	import { getModalStore, type ModalComponent } from '@skeletonlabs/skeleton';
 	import AppInfoModal from './appInfoModal.svelte';
 	import type { availableApps } from '$lib/server/schema';

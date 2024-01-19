@@ -55,7 +55,7 @@ export const containerEngines = sqliteTable('container_engines', {
 	host: text('host'),
 	ca: text('ca'),
 	cert: text('cert'),
-	key: text('key'),
+	key: text('key')
 });
 
 // Git repositores that host apps

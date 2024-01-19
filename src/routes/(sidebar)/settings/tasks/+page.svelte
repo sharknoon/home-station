@@ -61,7 +61,7 @@
 					</td>
 					<td class="flex items-center justify-end gap-2">
 						{#if task.stats.running}
-							<ProgressBar value={task.stats.progress * 100} max={100} />
+							<ProgressBar value={task.stats.progress} max={1} />
 						{/if}
 						<form method="post" use:enhance>
 							<input type="hidden" name="id" value={task.id} />

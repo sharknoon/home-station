@@ -3,6 +3,7 @@ import DatabaseConstructor, { type Database } from 'better-sqlite3';
 import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
 import * as schema from '$lib/server/schema';
 import { getAppDataPath, isAppDataPersistent } from '$lib/server/utils';
+import path from 'node:path';
 
 export let sqlite: Database;
 export let db: BetterSQLite3Database<typeof schema>;
@@ -11,11 +12,14 @@ export let db: BetterSQLite3Database<typeof schema>;
 try {
 	const appDataDirectory = await getAppDataPath();
 	if (await isAppDataPersistent()) {
-		console.info(`Connecting to the database "${appDataDirectory}/db.sqlite"`);
-		sqlite = new DatabaseConstructor(`${appDataDirectory}/db.sqlite`);
+		const databasePath = path.join(appDataDirectory, 'db.sqlite');
+		console.info(`Connecting to the database "${databasePath}"`);
+		sqlite = new DatabaseConstructor(databasePath);
 	} else {
 		sqlite = new DatabaseConstructor(':memory:');
-		console.warn("Connecting to the database in memory. All data will be lost when the server stops!");
+		console.warn(
+			'Connecting to the database in memory. All data will be lost when the server stops!'
+		);
 	}
 	db = drizzle(sqlite, { schema });
 	console.info('Successfully connected to the database');
@@ -32,9 +36,11 @@ try {
 try {
 	if (!(await db.query.appRepositories.findFirst())) {
 		// TODO remove and delete token once public
-		await db
-			.insert(schema.appRepositories)
-			.values({ url: 'https://github.com/Sharknoon/home-station', username: "Sharknoon", password: "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" });
+		await db.insert(schema.appRepositories).values({
+			url: 'https://github.com/Sharknoon/home-station',
+			username: 'Sharknoon',
+			password: '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'
+		});
 	}
 } catch (error) {
 	console.error('Failed to seed the database: ' + error);

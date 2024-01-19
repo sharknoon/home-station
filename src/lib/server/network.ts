@@ -16,7 +16,11 @@ export async function getPublicIp(): Promise<string> {
 	});
 }
 
-export async function detectDomains(): Promise<string[]> {
+/**
+ * Returns a list of hostnames and domains that point to this server
+ * @returns A string array of hostnames and domains
+ */
+export async function detectHostnames(): Promise<string[]> {
 	try {
 		return await dns.reverse(await getPublicIp());
 	} catch (error) {

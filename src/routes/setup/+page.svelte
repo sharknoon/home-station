@@ -28,10 +28,10 @@
 
 	// Step 3 Add domains and hostnames
 
-	let hostname: string;
-	let domains = data.detectedDomains.map((domain) => ({ domain, autoDetected: true }));
-	$: if (form?.hostname && form?.success && !domains.some((d) => d.domain === form?.hostname)) {
-		domains = [...domains, { domain: form.hostname, autoDetected: true }];
+	let hostnameInput: string;
+	let hostnames = data.detectedHostnames.map((hostname) => ({ hostname, autoDetected: true }));
+	$: if (form?.hostname && form?.success && !hostnames.some((h) => h.hostname === form?.hostname)) {
+		hostnames = [...hostnames, { hostname: form.hostname, autoDetected: true }];
 	}
 </script>
 
@@ -48,7 +48,7 @@
 		<aside class="alert variant-filled-warning">
 			<div><AlertTriangle /></div>
 			<div class="alert-message">
-				<p>The <code>{data.appDataPath}</code> was not mounted properly. All data will be lost when the container is stopped or restarted.</p>
+				<p>{$i18n.t('setup.missing-mount', { path: data.appDataPath })}</p>
 			</div>
 		</aside>
 	{/if}
@@ -281,11 +281,11 @@
 				<input type="hidden" name="username" bind:value={username} />
 				<input type="hidden" name="password" bind:value={password1} />
 				<input type="hidden" name="language" value={$i18n.language} />
-				<input type="hidden" name="hostnames" bind:value={domains} />
+				<input type="hidden" name="hostnames" bind:value={hostnames} />
 				<ul class="list">
-					{#each domains as { domain, autoDetected }}
+					{#each hostnames as { hostname, autoDetected }}
 						<li>
-							<code class="code text-base">{domain}</code>
+							<code class="code text-base">{hostname}</code>
 							{#if autoDetected}
 								<span class="badge variant-filled">{$i18n.t('setup.auto-detected')}</span>
 							{/if}
@@ -294,7 +294,7 @@
 								<button
 									type="button"
 									class="btn btn-sm variant-filled-error"
-									on:click={() => (domains = domains.filter((d) => d.domain !== domain))}
+									on:click={() => (hostnames = hostnames.filter((h) => h.hostname !== hostname))}
 								>
 									<Minus />
 								</button>
@@ -303,19 +303,19 @@
 					{/each}
 				</ul>
 				<div>
-					<p>{$i18n.t('setup.add-domain')}</p>
+					<p>{$i18n.t('setup.add-domain-or-hostname')}</p>
 					<div class="input-group input-group-divider grid-cols-[1fr_auto]">
 						<input
 							type="text"
-							placeholder={$i18n.t('setup.domain-name-placeholder')}
-							bind:value={hostname}
+							placeholder={$i18n.t('setup.domain-hostname-placeholder')}
+							bind:value={hostnameInput}
 						/>
 						<button
 							type="button"
 							class="variant-filled-secondary"
 							on:click={() => {
-								if (!domains.some((d) => d.domain === hostname)) {
-									domains = [...domains, { domain: hostname, autoDetected: false }];
+								if (!hostnames.some((h) => h.hostname === hostnameInput)) {
+									hostnames = [...hostnames, { hostname: hostnameInput, autoDetected: false }];
 								}
 							}}
 						>
@@ -328,7 +328,7 @@
 					</div>
 				</div>
 				<span class="badge variant-filled">{$i18n.t('setup.tip')}</span>
-				<span class="grow text-sm">{$i18n.t('setup.additional-domains')}</span>
+				<span class="grow text-sm">{$i18n.t('setup.additional-domains-or-hostnames')}</span>
 			</Step>
 		</Stepper>
 	</form>

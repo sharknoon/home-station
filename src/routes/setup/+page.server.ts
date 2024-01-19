@@ -4,7 +4,7 @@ import { eq } from 'drizzle-orm';
 import db from '$lib/server/db';
 import { auth } from '$lib/server/auth';
 import { containerEngines, users } from '$lib/server/schema';
-import { detectDomains } from '$lib/server/network';
+import { detectHostnames } from '$lib/server/network';
 import {
 	getEngines,
 	refreshEngines,
@@ -17,8 +17,8 @@ export const load = (async () => {
 	if (hasUsers) {
 		return redirect(303, '/');
 	}
-	const detectedDomains = await detectDomains();
-	return { detectedDomains };
+	const detectedHostnames = await detectHostnames();
+	return { detectedHostnames };
 }) satisfies PageServerLoad;
 
 export const actions = {
@@ -59,7 +59,8 @@ export const actions = {
 				},
 				attributes: {
 					username,
-					language
+					language,
+					theme: 'skeleton'
 				}
 			});
 			const session = await auth.createSession({

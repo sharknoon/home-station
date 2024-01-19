@@ -8,7 +8,7 @@ const config = {
 		'./src/**/*.{html,js,svelte,ts}',
 		join(require.resolve('@skeletonlabs/skeleton'), '../**/*.{html,js,svelte,ts}')
 	],
-	darkMode: "class",
+	darkMode: 'class',
 	theme: {
 		extend: {}
 	},
@@ -27,7 +27,6 @@ const config = {
 					{ name: 'hamlindigo', enhancements: true },
 					{ name: 'gold-nouveau', enhancements: true },
 					{ name: 'crimson', enhancements: true }
-
 				]
 			}
 		})
