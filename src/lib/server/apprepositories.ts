@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
-import git from 'nodegit';
+import git, { type AuthCallback, type ProgressCallback } from 'isomorphic-git';
+import http from 'isomorphic-git/http/node';
 import path from 'node:path';
-import { type Writable } from 'svelte/store';
 import yaml from 'js-yaml';
 import db from '$lib/server/db';
 import { appRepositories, availableApps } from '$lib/server/schema';
@@ -79,11 +79,18 @@ export async function createAppRepository(
 	await db.insert(appRepositories).values({ url, username, password });
 }
 
-export async function updateAvailableApps(): Promise<void> {
+export async function updateAvailableApps(
+	progress: (progress: number | undefined) => void
+): Promise<void> {
 	const appRepos = await db.query.appRepositories.findMany();
 	const apps: (typeof availableApps.$inferInsert)[] = [];
-	for (const { id, url } of appRepos) {
-		const appsInRepo = await fetchAppRepository(url);
+	for (const { id, url, username, password } of appRepos) {
+		const appsInRepo = await fetchAppRepository(
+			url,
+			progress,
+			username ?? undefined,
+			password ?? undefined
+		);
 		apps.push(
 			...appsInRepo.map((app) => {
 				const dbApp: typeof availableApps.$inferInsert = {
@@ -108,7 +115,12 @@ export async function updateAvailableApps(): Promise<void> {
 	await db.insert(availableApps).values(apps);
 }
 
-export async function fetchAppRepository(url: string, progress?: Writable<number>): Promise<App[]> {
+export async function fetchAppRepository(
+	url: string,
+	progress: (progress: number | undefined) => void,
+	username?: string,
+	password?: string
+): Promise<App[]> {
 	// Create a folder for the app repo if it doesn't exist
 	const appRepoPath = path.join(
 		appReposPath,
@@ -118,28 +130,25 @@ export async function fetchAppRepository(url: string, progress?: Writable<number
 			.toLowerCase()
 	);
 
-	const fetchOpts: git.FetchOptions = {
-		callbacks: {
-			// TODO remove once public
-			credentials: () =>
-				git.Cred.userpassPlaintextNew('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', 'x-oauth-basic'),
-			transferProgress: (p: { receivedObjects: () => number; totalObjects: () => number }) => {
-				progress?.set(p.receivedObjects() / p.totalObjects());
-			}
+	const onAuth: AuthCallback = () => ({ username, password });
+	const onProgress: ProgressCallback = (event) => {
+		//updateLabel(event.phase)
+		if (event.total) {
+			progress(event.loaded / event.total);
+		} else {
+			progress(undefined);
 		}
 	};
+	const author = { name: 'Home Station' };
 
 	// If the app repo was already cloned, pull the latest changes
 	const appRepoExists = await exists(path.join(appRepoPath, '.git'));
 	if (appRepoExists) {
 		console.info(`Pulling "${url}" to "${appRepoPath}"`);
-		const repo = await git.Repository.open(appRepoPath);
-		await repo.fetchAll(fetchOpts);
-		const branch = (await repo.getCurrentBranch()).shorthand();
-		await repo.mergeBranches(branch, `origin/${branch}`);
+		await git.pull({ fs, http, dir: appRepoPath, onAuth, onProgress, author });
 	} else {
 		console.info(`Cloning "${url}" to "${appRepoPath}"`);
-		await git.Clone(url, appRepoPath, { fetchOpts });
+		await git.clone({ fs, http, dir: appRepoPath, url, onAuth, onProgress });
 	}
 
 	// Load the apps from the files
@@ -154,7 +163,7 @@ export async function fetchAppRepository(url: string, progress?: Writable<number
 		}
 	}
 
-	progress?.set(1);
+	progress(1);
 	return apps;
 }
 

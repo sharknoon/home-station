@@ -6,9 +6,9 @@ export type Task = {
 	id: 'update-available-apps' | 'test'; // Never change this ID, it is used to identify the task in the database
 	schedule: string;
 	runImmediately?: boolean;
-	handler: (progressCallback?: (progress: number) => void) => Promise<void>;
+	handler: (progressCallback: (progress: number | undefined) => void) => Promise<void>;
 	stats: Writable<{
-		progress: number;
+		progress: number | undefined; // Undefined = Indeterminate
 		running: boolean;
 		lastExecution: Date | undefined;
 		lastDuration: number | undefined;
@@ -47,7 +47,7 @@ export async function scheduleTasks(): Promise<void> {
 export async function executeTask(task: Task): Promise<void> {
 	const { id, schedule, handler, stats } = task;
 	console.info(`Starting task "${id}"`);
-	stats.update((stats) => ({ ...stats, running: true }));
+	stats.update((stats) => ({ ...stats, progress: 0, running: true }));
 	const lastExecution = new Date();
 	try {
 		// Remove the await to run tasks in parallel
@@ -58,6 +58,7 @@ export async function executeTask(task: Task): Promise<void> {
 	const lastDuration = new Date().getTime() - lastExecution.getTime();
 	stats.update((stats) => ({
 		...stats,
+		progress: 1,
 		running: false,
 		lastExecution,
 		lastDuration,

@@ -33,9 +33,10 @@ try {
 // Seed the database
 try {
 	if (!(await db.query.appRepositories.findFirst())) {
+		// TODO remove and delete token once public
 		await db
 			.insert(schema.appRepositories)
-			.values({ url: 'https://github.com/Sharknoon/home-station' });
+			.values({ url: 'https://github.com/Sharknoon/home-station', username: "Sharknoon", password: "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" });
 	}
 } catch (error) {
 	console.error('Failed to seed the database: ' + error);
