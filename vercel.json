@@ -1,0 +1,4 @@
+{
+	"framework": "sveltekit-1",
+	"buildCommand": "ADAPTER=AUTO vite build"
+}
