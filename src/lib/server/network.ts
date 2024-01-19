@@ -18,7 +18,7 @@ export async function getPublicIp(): Promise<string> {
 
 export async function detectDomains(): Promise<string[]> {
 	try {
-		return dns.reverse(await getPublicIp());
+		return await dns.reverse(await getPublicIp());
 	} catch (error) {
 		return [];
 	}
