@@ -14,7 +14,7 @@
 		"login": "Anmelden"
 	},
 	"setup": {
-		"missing-mount": "Der Pfad {{path}} wurde nicht richtig gemounted. Wenn der Container gestoppt oder neu gestartet wird, gehen alle Daten verloren.",
+		"missing-mount": "Der Pfad \"{{- path}}\" wurde nicht richtig gemounted. Wenn der Container gestoppt oder neu gestartet wird, gehen alle Daten verloren.",
 		"step": "Schritt",
 		"back": "← Zurück",
 		"next": "Weiter →",
@@ -37,6 +37,8 @@
 		"test-connection": "Verbindung prüfen",
 		"connecting": "Verbinde...",
 		"successfully-connected": "Verbindung erfolgreich hergestellt 🎉",
+		"note": "Hinweis",
+		"note-mounted-docker-socket": "Wurde der Container-Engine Socket gemounted (-v /var/run/docker.sock:/var/run/docker.sock)? Ist die Container Engine gestartet?",
 		"remote-container-engine": "Ferngesteuerte Container-Engine (API)",
 		"container-engine-api-url": "Container-Engine API-URL",
 		"container-engine-api-url-placeholder": "z.B. 10.0.0.10:2375 oder meindocker.meinedomain.de:2375",

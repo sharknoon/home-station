@@ -3,7 +3,7 @@ import type { PageServerLoad, Actions } from './$types';
 import { eq } from 'drizzle-orm';
 import db from '$lib/server/db';
 import { auth } from '$lib/server/auth';
-import { containerEngines, users } from '$lib/server/schema';
+import { containerEngines, users, hostnames } from '$lib/server/schema';
 import { detectHostnames } from '$lib/server/network';
 import {
 	getEngines,
@@ -30,7 +30,8 @@ export const actions = {
 		const password = data.get('password')?.toString();
 		const language = data.get('language')?.toString();
 
-		console.log(username, password, language);
+		// Domains and Hostnames
+		const domainsAndHostnames = data.get('hostnames')?.toString()?.split(',') ?? [];
 
 		// User data validation
 		if (!username || !/[a-zA-Z0-9_]{4,31}/.test(username)) {
@@ -50,6 +51,9 @@ export const actions = {
 		}
 
 		try {
+			// Domain and Hostname setup
+			const hostnameValues = domainsAndHostnames.map((h) => ({ host: h }));
+			await db.insert(hostnames).values(hostnameValues).onConflictDoNothing();
 			// User setup
 			const user = await auth.createUser({
 				key: {

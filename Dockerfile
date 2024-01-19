@@ -12,9 +12,6 @@ FROM node:${NODE_VERSION}-slim as base
 # Set working directory for all build stages.
 WORKDIR /app
 
-# Set the default values for environment variables that are used in all stages.
-ENV DATABASE_URL=file:/app/data/db.sqlite
-
 # Install necessary apt packages needed in all stages.
 RUN --mount=type=cache,target=/var/cache/apt \
     apt-get update && \
@@ -61,12 +58,17 @@ FROM base as final
 # Use production node environment by default.
 ENV NODE_ENV=production
 
+# Set the origin for POST form submissions.
+# https://kit.svelte.dev/docs/adapter-node#environment-variables-origin-protocolheader-hostheader-and-port-header
+ENV ORIGIN=http://localhost:3000
+
 # Copy package.json so that package manager commands can be used.
 COPY package.json .
 
 # Copy the production dependencies from the deps stage and also
 # the built application from the build stage into the image.
 COPY --from=deps /app/node_modules node_modules
+COPY --from=build /app/drizzle drizzle
 COPY --from=build /app/build build
 
 # Hide update notifications from npm.
@@ -74,9 +76,6 @@ RUN npm config set update-notifier false
 
 # Expose the port that the application listens on.
 EXPOSE 3000
-
-# Create a volume for the app data.
-VOLUME /app/data
 
 # Run the application.
 CMD [ "node", "./build/index.js" ]

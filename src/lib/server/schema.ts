@@ -96,3 +96,8 @@ export const availableApps = sqliteTable(
 		};
 	}
 );
+
+// Domains and Hostnames for apps
+export const hostnames = sqliteTable('hostnames', {
+	host: text('host').primaryKey()
+});

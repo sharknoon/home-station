@@ -31,6 +31,10 @@ CREATE TABLE `container_engines` (
 	`key` text
 );
 --> statement-breakpoint
+CREATE TABLE `hostnames` (
+	`host` text PRIMARY KEY NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE `user_keys` (
 	`id` text PRIMARY KEY NOT NULL,
 	`user_id` text NOT NULL,

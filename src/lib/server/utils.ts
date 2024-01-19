@@ -29,11 +29,16 @@ export function isValidUrl(url: string): boolean {
 	}
 }
 
-// This is the main app directory. In a container it must be mounted as a volume
-let appDataDirectory: string;
+// This is the main app path. In a container it must be mounted as a volume
+let appDataPath: string;
+// Default appdata directory path in a container
+const containerAppDataPath = '/app/data';
+// Default fallback appdata directory path in a container
+const fallbackContainerAppDataPath = '/app/tmp';
+
 if (PUBLIC_CONTAINERIZED === 'true') {
-	appDataDirectory = '/app/data';
-	if (!(await exists(appDataDirectory))) {
+	appDataPath = containerAppDataPath;
+	if (!(await exists(appDataPath))) {
 		console.warn(
 			"Running in container, but the data directory isn't mounted. Using fallback path!"
 		);
@@ -42,41 +47,56 @@ if (PUBLIC_CONTAINERIZED === 'true') {
 		console.warn('| Please mount the "/app/data" directory like this: |');
 		console.warn('| docker run -v /path/to/data:/app/data ...         |');
 		console.warn('-----------------------------------------------------');
-		appDataDirectory = '/app/tmp';
-		await fs.mkdir(appDataDirectory, { recursive: true });
+		appDataPath = fallbackContainerAppDataPath;
+		await fs.mkdir(appDataPath, { recursive: true });
 	}
-	console.info(`Running in container, using "${appDataDirectory}" as data directory`);
+	console.info(`Running in container, using "${appDataPath}" as data directory`);
 } else {
-	let homeDirectory;
+	let homePath;
 	switch (process.platform) {
 		case 'win32':
-			homeDirectory = process.env.APPDATA;
+			homePath = process.env.APPDATA;
 			break;
 		default:
-			homeDirectory = process.env.HOME;
+			homePath = process.env.HOME;
 	}
-	if (!homeDirectory) {
+	if (!homePath) {
 		console.error(
-			'Could not find app-data/home directory. Please make sure that the environment variable "HOME" (macOS/Linux) or "APPDATA" (Windows) is set.'
+			'Could not find app-data/home directory path. Please make sure that the environment variable "HOME" (macOS/Linux) or "APPDATA" (Windows) is set.'
 		);
 		process.exit(1);
 	}
-	appDataDirectory = path.join(homeDirectory, '.home-station');
-	await fs.mkdir(appDataDirectory, { recursive: true });
-	console.info(`Running on "${process.platform}", using "${appDataDirectory}" as data directory`);
+	appDataPath = path.join(homePath, '.home-station');
+	await fs.mkdir(appDataPath, { recursive: true });
+	console.info(`Running on "${process.platform}", using "${appDataPath}" as data directory`);
 }
 
 /**
  * Checks if the app data is stored in a persistent manner. This is the case when the app
  * is running in a container and the data directory is mounted as a volume. If this is not
  * running in a container, the data is always persistent.
- * @returns true if the app data is persistent, false otherwise
+ * @returns An object containing the following information:
+ * - isPersistent: true if the app data is persistent, false otherwise
+ * - defaultAppDataPath: The default app data path, this is also the current app data path if mounted correctly
+ * - currentAppDataPath: The current app data path, can be a temporary path if not mounted correctly
  */
-export async function isAppDataPersistent(): Promise<boolean> {
+export async function isAppDataPersistent(): Promise<{
+	isPersistent: boolean;
+	defaultAppDataPath: string;
+	currentAppDataPath: string;
+}> {
 	if (PUBLIC_CONTAINERIZED === 'true') {
-		return await exists('/app/data');
+		return {
+			isPersistent: await exists(containerAppDataPath),
+			defaultAppDataPath: containerAppDataPath,
+			currentAppDataPath: appDataPath
+		};
 	} else {
-		return true;
+		return {
+			isPersistent: true,
+			defaultAppDataPath: appDataPath,
+			currentAppDataPath: appDataPath
+		};
 	}
 }
 
@@ -85,5 +105,5 @@ export async function isAppDataPersistent(): Promise<boolean> {
  * @returns The path to the app data directory
  */
 export async function getAppDataPath(): Promise<string> {
-	return appDataDirectory;
+	return appDataPath;
 }

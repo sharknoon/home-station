@@ -14,7 +14,7 @@
 		"login": "Login"
 	},
 	"setup": {
-		"missing-mount": "The path {{path}} was not mounted properly. All data will be lost when the container is stopped or restarted.",
+		"missing-mount": "The path \"{{- path}}\" was not mounted properly. All data will be lost when the container is stopped or restarted.",
 		"step": "Step",
 		"back": "← Back",
 		"next": "Next →",
@@ -37,6 +37,8 @@
 		"test-connection": "Test connection",
 		"connecting": "Connecting...",
 		"successfully-connected": "Successfully connected 🎉",
+		"note": "Note",
+		"note-mounted-docker-socket": "Has the container engine socket been mounted (-v /var/run/docker.sock:/var/run/docker.sock)? Has the container engine been started?",
 		"remote-container-engine": "Remote container engine (API)",
 		"container-engine-api-url": "Container engine API URL",
 		"container-engine-api-url-placeholder": "e.g. 10.0.0.10:2375 or mydocker.mydomain.com:2375",

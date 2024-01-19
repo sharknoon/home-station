@@ -4,6 +4,7 @@
 	import { Minus, Network, Plug2, Plus, RefreshCw, Unplug, AlertTriangle } from 'lucide-svelte';
 	import i18n from '$lib/i18n';
 	import { enhance } from '$app/forms';
+	import { page } from '$app/stores';
 
 	export let data: PageData;
 	export let form: ActionData;
@@ -30,9 +31,16 @@
 
 	let hostnameInput: string;
 	let hostnames = data.detectedHostnames.map((hostname) => ({ hostname, autoDetected: true }));
-	$: if (form?.hostname && form?.success && !hostnames.some((h) => h.hostname === form?.hostname)) {
-		hostnames = [...hostnames, { hostname: form.hostname, autoDetected: true }];
-	}
+	page.subscribe((page) => {
+		if (
+			page.form?.hostname &&
+			page.form?.success &&
+			!hostnames.some((h) => h.hostname === page.form?.hostname)
+		) {
+			hostnames = [...hostnames, { hostname: page.form.hostname, autoDetected: true }];
+		}
+	});
+	$: hostnamesOnly = hostnames.map((h) => h.hostname).join(',');
 </script>
 
 <div class="h-full flex flex-col gap-12 items-center justify-center p-12">
@@ -44,11 +52,11 @@
 		</span>
 	</h1>
 
-	{#if !data.appDataPersistent}
-		<aside class="alert variant-filled-warning">
+	{#if !data.appDataPersistent.isPersistent}
+		<aside class="alert variant-filled-warning max-w-[35rem]">
 			<div><AlertTriangle /></div>
 			<div class="alert-message">
-				<p>{$i18n.t('setup.missing-mount', { path: data.appDataPath })}</p>
+				<p>{$i18n.t('setup.missing-mount', { path: data.appDataPersistent.defaultAppDataPath })}</p>
 			</div>
 		</aside>
 	{/if}
@@ -135,7 +143,7 @@
 							{$i18n.t('setup.local-container-engine')}
 						</svelte:fragment>
 						<svelte:fragment slot="content">
-							<div class="space-y-4">
+							<div class="space-y-2">
 								<label class="label">
 									<span>{$i18n.t('setup.container-engine-name')}</span>
 									<input
@@ -147,28 +155,26 @@
 										bind:value={name}
 									/>
 								</label>
-								<div class="mt-2">
-									<Accordion>
-										<AccordionItem>
-											<svelte:fragment slot="summary">
-												{$i18n.t('setup.more-settings')}
-											</svelte:fragment>
-											<svelte:fragment slot="content">
-												<label class="label">
-													<span>{$i18n.t('setup.override-socket')}</span>
-													<input
-														class="input"
-														type="text"
-														name="socketPath"
-														placeholder={$i18n.t('setup.override-socket-placeholder')}
-													/>
-												</label>
-											</svelte:fragment>
-										</AccordionItem>
-									</Accordion>
-								</div>
+								<Accordion>
+									<AccordionItem>
+										<svelte:fragment slot="summary">
+											{$i18n.t('setup.more-settings')}
+										</svelte:fragment>
+										<svelte:fragment slot="content">
+											<label class="label">
+												<span>{$i18n.t('setup.override-socket')}</span>
+												<input
+													class="input"
+													type="text"
+													name="socketPath"
+													placeholder={$i18n.t('setup.override-socket-placeholder')}
+												/>
+											</label>
+										</svelte:fragment>
+									</AccordionItem>
+								</Accordion>
 								<!-- TODO replace with svelte 5 snippets -->
-								<div class="flex gap-4 items-center mt-4">
+								<div class="flex gap-4 items-center">
 									<button
 										type="submit"
 										formaction="?/connectLocal"
@@ -190,6 +196,10 @@
 										</div>
 									{/if}
 								</div>
+								{#if form?.type === 'local' && (form?.error?.includes('/var/run/docker.sock') || form?.error?.includes('//./pipe/docker_engine'))}
+									<span class="badge variant-filled-warning">{$i18n.t('setup.note')}</span>
+									<span class="grow text-sm">{$i18n.t('setup.note-mounted-docker-socket')}</span>
+								{/if}
 							</div>
 						</svelte:fragment>
 					</AccordionItem>
@@ -199,30 +209,29 @@
 							{$i18n.t('setup.remote-container-engine')}
 						</svelte:fragment>
 						<svelte:fragment slot="content">
-							<label class="label">
-								<span>{$i18n.t('setup.container-engine-name')}</span>
-								<input
-									class="input"
-									type="text"
-									name="name"
-									required
-									placeholder={$i18n.t('setup.container-engine-name-placeholder')}
-									bind:value={name}
-								/>
-							</label>
-							<div class="my-4"></div>
-							<label class="label">
-								<span>{$i18n.t('setup.container-engine-api-url')}</span>
-								<input
-									class="input"
-									type="text"
-									name="host"
-									required
-									placeholder={$i18n.t('setup.container-engine-api-url-placeholder')}
-									bind:value={host}
-								/>
-							</label>
-							<div class="mt-2">
+							<div class="space-y-2 mb-2">
+								<label class="label">
+									<span>{$i18n.t('setup.container-engine-name')}</span>
+									<input
+										class="input"
+										type="text"
+										name="name"
+										required
+										placeholder={$i18n.t('setup.container-engine-name-placeholder')}
+										bind:value={name}
+									/>
+								</label>
+								<label class="label">
+									<span>{$i18n.t('setup.container-engine-api-url')}</span>
+									<input
+										class="input"
+										type="text"
+										name="host"
+										required
+										placeholder={$i18n.t('setup.container-engine-api-url-placeholder')}
+										bind:value={host}
+									/>
+								</label>
 								<Accordion>
 									<AccordionItem>
 										<svelte:fragment slot="summary">
@@ -244,29 +253,29 @@
 										</svelte:fragment>
 									</AccordionItem>
 								</Accordion>
-							</div>
-							<div class="flex gap-4 items-center mt-4">
-								<button
-									type="submit"
-									formaction="?/connectRemote"
-									class="btn variant-filled-secondary"
-									disabled={!host}
-								>
-									{#if !loading}
-										<span><Unplug /></span>
-										<span>{$i18n.t('setup.test-connection')}</span>
-									{:else}
-										<span><RefreshCw class="animate-spin" /></span>
-										<span>{$i18n.t('setup.connecting')}</span>
+								<div class="flex gap-4 items-center">
+									<button
+										type="submit"
+										formaction="?/connectRemote"
+										class="btn variant-filled-secondary"
+										disabled={!host}
+									>
+										{#if !loading}
+											<span><Unplug /></span>
+											<span>{$i18n.t('setup.test-connection')}</span>
+										{:else}
+											<span><RefreshCw class="animate-spin" /></span>
+											<span>{$i18n.t('setup.connecting')}</span>
+										{/if}
+									</button>
+									{#if form?.type === 'remote' && form?.error}
+										<div class="text-error-500-400-token text-sm font-semibold">{form.error}</div>
+									{:else if form?.type === 'remote' && form?.success}
+										<div class="text-success-800-100-token text-sm font-semibold">
+											{$i18n.t('setup.successfully-connected')}
+										</div>
 									{/if}
-								</button>
-								{#if form?.type === 'remote' && form?.error}
-									<div class="text-error-500-400-token text-sm font-semibold">{form.error}</div>
-								{:else if form?.type === 'remote' && form?.success}
-									<div class="text-success-800-100-token text-sm font-semibold">
-										{$i18n.t('setup.successfully-connected')}
-									</div>
-								{/if}
+								</div>
 							</div>
 						</svelte:fragment>
 					</AccordionItem>
@@ -281,7 +290,7 @@
 				<input type="hidden" name="username" bind:value={username} />
 				<input type="hidden" name="password" bind:value={password1} />
 				<input type="hidden" name="language" value={$i18n.language} />
-				<input type="hidden" name="hostnames" bind:value={hostnames} />
+				<input type="hidden" name="hostnames" bind:value={hostnamesOnly} />
 				<ul class="list">
 					{#each hostnames as { hostname, autoDetected }}
 						<li>
@@ -290,15 +299,13 @@
 								<span class="badge variant-filled">{$i18n.t('setup.auto-detected')}</span>
 							{/if}
 							<span class="flex-auto"></span>
-							{#if !autoDetected}
-								<button
-									type="button"
-									class="btn btn-sm variant-filled-error"
-									on:click={() => (hostnames = hostnames.filter((h) => h.hostname !== hostname))}
-								>
-									<Minus />
-								</button>
-							{/if}
+							<button
+								type="button"
+								class="btn btn-sm variant-filled-error"
+								on:click={() => (hostnames = hostnames.filter((h) => h.hostname !== hostname))}
+							>
+								<Minus />
+							</button>
 						</li>
 					{/each}
 				</ul>
@@ -319,11 +326,7 @@
 								}
 							}}
 						>
-							{#if loading}
-								<RefreshCw class="animate-spin" />
-							{:else}
-								<Plus />
-							{/if}
+							<Plus />
 						</button>
 					</div>
 				</div>

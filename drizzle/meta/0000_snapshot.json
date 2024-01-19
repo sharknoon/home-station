@@ -1,7 +1,7 @@
 {
 	"version": "5",
 	"dialect": "sqlite",
-	"id": "c9474408-e710-4692-9135-8f0f7618133d",
+	"id": "8cfafceb-53b6-4b96-834e-8487d3e97e45",
 	"prevId": "00000000-0000-0000-0000-000000000000",
 	"tables": {
 		"app_repositories": {
@@ -208,6 +208,22 @@
 					"isUnique": true
 				}
 			},
+			"foreignKeys": {},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {}
+		},
+		"hostnames": {
+			"name": "hostnames",
+			"columns": {
+				"host": {
+					"name": "host",
+					"type": "text",
+					"primaryKey": true,
+					"notNull": true,
+					"autoincrement": false
+				}
+			},
+			"indexes": {},
 			"foreignKeys": {},
 			"compositePrimaryKeys": {},
 			"uniqueConstraints": {}

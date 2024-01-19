@@ -92,9 +92,9 @@
 	// Toast
 
 	const toastStore = getToastStore();
-	if (!data.appDataPersistent) {
+	if (!data.appDataPersistent.isPersistent) {
 		toastStore.trigger({
-			message: `The path ${data.appDataPath} was not mounted properly. All data will be lost when the container is stopped or restarted.`,
+			message: `The path ${data.appDataPersistent.defaultAppDataPath} was not mounted properly. All data will be lost when the container is stopped or restarted.`,
 			background: 'variant-filled-warning',
 			hideDismiss: true,
 			timeout: 2147483647 // This is an important warning and should never disappear, until the user has fixed the issue
