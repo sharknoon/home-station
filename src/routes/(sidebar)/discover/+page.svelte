@@ -23,16 +23,12 @@
 			<header class="h-24 max-h-24 p-2 bg-white">
 				<div
 					class="h-full bg-contain bg-no-repeat bg-center"
-					style="background-image: url('{app.banner?.replaceAll('\\', '/')}');"
+					style="background-image: url('{app.banner}');"
 				/>
 			</header>
 			<div class="p-4 space-y-2">
 				<div class="flex gap-4 items-center">
-					<img
-						src={app.icon}
-						alt="icon"
-						class="object-cover h-24 w-24 rounded-2xl p-2 bg-white border-4 border-surface-100-800-token"
-					/>
+					<img src={app.icon} alt="icon" class="object-cover h-20 w-20 rounded-2xl p-2 bg-white" />
 					<div>
 						<h3 class="h3">{app.name}</h3>
 						<div class="text-sm text-surface-700-200-token">{app.developer}</div>

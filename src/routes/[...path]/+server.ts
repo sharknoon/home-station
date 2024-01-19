@@ -1,12 +1,15 @@
 import fs from 'node:fs/promises';
 import { error } from '@sveltejs/kit';
+import path from 'node:path';
+import { getAppDataPath } from '$lib/server/utils.js';
 
 export const GET = async ({ params }) => {
 	try {
-		const file = await fs.readFile('/' + params.path);
+		const appDataPath = await getAppDataPath();
+		const filePath = path.join(appDataPath, params.path);
+		const file = await fs.readFile(filePath);
 		return new Response(file);
 	} catch (e) {
-		console.log(e);
 		return error(404);
 	}
 };

@@ -60,7 +60,8 @@ export type App = {
 	};
 };
 
-const appReposPath = path.join(await getAppDataPath(), 'appRepositories');
+const appDataPath = await getAppDataPath();
+const appReposPath = path.join(appDataPath, 'appRepositories');
 await fs.mkdir(appReposPath, { recursive: true });
 
 export async function createAppRepository(
@@ -170,10 +171,7 @@ export async function fetchAppRepository(
 async function loadAppFromFiles(appPath: string): Promise<App> {
 	if (await exists(path.join(appPath, 'app.yml'))) {
 		const appYaml = await fs.readFile(path.join(appPath, 'app.yml'), 'utf8');
-		const app = yaml.load(appYaml) as App;
-		app.icon = path.join(appPath, app.icon);
-		if (app.banner) app.banner = path.join(appPath, app.banner);
-		return app;
+		return yaml.load(appYaml) as App;
 	} else {
 		console.warn(`No app.yml found in "${appPath}! Skipping..."`);
 		throw new Error(`No app.yml found in "${appPath}! Skipping..."`);
