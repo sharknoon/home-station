@@ -28,9 +28,6 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
-      - name: Migrate test database
-        run: npx drizzle-kit push:sqlite
-
       - name: Run tests
         run: npm run test
 
