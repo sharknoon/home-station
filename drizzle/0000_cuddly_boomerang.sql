@@ -28,13 +28,7 @@ CREATE TABLE `container_engines` (
 	`host` text,
 	`ca` text,
 	`cert` text,
-	`key` text,
-	`number_of_cpus` integer NOT NULL,
-	`total_memory` integer NOT NULL,
-	`number_of_stacks` integer NOT NULL,
-	`number_of_containers` integer NOT NULL,
-	`number_of_images` integer NOT NULL,
-	`number_of_volumes` integer NOT NULL
+	`key` text
 );
 --> statement-breakpoint
 CREATE TABLE `user_keys` (

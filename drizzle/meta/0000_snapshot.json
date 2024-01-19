@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "sqlite",
-  "id": "7c176ee1-8082-4d83-9540-34b4610d5c39",
+  "id": "c9474408-e710-4692-9135-8f0f7618133d",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "app_repositories": {
@@ -207,48 +207,6 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false,
-          "autoincrement": false
-        },
-        "number_of_cpus": {
-          "name": "number_of_cpus",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "total_memory": {
-          "name": "total_memory",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "number_of_stacks": {
-          "name": "number_of_stacks",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "number_of_containers": {
-          "name": "number_of_containers",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "number_of_images": {
-          "name": "number_of_images",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "number_of_volumes": {
-          "name": "number_of_volumes",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
           "autoincrement": false
         }
       },
