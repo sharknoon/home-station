@@ -1,8 +1,10 @@
 id: 'filebrowser'
 name: 
-  - en: 'File Browser'
+  en: 'File Browser'
+  de: 'File Browser'
 description:
-  - en: 'File Browser provides a file managing interface within a specified directory and it can be used to upload, delete, preview, rename and edit your files. It allows the creation of multiple users and each user can have its own directory. It can be used as a standalone app.'
+  en: 'File Browser provides a file managing interface within a specified directory and it can be used to upload, delete, preview, rename and edit your files. It allows the creation of multiple users and each user can have its own directory. It can be used as a standalone app.'
+  de: 'File Browser bietet eine Dateiverwaltungsoberfläche innerhalb eines angegebenen Verzeichnisses und kann zum Hochladen, Löschen, Vorschauen, Umbenennen und Bearbeiten Ihrer Dateien verwendet werden. Es ermöglicht die Erstellung mehrerer Benutzer und jeder Benutzer kann sein eigenes Verzeichnis haben. Es kann als eigenständige App verwendet werden.'
 icon: 'https://raw.githubusercontent.com/filebrowser/logo/master/icon_raw.svg'
 banner: 'https://raw.githubusercontent.com/filebrowser/logo/master/banner.png' # optional
 links:
@@ -10,7 +12,8 @@ links:
   website: 'https://filebrowser.org/' # optional
   custom:
     - name:
-        - en: 'Demo'
+        en: 'Demo'
+        de: 'Demo'
       url: 'https://demo.filebrowser.org/login?redirect=%2Ffiles%2F'
 publishedAt: '2021-01-01T00:00:00Z'
 developer: 'filebrowser'
@@ -18,20 +21,24 @@ category: 'File Transfer - Web-based File Managers'
 config: # User facing config during setup, optional
   - id: 'api-key'
     name: 
-      - en: 'API key'
+      en: 'API key'
+      de: 'API-Key'
     description:
-      - en: 'You need an api key to use this service'
+      en: 'You need an api key to use this service'
+      de: 'Du benötigst einen API-Key um diesen Dienst zu nutzen'
     type: 'string' # Other types: Boolean, Number, Select, Range, Color, Date, Datetime, Email, month, password, tel, time, url, week
     required: false
     default: 'sadf' # Optional if required = true
     environment: 'API_KEY'
     form-validation: '[0-9a-bA-Z]+' # optional
     value-validation: 'myscript.js' # optional
-http: # optional, one of http, tcp or udp is required
+http: # optional, one of http, tcp or udp is required (ports of tcp and udp needs to be globally unique)
   - port: 80
     description:
-      - en: 'Web-UI'
-    subdomain: 'filebrowser'
+      en: 'Web ui'
+      de: 'Web-UI'
+    subdomain: 'filebrowser' # globally unique
 messages:
   post-install:
     en: 'The default username is admin and the default password is admin. You can change them in the settings.'
+    de: 'Der Standardbenutzername ist admin und das Standardpasswort ist admin. Sie können sie in den Einstellungen ändern.'
