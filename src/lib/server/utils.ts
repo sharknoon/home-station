@@ -29,6 +29,38 @@ export function isValidUrl(url: string): boolean {
 	}
 }
 
+/**
+ * Reduces the number of calls of a callback function by throttling it
+ * @param callback The callback function to be throttled
+ * @param delay The delay in milliseconds in which calls shall occur
+ * @returns The throttled callback function
+ * @see https://skilled.dev/course/throttle
+ */
+export function throttle<T>(
+	callback: (...args: T[]) => void,
+	delay: number = 1000
+): (...args: T[]) => void {
+	let throttleTimeout: NodeJS.Timeout | null = null;
+	let storedArgs: T[] | null = null;
+
+	const throttledCallback = (...args: T[]) => {
+		storedArgs = args;
+		const shouldExecuteCallback = !throttleTimeout;
+		if (shouldExecuteCallback) {
+			callback(...storedArgs);
+			storedArgs = null;
+			throttleTimeout = setTimeout(() => {
+				throttleTimeout = null;
+				if (storedArgs) {
+					throttledCallback(...storedArgs);
+				}
+			}, delay);
+		}
+	};
+
+	return throttledCallback;
+}
+
 // This is the main app path. In a container it must be mounted as a volume
 let appDataPath: string;
 // Default appdata directory path in a container

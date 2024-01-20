@@ -2,6 +2,7 @@ import { writable, type Writable } from 'svelte/store';
 import cron, { CronJob } from 'cron';
 import { updateAvailableApps } from '$lib/server/apprepositories';
 import { dev } from '$app/environment';
+import { throttle } from './utils';
 
 export type Task = {
 	/** NEVER change this ID, it is used to identify the task in the database */
@@ -47,9 +48,9 @@ if (dev) {
 		schedule: '0 0 1 * *',
 		runImmediately: false,
 		handler: async (progressCallback) => {
-			for (let i = 0; i < 10; i++) {
-				await new Promise((resolve) => setTimeout(resolve, 1000));
-				progressCallback((i + 1) / 10);
+			for (let i = 0; i < 100; i++) {
+				await new Promise((resolve) => setTimeout(resolve, 100));
+				progressCallback((i + 1) / 100);
 			}
 		},
 		stats: writable({
@@ -85,7 +86,7 @@ export async function executeTask(task: Task): Promise<void> {
 	stats.update((stats) => ({ ...stats, progress: 0, running: true }));
 	const lastExecution = new Date();
 	try {
-		await handler((p) => stats.update((s) => ({ ...s, progress: p })));
+		await handler(throttle((p) => stats.update((s) => ({ ...s, progress: p }))));
 	} catch (error) {
 		console.error(`Error running task "${id}":`, error);
 	}
