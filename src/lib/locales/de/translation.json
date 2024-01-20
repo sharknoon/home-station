@@ -1,11 +1,74 @@
 {
   "tasks": {
     "update-available-apps": "Abrufen von Apps aus App-Repositories",
-    "test": "[DEV] Testaufgabe",
-    "milliseconds": "Millisekunden"
+    "test": "[DEV] Testaufgabe"
+  },
+  "sidebar": {
+    "my-apps": "Meine Apps",
+    "discover": "Erkunden",
+    "settings": {
+      "settings": "Einstellungen",
+      "general": "Allgemein",
+      "users": "Benutzer",
+      "container-engines": "Container-Engines",
+      "domains-and-hostnames": "Domains und Hostnamen",
+      "system": "System",
+      "tasks": "Aufgaben"
+    },
+    "toast-missing-mount": "Der Pfad \"{{- path}}\" wurde nicht richtig gemounted. Wenn der Container gestoppt oder neu gestartet wird, gehen alle Daten verloren.",
+    "search": "Suche nach Apps und Einstellungen",
+    "account": "Konto",
+    "sign-out": "Abmelden"
   },
   "brand": {
     "title": "Home Station"
+  },
+  "account": {
+    "general": {
+      "general": "Allgemein",
+      "language": "Sprache"
+    },
+    "password": {
+      "password": "Passwort"
+    },
+    "theme": {
+      "theme": "Erscheinungsbild"
+    }
+  },
+  "discover": {
+    "install": "Installieren"
+  },
+  "settings": {
+    "container-engines": {
+      "container-engines": "Container-Engines",
+      "local": "lokal",
+      "remote": "ferngesteuert",
+      "number-of-stacks_one": "{{count}} Stack",
+      "number-of-stacks_other": "{{count}} Stacks",
+      "number-of-containers_one": "{{count}} Container",
+      "number-of-containers_other": "{{count}} Container",
+      "number-of-volumes_one": "{{count}} Volume",
+      "number-of-volumes_other": "{{count}} Volumes",
+      "number-of-images_one": "{{count}} Image",
+      "number-of-images_other": "{{count}} Images",
+      "number-of-Cpus_one": "{{count}} CPU",
+      "number-of-Cpus_other": "{{count}} CPUs",
+      "total-memory": "{{value}} GB RAM"
+    },
+    "tasks": {
+      "scheduled-tasks": "Geplante Aufgaben",
+      "name": "Name",
+      "interval": "Intervall",
+      "last-execution": "Letzte Ausführung",
+      "last-duration": "Letzte Dauer",
+      "next-execution": "Nächste Ausführung",
+      "milliseconds": "Millisekunden"
+    },
+    "users": {
+      "users": "Benutzer",
+      "username": "Benutzername",
+      "language": "Sprache"
+    }
   },
   "login": {
     "login-to-continue": "Anmelden um fortzufahren",

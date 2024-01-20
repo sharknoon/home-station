@@ -33,17 +33,17 @@
 	}, 1000);
 </script>
 
-<h2 class="h2 mb-4">Scheduled Tasks</h2>
+<h2 class="h2 mb-4">{$i18n.t("settings.tasks.scheduled-tasks")}</h2>
 
 <div class="table-container">
 	<table class="table table-hover [&_td]:!align-middle">
 		<thead>
 			<tr>
-				<th>Name</th>
-				<th>Interval</th>
-				<th>Last Execution</th>
-				<th>Last Duration</th>
-				<th>Next Execution</th>
+				<th>{$i18n.t("settings.tasks.name")}</th>
+				<th>{$i18n.t("settings.tasks.interval")}</th>
+				<th>{$i18n.t("settings.tasks.last-execution")}</th>
+				<th>{$i18n.t("settings.tasks.last-duration")}</th>
+				<th>{$i18n.t("settings.tasks.next-execution")}</th>
 				<th></th>
 			</tr>
 		</thead>
@@ -62,7 +62,7 @@
 					<td>
 						<!-- TODO switch to Intl version as soon as it is released: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DurationFormat/format -->
 						{task.stats.lastDuration
-							? `${task.stats.lastDuration} ${$i18n.t('tasks.milliseconds')}`
+							? `${task.stats.lastDuration} ${$i18n.t('settings.tasks.milliseconds')}`
 							: '-'}
 					</td>
 					<td class="capitalize">

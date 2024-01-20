@@ -1,4 +1,6 @@
 import { sqliteTable, text, integer, primaryKey, blob } from 'drizzle-orm/sqlite-core';
+import type { LocalizedString } from '$lib/i18n';
+import type { AppConfig, AppHttp, AppLinks, AppMessages } from './apprepositories';
 
 // Partly managed by Lucia, added lanugage and theme
 export const users = sqliteTable('users', {
@@ -70,29 +72,25 @@ export const appRepositories = sqliteTable('app_repositories', {
 export const availableApps = sqliteTable(
 	'available_apps',
 	{
-		appId: text('app_id').notNull(),
+		id: text('id').notNull(),
 		appRepositoryId: integer('app_repository_id')
 			.notNull()
 			.references(() => appRepositories.id),
-		name: text('name').notNull(),
-		description: text('description').notNull(),
+		name: text('name', { mode: 'json' }).notNull().$type<LocalizedString>(),
+		description: text('description', { mode: 'json' }).notNull().$type<LocalizedString>(),
 		icon: text('icon').notNull(),
 		banner: text('banner'),
-		links: text('links', { mode: 'json' }).notNull().$type<{
-			repository: string;
-			website?: string;
-			custom?: {
-				name: string;
-				url: string;
-			}[];
-		}>(),
+		links: text('links', { mode: 'json' }).notNull().$type<AppLinks>(),
 		publishedAt: text('published_at').notNull(),
 		developer: text('developer').notNull(),
-		category: text('category', { enum: ['File Transfer - Web-based File Managers'] }).notNull() //TODO: Add more categories from awesome-selfhosted
+		category: text('category', { enum: ['File Transfer - Web-based File Managers'] }).notNull(), //TODO: Add more categories from awesome-selfhosted
+		config: text('config', { mode: 'json' }).$type<AppConfig[]>(),
+		http: text('http', { mode: 'json' }).notNull().$type<AppHttp[]>(),
+		messages: text('messages', { mode: 'json' }).$type<AppMessages>()
 	},
 	(table) => {
 		return {
-			pk: primaryKey({ columns: [table.appId, table.appRepositoryId] })
+			pk: primaryKey({ columns: [table.id, table.appRepositoryId] })
 		};
 	}
 );

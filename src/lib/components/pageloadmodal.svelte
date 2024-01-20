@@ -5,7 +5,7 @@
 </script>
 
 {#if $modalStore[0]}
-	<div class="card variant-ghost p-4">
+	<div class="card variant-glass p-4">
 		<ProgressRadial width="w-12" />
 	</div>
 {/if}

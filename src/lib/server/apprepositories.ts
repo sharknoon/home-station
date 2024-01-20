@@ -6,58 +6,70 @@ import yaml from 'js-yaml';
 import db from '$lib/server/db';
 import { appRepositories, availableApps } from '$lib/server/schema';
 import { exists, getAppDataPath, isValidUrl } from './utils';
+import { type LocalizedString } from '$lib/i18n';
 
 export type App = {
 	id: string;
-	name: string;
-	description: string;
+	name: LocalizedString;
+	description: LocalizedString;
 	icon: string;
 	banner?: string;
-	links: {
-		repository: string;
-		website?: string;
-		custom?: {
-			name: string;
-			url: string;
-		}[];
-	};
+	links: AppLinks;
 	publishedAt: string;
 	developer: string;
 	category: 'File Transfer - Web-based File Managers';
-	config?: {
-		id: string;
-		name: string;
-		description: string;
-		type:
-			| 'string'
-			| 'boolean'
-			| 'number'
-			| 'select'
-			| 'range'
-			| 'color'
-			| 'date'
-			| 'datetime'
-			| 'email'
-			| 'month'
-			| 'password'
-			| 'telephone'
-			| 'time'
-			| 'url'
-			| 'week';
-		required: boolean;
-		default?: string;
-		environment?: string;
-		'form-validation'?: string;
-		'value-validation'?: string;
-	}[];
-	http: {
-		port: number;
-		description: string;
-		subdomain: string;
-	}[];
-	messages?: {
-		'post-install'?: string;
-	};
+	config?: AppConfig[];
+	http: AppHttp[];
+	messages?: AppMessages;
+};
+
+export type AppLinks = {
+	repository: string;
+	website?: string;
+	custom?: CustomAppLinks[];
+};
+
+export type CustomAppLinks = {
+	id: string;
+	name: LocalizedString;
+	url: string;
+};
+
+export type AppConfig = {
+	id: string;
+	name: LocalizedString;
+	description: LocalizedString;
+	type:
+		| 'string'
+		| 'boolean'
+		| 'number'
+		| 'select'
+		| 'range'
+		| 'color'
+		| 'date'
+		| 'datetime'
+		| 'email'
+		| 'month'
+		| 'password'
+		| 'telephone'
+		| 'time'
+		| 'url'
+		| 'week';
+	required: boolean;
+	default?: string;
+	environment?: string;
+	'form-validation'?: string;
+	'value-validation'?: string;
+};
+
+export type AppHttp = {
+	port: number;
+	description: LocalizedString;
+	subdomain: string;
+};
+
+export type AppMessages = {
+	'post-install'?: LocalizedString;
 };
 
 const appDataPath = await getAppDataPath();
@@ -92,23 +104,14 @@ export async function updateAvailableApps(
 			username ?? undefined,
 			password ?? undefined
 		);
-		apps.push(
-			...appsInRepo.map((app) => {
-				const dbApp: typeof availableApps.$inferInsert = {
-					appId: app.id,
-					appRepositoryId: id,
-					name: app.name,
-					description: app.description,
-					icon: app.icon,
-					banner: app.banner,
-					links: app.links,
-					publishedAt: app.publishedAt,
-					developer: app.developer,
-					category: app.category
-				};
-				return dbApp;
-			})
-		);
+		const dbApps = appsInRepo.map((app) => {
+			const dbApp: typeof availableApps.$inferInsert = {
+				appRepositoryId: id,
+				...app
+			};
+			return dbApp;
+		});
+		apps.push(...dbApps);
 	}
 	// https://github.com/drizzle-team/drizzle-orm/issues/1728
 	// TODO As long as mass-upserting isn't supported, we do it like this:
@@ -133,7 +136,6 @@ export async function fetchAppRepository(
 
 	const onAuth: AuthCallback = () => ({ username, password });
 	const onProgress: ProgressCallback = (event) => {
-		//updateLabel(event.phase)
 		if (event.total) {
 			progress(event.loaded / event.total);
 		} else {
@@ -164,7 +166,6 @@ export async function fetchAppRepository(
 		}
 	}
 
-	progress(1);
 	return apps;
 }
 

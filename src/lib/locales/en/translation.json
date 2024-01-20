@@ -1,11 +1,74 @@
 {
   "tasks": {
     "update-available-apps": "Fetch apps from app repositories",
-    "test": "[DEV] Test task",
-    "milliseconds": "milliseconds"
+    "test": "[DEV] Test task"
+  },
+  "sidebar": {
+    "my-apps": "My apps",
+    "discover": "Discover",
+    "settings": {
+      "settings": "Settings",
+      "general": "General",
+      "users": "Users",
+      "container-engines": "Container engines",
+      "domains-and-hostnames": "Domains and hostnames",
+      "system": "System",
+      "tasks": "Tasks"
+    },
+    "toast-missing-mount": "The path \"{{- path}}\" was not mounted properly. All data will be lost when the container is stopped or restarted.",
+    "search": "Search for apps and settings",
+    "account": "Account",
+    "sign-out": "Sign out"
   },
   "brand": {
     "title": "Home Station"
+  },
+  "account": {
+    "general": {
+      "general": "General",
+      "language": "Language"
+    },
+    "password": {
+      "password": "Password"
+    },
+    "theme": {
+      "theme": "Theme"
+    }
+  },
+  "discover": {
+    "install": "Install"
+  },
+  "settings": {
+    "container-engines": {
+      "container-engines": "Container engines",
+      "local": "local",
+      "remote": "remote",
+      "number-of-stacks_one": "{{count}} stack",
+      "number-of-stacks_other": "{{count}} stacks",
+      "number-of-containers_one": "{{count}} container",
+      "number-of-containers_other": "{{count}} containers",
+      "number-of-volumes_one": "{{count}} volume",
+      "number-of-volumes_other": "{{count}} volumes",
+      "number-of-images_one": "{{count}} image",
+      "number-of-images_other": "{{count}} images",
+      "number-of-Cpus_one": "{{count}} CPU",
+      "number-of-Cpus_other": "{{count}} CPUs",
+      "total-memory": "{{value}} GM RAM"
+    },
+    "tasks": {
+      "scheduled-tasks": "Scheduled tasks",
+      "name": "Name",
+      "interval": "Interval",
+      "last-execution": "Last execution",
+      "last-duration": "Last duration",
+      "next-execution": "Next execution",
+      "milliseconds": "milliseconds"
+    },
+    "users": {
+      "users": "Users",
+      "username": "Username",
+      "language": "Language"
+    }
   },
   "login": {
     "login-to-continue": "Login to continue",

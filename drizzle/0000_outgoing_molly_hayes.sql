@@ -6,7 +6,7 @@ CREATE TABLE `app_repositories` (
 );
 --> statement-breakpoint
 CREATE TABLE `available_apps` (
-	`app_id` text NOT NULL,
+	`id` text NOT NULL,
 	`app_repository_id` integer NOT NULL,
 	`name` text NOT NULL,
 	`description` text NOT NULL,
@@ -16,7 +16,10 @@ CREATE TABLE `available_apps` (
 	`published_at` text NOT NULL,
 	`developer` text NOT NULL,
 	`category` text NOT NULL,
-	PRIMARY KEY(`app_id`, `app_repository_id`),
+	`config` text,
+	`http` text NOT NULL,
+	`messages` text,
+	PRIMARY KEY(`app_repository_id`, `id`),
 	FOREIGN KEY (`app_repository_id`) REFERENCES `app_repositories`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint

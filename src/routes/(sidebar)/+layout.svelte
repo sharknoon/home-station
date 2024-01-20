@@ -6,7 +6,8 @@
 		ChevronDown,
 		LogOut,
 		Search,
-		type Icon
+		type Icon,
+		CircleUserRound
 	} from 'lucide-svelte';
 	import Brand from '$lib/components/brand.svelte';
 	import type { LayoutData } from './$types';
@@ -28,13 +29,14 @@
 	import type { ComponentType } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { slide } from 'svelte/transition';
+	import i18n from '$lib/i18n';
 
 	export let data: LayoutData;
 
 	// Sidebar
 
 	let currentItem = 0;
-	const appRailItems: {
+	let appRailItems: {
 		title: string;
 		icon: ComponentType<Icon>;
 		href?: string;
@@ -46,30 +48,40 @@
 				badge?: string;
 			}[];
 		}[];
-	}[] = [
+	}[] = [];
+	$: appRailItems = [
 		{
-			title: 'My apps',
+			title: $i18n.t('sidebar.my-apps'),
 			icon: LayoutGrid,
 			href: '/'
 		},
 		{
-			title: 'Discover',
+			title: $i18n.t('sidebar.discover'),
 			icon: Sparkles,
 			href: '/discover'
 		},
 		{
-			title: 'Settings',
+			title: $i18n.t('sidebar.settings.settings'),
 			icon: Settings,
 			submenu: [
 				{
-					title: 'General',
+					title: $i18n.t('sidebar.settings.general'),
 					list: [
-						{ label: 'Apps', href: '/settings/apps' },
-						{ label: 'Users', href: '/settings/users' },
-						{ label: 'Container engines', href: '/settings/container-engines' }
+						{ label: $i18n.t('sidebar.settings.users'), href: '/settings/users' },
+						{
+							label: $i18n.t('sidebar.settings.container-engines'),
+							href: '/settings/container-engines'
+						},
+						{
+							label: $i18n.t('sidebar.settings.domains-and-hostnames'),
+							href: '/settings/domains-and-hostnames'
+						}
 					]
 				},
-				{ title: 'System', list: [{ label: 'Tasks', href: '/settings/tasks' }] }
+				{
+					title: $i18n.t('sidebar.settings.system'),
+					list: [{ label: $i18n.t('sidebar.settings.tasks'), href: '/settings/tasks' }]
+				}
 			]
 		}
 	];
@@ -94,7 +106,9 @@
 	const toastStore = getToastStore();
 	if (!data.appDataPersistency.isPersistent) {
 		toastStore.trigger({
-			message: `The path ${data.appDataPersistency.defaultAppDataPath} was not mounted properly. All data will be lost when the container is stopped or restarted.`,
+			message: $i18n.t('sidebar.toast-missing-mount', {
+				path: data.appDataPersistency.defaultAppDataPath
+			}),
 			background: 'variant-filled-warning',
 			hideDismiss: true,
 			timeout: 2147483647 // This is an important warning and should never disappear, until the user has fixed the issue
@@ -136,7 +150,7 @@
 					<span
 						class="bg-gradient-to-br from-primary-500 to-secondary-500 bg-clip-text text-transparent box-decoration-clone font-bold"
 					>
-						App Station
+						{$i18n.t('brand.title')}
 					</span>
 				</h1>
 			</svelte:fragment>
@@ -144,8 +158,8 @@
 				<Search class="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 z-10" />
 				<input
 					type="search"
-					class="input variant-ghost autocomplete pl-12"
-					placeholder="Search for apps"
+					class="input variant-soft autocomplete pl-12"
+					placeholder={$i18n.t('sidebar.search')}
 					bind:value={searchInput}
 					use:popup={searchPopupSettings}
 				/>
@@ -174,9 +188,15 @@
 					<nav class="list-nav">
 						<ul>
 							<li>
+								<a href="/account">
+									<CircleUserRound class="h-6" />
+									<span>{$i18n.t('sidebar.account')}</span>
+								</a>
+							</li>
+							<li>
 								<button formaction="/?/logout">
 									<LogOut class="h-6" />
-									<span>Ausloggen</span>
+									<span>{$i18n.t('sidebar.sign-out')}</span>
 								</button>
 							</li>
 						</ul>
@@ -216,7 +236,7 @@
 					</AppRailAnchor>
 				</svelte:fragment>
 			</AppRail>
-			{#if appRailItems[currentItem].submenu}
+			{#if appRailItems[currentItem]?.submenu}
 				{@const submenu = appRailItems[currentItem].submenu ?? []}
 				<section class="p-4 pb-20 space-y-4 overflow-y-auto w-64" transition:slide={{ axis: 'x' }}>
 					{#each submenu as segment, i}
@@ -228,7 +248,7 @@
 								{#each segment.list as { href, label, badge }}
 									<li>
 										<a {href} class={submenuItemActive(href)}>
-											<span class="flex-auto">{label}</span>
+											<span class="flex-auto truncate">{label}</span>
 											{#if badge}<span class="badge variant-filled-secondary">{badge}</span>{/if}
 										</a>
 									</li>
@@ -243,5 +263,7 @@
 		</div>
 	</svelte:fragment>
 
-	<slot />
+	<div class="container mx-auto p-4">
+		<slot />
+	</div>
 </AppShell>
