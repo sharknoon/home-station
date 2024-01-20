@@ -1,28 +1,34 @@
 import { writable, type Writable } from 'svelte/store';
 import cron, { CronJob } from 'cron';
 import { updateAvailableApps } from '$lib/server/apprepositories';
+import { dev } from '$app/environment';
 
 export type Task = {
-	id: 'update-available-apps' | 'test'; // Never change this ID, it is used to identify the task in the database
+	/** NEVER change this ID, it is used to identify the task in the database */
+	id: 'update-available-apps' | 'test';
 	schedule: string;
 	runImmediately?: boolean;
+	/** Do not call this directly, use executeTask() instead */
 	handler: (progressCallback: (progress: number | undefined) => void) => Promise<void>;
-	stats: Writable<{
-		progress: number | undefined; // Undefined = Indeterminate
-		running: boolean;
-		lastExecution: Date | undefined;
-		lastDuration: number | undefined;
-		nextExecution: Date;
-	}>;
+	stats: Writable<TaskStats>;
+};
+
+export type TaskStats = {
+	/** Undefined = Indeterminate */
+	progress: number | undefined;
+	running: boolean;
+	lastExecution: Date | undefined;
+	lastDuration: number | undefined;
+	nextExecution: Date;
 };
 
 export const tasks: Task[] = [
 	{
 		// t('tasks.update-available-apps') This is for i18next to automatically create a locale file entry
-		id: 'update-available-apps', // Never change this ID, it is used to identify the task in the database
+		id: 'update-available-apps',
 		schedule: '*/30 * * * *',
 		runImmediately: true,
-		handler: updateAvailableApps, // Do not call this directly, use executeTask() instead
+		handler: updateAvailableApps,
 		stats: writable({
 			progress: 0,
 			running: false,
@@ -32,6 +38,29 @@ export const tasks: Task[] = [
 		})
 	}
 ];
+
+// Test the task execution and the progress callback
+if (dev) {
+	tasks.push({
+		// t('tasks.test') This is for i18next to automatically create a locale file entry
+		id: 'test',
+		schedule: '0 0 1 * *',
+		runImmediately: false,
+		handler: async (progressCallback) => {
+			for (let i = 0; i < 10; i++) {
+				await new Promise((resolve) => setTimeout(resolve, 1000));
+				progressCallback((i + 1) / 10);
+			}
+		},
+		stats: writable({
+			progress: 0,
+			running: false,
+			lastExecution: undefined,
+			lastDuration: undefined,
+			nextExecution: cron.sendAt('0 0 1 * *').toJSDate()
+		})
+	});
+}
 
 export async function scheduleTasks(): Promise<void> {
 	for (const task of tasks) {
@@ -44,20 +73,24 @@ export async function scheduleTasks(): Promise<void> {
 	}
 }
 
+/**
+ * This function executes a task. It is either called automatically by a cron job or
+ * manually by the user. You can either await for the task to finish or run it in parallel
+ * with other tasks.
+ * @param task The task to execute
+ */
 export async function executeTask(task: Task): Promise<void> {
 	const { id, schedule, handler, stats } = task;
 	console.info(`Starting task "${id}"`);
 	stats.update((stats) => ({ ...stats, progress: 0, running: true }));
 	const lastExecution = new Date();
 	try {
-		// Remove the await to run tasks in parallel
 		await handler((p) => stats.update((s) => ({ ...s, progress: p })));
 	} catch (error) {
 		console.error(`Error running task "${id}":`, error);
 	}
 	const lastDuration = new Date().getTime() - lastExecution.getTime();
-	stats.update((stats) => ({
-		...stats,
+	stats.update(() => ({
 		progress: 1,
 		running: false,
 		lastExecution,

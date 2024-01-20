@@ -5,8 +5,8 @@ import { tasks } from '$lib/server/tasks';
 const controllers = new Set<ReadableStreamDefaultController<string>>();
 if (!building) {
 	for (const task of tasks) {
-		task.stats.subscribe(() => {
-			const result = `event: updateStats\ndata: noop\n\n`;
+		task.stats.subscribe((stats) => {
+			const result = `event: updateStats\ndata: ${JSON.stringify({ id: task.id, stats })}\n\n`;
 			controllers.forEach((controller) => controller.enqueue(result));
 		});
 	}

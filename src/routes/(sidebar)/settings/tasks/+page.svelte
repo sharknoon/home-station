@@ -2,19 +2,30 @@
 	import type { PageData } from './$types';
 	import { intlFormatDistance } from 'date-fns';
 	import { i18n } from '$lib/i18n';
-	import { RefreshCw } from 'lucide-svelte';
+	import { Play } from 'lucide-svelte';
 	import cronstrue from 'cronstrue';
 	import { enhance } from '$app/forms';
 	import { onMount } from 'svelte';
-	import { invalidateAll } from '$app/navigation';
-	import { ProgressBar } from '@skeletonlabs/skeleton';
+	import { ProgressRadial } from '@skeletonlabs/skeleton';
+	import type { TaskStats } from '$lib/server/tasks';
 
 	export let data: PageData;
 
 	onMount(() => {
 		const evtSource = new EventSource('/settings/tasks/events');
 		evtSource.onerror = (e) => console.error(e);
-		evtSource.addEventListener('updateStats', () => invalidateAll());
+		evtSource.addEventListener('updateStats', (stats: MessageEvent<string>) => {
+			const updatedStats = JSON.parse(stats.data) as {
+				id: string;
+				stats: TaskStats;
+			};
+			data.tasks = data.tasks.map((task) => {
+				if (task.id === updatedStats.id) {
+					task.stats = updatedStats.stats;
+				}
+				return task;
+			});
+		});
 	});
 
 	setInterval(() => {
@@ -60,18 +71,26 @@
 							: '-'}
 					</td>
 					<td class="flex items-center justify-end gap-2">
-						{#if task.stats.running}
-							<ProgressBar value={task.stats.progress} max={1} />
-						{/if}
 						<form method="post" use:enhance>
 							<input type="hidden" name="id" value={task.id} />
 							<button
 								type="submit"
 								formaction="?/runTask"
-								class="btn btn-sm variant-filled bg-initial"
+								class="btn btn-sm variant-filled disabled:!opacity-100"
 								disabled={task.stats.running}
 							>
-								<RefreshCw class="h-4 w-4 {task.stats.running ? 'animate-spin' : ''}" />
+								{#if task.stats.running}
+									<ProgressRadial
+										class="h-4 w-4"
+										stroke={100}
+										meter="stroke-surface-50 dark:stroke-surface-900"
+										value={task.stats.progress === undefined || task.stats.progress === null
+											? undefined
+											: task.stats.progress * 100}
+									/>
+								{:else}
+									<Play class="h-4 w-4" />
+								{/if}
 							</button>
 						</form>
 					</td>
