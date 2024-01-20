@@ -2,7 +2,7 @@ import { drizzle, type BetterSQLite3Database } from 'drizzle-orm/better-sqlite3'
 import DatabaseConstructor, { type Database } from 'better-sqlite3';
 import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
 import * as schema from '$lib/server/schema';
-import { getAppDataPath, isAppDataPersistent } from '$lib/server/utils';
+import { getAppDataPersistency } from '$lib/server/utils';
 import path from 'node:path';
 
 export let sqlite: Database;
@@ -10,9 +10,9 @@ export let db: BetterSQLite3Database<typeof schema>;
 
 // Create the connection to the better-sqlite3 database and run migrations
 try {
-	const appDataDirectory = await getAppDataPath();
-	if (await isAppDataPersistent()) {
-		const databasePath = path.join(appDataDirectory, 'db.sqlite');
+	const appDataPersitency = await getAppDataPersistency();
+	if (appDataPersitency.isPersistent) {
+		const databasePath = path.join(appDataPersitency.currentAppDataPath, 'db.sqlite');
 		console.info(`Connecting to the database "${databasePath}"`);
 		sqlite = new DatabaseConstructor(databasePath);
 	} else {

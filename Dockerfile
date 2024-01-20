@@ -12,11 +12,6 @@ FROM node:${NODE_VERSION}-slim as base
 # Set working directory for all build stages.
 WORKDIR /app
 
-# Install necessary apt packages needed in all stages.
-RUN --mount=type=cache,target=/var/cache/apt \
-    apt-get update && \
-    apt-get install -y openssl
-
 ################################################################################
 # Create a stage for installing production dependecies.
 FROM base as deps
@@ -62,20 +57,18 @@ ENV NODE_ENV=production
 # https://kit.svelte.dev/docs/adapter-node#environment-variables-origin-protocolheader-hostheader-and-port-header
 ENV ORIGIN=http://localhost:3000
 
-# Copy package.json so that package manager commands can be used.
-COPY package.json .
-
 # Copy the production dependencies from the deps stage and also
 # the built application from the build stage into the image.
 COPY --from=deps /app/node_modules node_modules
 COPY --from=build /app/drizzle drizzle
 COPY --from=build /app/build build
 
-# Hide update notifications from npm.
+# Hide update notifications from npm. The latest version of the node image doesn't 
+# always ship with the latest version of npm
 RUN npm config set update-notifier false
 
 # Expose the port that the application listens on.
 EXPOSE 3000
 
-# Run the application.
-CMD [ "node", "./build/index.js" ]
+# Run the application. Set the default type to module skip a package.json file with { "type": "module" }.
+CMD [ "node", "--experimental-default-type=module",  "./build/index.js" ]

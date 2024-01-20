@@ -80,7 +80,7 @@ if (PUBLIC_CONTAINERIZED === 'true') {
  * - defaultAppDataPath: The default app data path, this is also the current app data path if mounted correctly
  * - currentAppDataPath: The current app data path, can be a temporary path if not mounted correctly
  */
-export async function isAppDataPersistent(): Promise<{
+export async function getAppDataPersistency(): Promise<{
 	isPersistent: boolean;
 	defaultAppDataPath: string;
 	currentAppDataPath: string;
