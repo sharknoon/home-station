@@ -1,5 +1,5 @@
 id: 'filebrowser'
-name: 
+name:
   en: 'File Browser'
   de: 'File Browser'
 description:
@@ -20,7 +20,7 @@ developer: 'filebrowser'
 category: 'File Transfer - Web-based File Managers'
 config: # User facing config during setup, optional
   - id: 'api-key'
-    name: 
+    name:
       en: 'API key'
       de: 'API-Key'
     description:

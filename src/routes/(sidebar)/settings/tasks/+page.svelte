@@ -33,17 +33,17 @@
 	}, 1000);
 </script>
 
-<h2 class="h2 mb-4">{$i18n.t("settings.tasks.scheduled-tasks")}</h2>
+<h2 class="h2 mb-4">{$i18n.t('settings.tasks.scheduled-tasks')}</h2>
 
 <div class="table-container">
 	<table class="table table-hover [&_td]:!align-middle">
 		<thead>
 			<tr>
-				<th>{$i18n.t("settings.tasks.name")}</th>
-				<th>{$i18n.t("settings.tasks.interval")}</th>
-				<th>{$i18n.t("settings.tasks.last-execution")}</th>
-				<th>{$i18n.t("settings.tasks.last-duration")}</th>
-				<th>{$i18n.t("settings.tasks.next-execution")}</th>
+				<th>{$i18n.t('settings.tasks.name')}</th>
+				<th>{$i18n.t('settings.tasks.interval')}</th>
+				<th>{$i18n.t('settings.tasks.last-execution')}</th>
+				<th>{$i18n.t('settings.tasks.last-duration')}</th>
+				<th>{$i18n.t('settings.tasks.next-execution')}</th>
 				<th></th>
 			</tr>
 		</thead>

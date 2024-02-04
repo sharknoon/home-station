@@ -184,7 +184,7 @@
 					<span class="-translate-y-[0.1rem]">{data.username}</span>
 					<ChevronDown />
 				</button>
-				<form method="post" class="card p-4 shadow-xl" data-popup="avatarClick" use:enhance>
+				<form method="post" class="card p-4 shadow-xl w-max" data-popup="avatarClick" use:enhance>
 					<nav class="list-nav">
 						<ul>
 							<li>

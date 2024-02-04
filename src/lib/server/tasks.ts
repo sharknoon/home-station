@@ -2,11 +2,12 @@ import { writable, type Writable } from 'svelte/store';
 import cron, { CronJob } from 'cron';
 import { updateAvailableApps } from '$lib/server/apprepositories';
 import { dev } from '$app/environment';
-import { throttle } from './utils';
+import { throttle } from '$lib/server/utils';
+import { deleteExpiredSessions } from '$lib/server/auth';
 
 export type Task = {
 	/** NEVER change this ID, it is used to identify the task in the database */
-	id: 'update-available-apps' | 'test';
+	id: 'update-available-apps' | 'delete-expired-sessions' | 'test';
 	schedule: string;
 	runImmediately?: boolean;
 	/** Do not call this directly, use executeTask() instead */
@@ -30,15 +31,27 @@ export const tasks: Task[] = [
 		schedule: '*/30 * * * *',
 		runImmediately: true,
 		handler: updateAvailableApps,
-		stats: writable({
-			progress: 0,
-			running: false,
-			lastExecution: undefined,
-			lastDuration: undefined,
-			nextExecution: cron.sendAt('*/30 * * * *').toJSDate()
-		})
+		stats: getDefaultStats('*/30 * * * *')
+	},
+	{
+		// t('tasks.delete-expired-sessions') This is for i18next to automatically create a locale file entry
+		id: 'delete-expired-sessions',
+		schedule: '0 0 1 * *',
+		runImmediately: false,
+		handler: deleteExpiredSessions,
+		stats: getDefaultStats('0 0 1 * *')
 	}
 ];
+
+function getDefaultStats(schedule: string): Writable<TaskStats> {
+	return writable({
+		progress: 0,
+		running: false,
+		lastExecution: undefined,
+		lastDuration: undefined,
+		nextExecution: cron.sendAt(schedule).toJSDate()
+	});
+}
 
 // Test the task execution and the progress callback
 if (dev) {

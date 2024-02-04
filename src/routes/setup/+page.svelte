@@ -56,7 +56,9 @@
 		<aside class="alert variant-filled-warning max-w-[35rem]">
 			<div><AlertTriangle /></div>
 			<div class="alert-message">
-				<p>{$i18n.t('setup.missing-mount', { path: data.appDataPersistency.defaultAppDataPath })}</p>
+				<p>
+					{$i18n.t('setup.missing-mount', { path: data.appDataPersistency.defaultAppDataPath })}
+				</p>
 			</div>
 		</aside>
 	{/if}

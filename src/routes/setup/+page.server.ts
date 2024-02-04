@@ -2,7 +2,7 @@ import { fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 import { eq } from 'drizzle-orm';
 import db from '$lib/server/db';
-import { auth } from '$lib/server/auth';
+import { lucia } from '$lib/server/auth';
 import { containerEngines, users, hostnames } from '$lib/server/schema';
 import { detectHostnames } from '$lib/server/network';
 import {
@@ -11,6 +11,8 @@ import {
 	testLocalConnection,
 	testRemoteConnection
 } from '$lib/server/containerengines';
+import { generateId } from 'lucia';
+import { Argon2id } from 'oslo/password';
 
 export const load = (async () => {
 	const hasUsers = !!(await db.query.users.findFirst());
@@ -22,7 +24,7 @@ export const load = (async () => {
 }) satisfies PageServerLoad;
 
 export const actions = {
-	signup: async ({ request, locals }) => {
+	signup: async ({ request, cookies }) => {
 		const data = await request.formData();
 
 		// User data
@@ -55,29 +57,27 @@ export const actions = {
 			const hostnameValues = domainsAndHostnames.map((h) => ({ host: h }));
 			await db.insert(hostnames).values(hostnameValues).onConflictDoNothing();
 			// User setup
-			const user = await auth.createUser({
-				key: {
-					providerId: 'username', // auth method
-					providerUserId: username.toLowerCase(), // unique id when using "username" auth method
-					password // hashed by Lucia
-				},
-				attributes: {
-					username,
-					language,
-					theme: 'skeleton'
-				}
+			const userId = generateId(15);
+			const hashedPassword = await new Argon2id().hash(password);
+			await db.insert(users).values({
+				id: userId,
+				username: username.toLowerCase(),
+				hashedPassword,
+				language,
+				theme: 'skeleton'
 			});
-			const session = await auth.createSession({
-				userId: user.userId,
-				attributes: {}
+			const session = await lucia.createSession(userId, {});
+			const sessionCookie = lucia.createSessionCookie(session.id);
+			cookies.set(sessionCookie.name, sessionCookie.value, {
+				path: '.',
+				...sessionCookie.attributes
 			});
-			locals.auth.setSession(session); // set session cookie
 		} catch (e) {
 			return fail(500, {
 				message: 'An unknown error occurred'
 			});
 		}
-		return redirect(303, '/');
+		return redirect(302, '/');
 	},
 	async connectLocal({ request }) {
 		try {

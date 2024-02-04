@@ -26,14 +26,15 @@
 				<span>{$i18n.t('login.password')}</span>
 				<input
 					class="input"
-					class:input-error={form?.password && form?.invalid}
 					type="password"
 					name="password"
 					placeholder={$i18n.t('login.password')}
 				/>
 			</label>
-			{#if form?.password && form?.invalid}
-				<p class="text-error-500-400-token text-sm">{$i18n.t('login.incorrect-password')}</p>
+			{#if form?.incorrect}
+				<p class="text-error-500-400-token text-sm">
+					{$i18n.t('login.incorrect-username-or-password')}
+				</p>
 			{/if}
 			<button type="submit" class="btn variant-filled-primary">{$i18n.t('login.login')}</button>
 		</form>

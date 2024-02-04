@@ -113,8 +113,6 @@ export async function updateAvailableApps(
 		});
 		apps.push(...dbApps);
 	}
-	// https://github.com/drizzle-team/drizzle-orm/issues/1728
-	// TODO As long as mass-upserting isn't supported, we do it like this:
 	await db.delete(availableApps);
 	await db.insert(availableApps).values(apps);
 }

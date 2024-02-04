@@ -7,14 +7,14 @@
 	const languageNames = new Intl.DisplayNames([$i18n.language], { type: 'language' });
 </script>
 
-<h2 class="h2 mb-4">{$i18n.t("settings.users.users")}</h2>
+<h2 class="h2 mb-4">{$i18n.t('settings.users.users')}</h2>
 
 <div class="table-container">
 	<table class="table table-hover [&_td]:!align-middle">
 		<thead>
 			<tr>
-				<th>{$i18n.t("settings.users.username")}</th>
-				<th>{$i18n.t("settings.users.language")}</th>
+				<th>{$i18n.t('settings.users.username')}</th>
+				<th>{$i18n.t('settings.users.language')}</th>
 				<th></th>
 			</tr>
 		</thead>

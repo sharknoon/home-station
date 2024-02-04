@@ -1,24 +1,41 @@
-import { lucia } from 'lucia';
-import { sveltekit } from 'lucia/middleware';
-import { betterSqlite3 } from '@lucia-auth/adapter-sqlite';
-import { sqlite } from '$lib/server/db';
+import { Lucia } from 'lucia';
+import { db } from '$lib/server/db';
 import { dev } from '$app/environment';
+import { DrizzleSQLiteAdapter } from '@lucia-auth/adapter-drizzle';
+import { sessions, users } from './schema';
 
-export const auth = lucia({
-	env: dev ? 'DEV' : 'PROD',
-	middleware: sveltekit(),
-	adapter: betterSqlite3(sqlite, {
-		user: 'users',
-		session: 'user_sessions',
-		key: 'user_keys'
-	}),
-	getUserAttributes: (data) => {
+// @ts-expect-error Some weird behavior with the adapter
+const adapter = new DrizzleSQLiteAdapter(db, sessions, users);
+
+export const lucia = new Lucia(adapter, {
+	sessionCookie: {
+		attributes: {
+			// set to `true` when using HTTPS
+			secure: !dev
+		}
+	},
+	getUserAttributes: (attributes) => {
 		return {
-			username: data.username,
-			language: data.language,
-			theme: data.theme
+			username: attributes.username,
+			language: attributes.language,
+			theme: attributes.theme
 		};
 	}
 });
 
-export type Auth = typeof auth;
+declare module 'lucia' {
+	interface Register {
+		Lucia: typeof lucia;
+		DatabaseUserAttributes: DatabaseUserAttributes;
+	}
+}
+
+interface DatabaseUserAttributes {
+	username: (typeof users.$inferSelect)['username'];
+	language: (typeof users.$inferSelect)['language'];
+	theme: (typeof users.$inferSelect)['theme'];
+}
+
+export async function deleteExpiredSessions() {
+	lucia.deleteExpiredSessions();
+}

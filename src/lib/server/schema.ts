@@ -1,11 +1,11 @@
-import { sqliteTable, text, integer, primaryKey, blob } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, integer, primaryKey } from 'drizzle-orm/sqlite-core';
 import type { LocalizedString } from '$lib/i18n';
 import type { AppConfig, AppHttp, AppLinks, AppMessages } from './apprepositories';
 
-// Partly managed by Lucia, added lanugage and theme
 export const users = sqliteTable('users', {
 	id: text('id').primaryKey(),
 	username: text('username').notNull().unique(),
+	hashedPassword: text('hashed_password').notNull(),
 	language: text('language').notNull().default('en'),
 	theme: text('theme', {
 		enum: [
@@ -25,27 +25,12 @@ export const users = sqliteTable('users', {
 		.default('skeleton')
 });
 
-// Managed by Lucia
 export const sessions = sqliteTable('user_sessions', {
 	id: text('id').primaryKey(),
 	userId: text('user_id')
 		.notNull()
 		.references(() => users.id),
-	activeExpires: blob('active_expires', {
-		mode: 'bigint'
-	}).notNull(),
-	idleExpires: blob('idle_expires', {
-		mode: 'bigint'
-	}).notNull()
-});
-
-// Managed by Lucia
-export const keys = sqliteTable('user_keys', {
-	id: text('id').primaryKey(),
-	userId: text('user_id')
-		.notNull()
-		.references(() => users.id),
-	hashedPassword: text('hashed_password')
+	expiresAt: integer('expires_at').notNull()
 });
 
 // The container engines (remote or local) for deploying the apps
