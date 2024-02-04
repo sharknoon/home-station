@@ -8,12 +8,12 @@ import path from 'node:path';
  * @returns true if the path exists, false otherwise
  */
 export async function exists(path: string): Promise<boolean> {
-	try {
-		await fs.access(path, fs.constants.F_OK);
-		return true;
-	} catch {
-		return false;
-	}
+    try {
+        await fs.access(path, fs.constants.F_OK);
+        return true;
+    } catch {
+        return false;
+    }
 }
 
 /**
@@ -22,11 +22,11 @@ export async function exists(path: string): Promise<boolean> {
  * @returns true if the url is valid, false otherwise
  */
 export function isValidUrl(url: string): boolean {
-	try {
-		return Boolean(new URL(url));
-	} catch {
-		return false;
-	}
+    try {
+        return Boolean(new URL(url));
+    } catch {
+        return false;
+    }
 }
 
 /**
@@ -37,28 +37,28 @@ export function isValidUrl(url: string): boolean {
  * @see https://skilled.dev/course/throttle
  */
 export function throttle<T>(
-	callback: (...args: T[]) => void,
-	delay: number = 1000
+    callback: (...args: T[]) => void,
+    delay: number = 1000
 ): (...args: T[]) => void {
-	let throttleTimeout: NodeJS.Timeout | null = null;
-	let storedArgs: T[] | null = null;
+    let throttleTimeout: NodeJS.Timeout | null = null;
+    let storedArgs: T[] | null = null;
 
-	const throttledCallback = (...args: T[]) => {
-		storedArgs = args;
-		const shouldExecuteCallback = !throttleTimeout;
-		if (shouldExecuteCallback) {
-			callback(...storedArgs);
-			storedArgs = null;
-			throttleTimeout = setTimeout(() => {
-				throttleTimeout = null;
-				if (storedArgs) {
-					throttledCallback(...storedArgs);
-				}
-			}, delay);
-		}
-	};
+    const throttledCallback = (...args: T[]) => {
+        storedArgs = args;
+        const shouldExecuteCallback = !throttleTimeout;
+        if (shouldExecuteCallback) {
+            callback(...storedArgs);
+            storedArgs = null;
+            throttleTimeout = setTimeout(() => {
+                throttleTimeout = null;
+                if (storedArgs) {
+                    throttledCallback(...storedArgs);
+                }
+            }, delay);
+        }
+    };
 
-	return throttledCallback;
+    return throttledCallback;
 }
 
 // This is the main app path. In a container it must be mounted as a volume
@@ -69,38 +69,38 @@ const containerAppDataPath = '/app/data';
 const fallbackContainerAppDataPath = '/app/tmp';
 
 if (PUBLIC_CONTAINERIZED === 'true') {
-	appDataPath = containerAppDataPath;
-	if (!(await exists(appDataPath))) {
-		console.warn(
-			"Running in container, but the data directory isn't mounted. Using fallback path!"
-		);
-		console.warn('-----------------------------------------------------');
-		console.warn('| ALL DATA WILL BE LOST WHEN THE SERVER STOPS!      |');
-		console.warn('| Please mount the "/app/data" directory like this: |');
-		console.warn('| docker run -v /path/to/data:/app/data ...         |');
-		console.warn('-----------------------------------------------------');
-		appDataPath = fallbackContainerAppDataPath;
-		await fs.mkdir(appDataPath, { recursive: true });
-	}
-	console.info(`Running in container, using "${appDataPath}" as data directory`);
+    appDataPath = containerAppDataPath;
+    if (!(await exists(appDataPath))) {
+        console.warn(
+            "Running in container, but the data directory isn't mounted. Using fallback path!"
+        );
+        console.warn('-----------------------------------------------------');
+        console.warn('| ALL DATA WILL BE LOST WHEN THE SERVER STOPS!      |');
+        console.warn('| Please mount the "/app/data" directory like this: |');
+        console.warn('| docker run -v /path/to/data:/app/data ...         |');
+        console.warn('-----------------------------------------------------');
+        appDataPath = fallbackContainerAppDataPath;
+        await fs.mkdir(appDataPath, { recursive: true });
+    }
+    console.info(`Running in container, using "${appDataPath}" as data directory`);
 } else {
-	let homePath;
-	switch (process.platform) {
-		case 'win32':
-			homePath = process.env.APPDATA;
-			break;
-		default:
-			homePath = process.env.HOME;
-	}
-	if (!homePath) {
-		console.error(
-			'Could not find app-data/home directory path. Please make sure that the environment variable "HOME" (macOS/Linux) or "APPDATA" (Windows) is set.'
-		);
-		process.exit(1);
-	}
-	appDataPath = path.join(homePath, '.home-station');
-	await fs.mkdir(appDataPath, { recursive: true });
-	console.info(`Running on "${process.platform}", using "${appDataPath}" as data directory`);
+    let homePath;
+    switch (process.platform) {
+        case 'win32':
+            homePath = process.env.APPDATA;
+            break;
+        default:
+            homePath = process.env.HOME;
+    }
+    if (!homePath) {
+        console.error(
+            'Could not find app-data/home directory path. Please make sure that the environment variable "HOME" (macOS/Linux) or "APPDATA" (Windows) is set.'
+        );
+        process.exit(1);
+    }
+    appDataPath = path.join(homePath, '.home-station');
+    await fs.mkdir(appDataPath, { recursive: true });
+    console.info(`Running on "${process.platform}", using "${appDataPath}" as data directory`);
 }
 
 /**
@@ -113,23 +113,23 @@ if (PUBLIC_CONTAINERIZED === 'true') {
  * - currentAppDataPath: The current app data path, can be a temporary path if not mounted correctly
  */
 export async function getAppDataPersistency(): Promise<{
-	isPersistent: boolean;
-	defaultAppDataPath: string;
-	currentAppDataPath: string;
+    isPersistent: boolean;
+    defaultAppDataPath: string;
+    currentAppDataPath: string;
 }> {
-	if (PUBLIC_CONTAINERIZED === 'true') {
-		return {
-			isPersistent: await exists(containerAppDataPath),
-			defaultAppDataPath: containerAppDataPath,
-			currentAppDataPath: appDataPath
-		};
-	} else {
-		return {
-			isPersistent: true,
-			defaultAppDataPath: appDataPath,
-			currentAppDataPath: appDataPath
-		};
-	}
+    if (PUBLIC_CONTAINERIZED === 'true') {
+        return {
+            isPersistent: await exists(containerAppDataPath),
+            defaultAppDataPath: containerAppDataPath,
+            currentAppDataPath: appDataPath
+        };
+    } else {
+        return {
+            isPersistent: true,
+            defaultAppDataPath: appDataPath,
+            currentAppDataPath: appDataPath
+        };
+    }
 }
 
 /**
@@ -137,5 +137,5 @@ export async function getAppDataPersistency(): Promise<{
  * @returns The path to the app data directory
  */
 export async function getAppDataPath(): Promise<string> {
-	return appDataPath;
+    return appDataPath;
 }

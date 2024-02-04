@@ -5,7 +5,7 @@ import { getAppDataPersistency } from '$lib/server/utils';
 const appDataPersistency = await getAppDataPersistency();
 
 export const load = (async ({ locals }) => {
-	const language = locals.user?.language;
-	const theme = locals.user?.theme;
-	return { language, theme, appDataPersistency };
+    const language = locals.user?.language;
+    const theme = locals.user?.theme;
+    return { language, theme, appDataPersistency };
 }) satisfies LayoutServerLoad;

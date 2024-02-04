@@ -1,30 +1,36 @@
 version: '3.3'
 services:
-  filebrowser:
-    image: filebrowser/filebrowser
-    container_name: filebrowser
-    entrypoint:
-      ['/filebrowser', '-c', '/etc/filebrowser/.filebrowser.json', '-d', '/database/filebrowser.db']
-    restart: always
-    volumes:
-      - 'data:/srv'
-      - '/var/lib/docker/volumes:/srv/volumes'
-      - 'db:/database'
-      - 'config:/etc/filebrowser'
-    labels:
-      traefik.enable: true
-      traefik.http.routers.filebrowser.entrypoints: websecure
-      traefik.http.routers.filebrowser.rule: Host(`filebrowser.sharknoon.de`)
-      traefik.http.routers.filebrowser.service: filebrowser
-      traefik.http.services.filebrowser.loadbalancer.server.port: 80
-    networks:
-      - traefik_net
+    filebrowser:
+        image: filebrowser/filebrowser
+        container_name: filebrowser
+        entrypoint:
+            [
+                '/filebrowser',
+                '-c',
+                '/etc/filebrowser/.filebrowser.json',
+                '-d',
+                '/database/filebrowser.db'
+            ]
+        restart: always
+        volumes:
+            - 'data:/srv'
+            - '/var/lib/docker/volumes:/srv/volumes'
+            - 'db:/database'
+            - 'config:/etc/filebrowser'
+        labels:
+            traefik.enable: true
+            traefik.http.routers.filebrowser.entrypoints: websecure
+            traefik.http.routers.filebrowser.rule: Host(`filebrowser.sharknoon.de`)
+            traefik.http.routers.filebrowser.service: filebrowser
+            traefik.http.services.filebrowser.loadbalancer.server.port: 80
+        networks:
+            - traefik_net
 
 networks:
-  traefik_net:
-    external: true
+    traefik_net:
+        external: true
 
 volumes:
-  data:
-  db:
-  config:
+    data:
+    db:
+    config:

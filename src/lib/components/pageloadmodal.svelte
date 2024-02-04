@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { getModalStore, ProgressRadial } from '@skeletonlabs/skeleton';
+    import { getModalStore, ProgressRadial } from '@skeletonlabs/skeleton';
 
-	const modalStore = getModalStore();
+    const modalStore = getModalStore();
 </script>
 
 {#if $modalStore[0]}
-	<div class="card variant-glass p-4">
-		<ProgressRadial width="w-12" />
-	</div>
+    <div class="card variant-glass p-4">
+        <ProgressRadial width="w-12" />
+    </div>
 {/if}
