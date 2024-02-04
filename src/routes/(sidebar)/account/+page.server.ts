@@ -6,6 +6,7 @@ import { fail } from '@sveltejs/kit';
 import { get } from 'svelte/store';
 import i18n from '$lib/i18n';
 import { Argon2id } from 'oslo/password';
+import { themes, type Theme } from '$lib/theme';
 
 export const actions: Actions = {
 	updateAccount: async ({ request, locals }) => {
@@ -37,5 +38,21 @@ export const actions: Actions = {
 		await db.update(users).set({ hashedPassword }).where(eq(users.id, locals.user.id));
 
 		return { success: true, password: 'password' };
+	},
+	updateTheme: async ({ request, locals }) => {
+		if (!locals.user) return fail(401, { success: false, error: 'Unauthorized' });
+		const data = await request.formData();
+		const theme = data.get('theme')?.toString() as Theme | undefined;
+		if (!theme) return fail(400, { success: false, theme, error: 'Theme is required' });
+		if (!themes.map((t) => t.name).includes(theme)) {
+			return fail(400, {
+				error: `Unsupported theme '${theme}', supported themes: ${themes}`
+			});
+		}
+
+		await db.update(users).set({ theme }).where(eq(users.id, locals.user.id));
+		locals.user.theme = theme;
+
+		return { success: true, theme };
 	}
 };

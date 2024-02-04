@@ -38,7 +38,8 @@
 			"save": "Save"
 		},
 		"theme": {
-			"theme": "Theme"
+			"theme": "Theme",
+			"apply": "Apply"
 		}
 	},
 	"discover": {

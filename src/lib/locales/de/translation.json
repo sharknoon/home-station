@@ -38,7 +38,8 @@
 			"save": "Speichern"
 		},
 		"theme": {
-			"theme": "Erscheinungsbild"
+			"theme": "Erscheinungsbild",
+			"apply": "Anwenden"
 		}
 	},
 	"discover": {

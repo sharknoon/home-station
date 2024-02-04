@@ -1,17 +1,17 @@
 <script lang="ts">
 	import { Tab, TabGroup } from '@skeletonlabs/skeleton';
-	import { writable } from 'svelte/store';
 	import i18n from '$lib/i18n';
-	import { Save } from 'lucide-svelte';
+	import { PaintRoller, Save } from 'lucide-svelte';
 	import { enhance } from '$app/forms';
-	import type { ActionData } from './$types';
+	import type { ActionData, PageData } from './$types';
+	import { themes, type Theme } from '$lib/theme';
 
+	export let data: PageData;
 	export let form: ActionData;
 
 	let tabSet: number = 0;
 
 	// General tab
-	const language = writable<string>($i18n.language);
 	$: if (form?.language && form?.success) $i18n.changeLanguage(form.language);
 
 	// Password tab
@@ -19,6 +19,12 @@
 	let password2: string;
 	$: passwordCorrect = (password1?.length || 0) >= 8;
 	$: passwordsEqual = password1 === password2;
+
+	// Theme tab
+	$: if (form?.theme && form?.success) applyTheme(form.theme);
+	function applyTheme(theme: Theme) {
+		document.body.setAttribute('data-theme', theme);
+	}
 </script>
 
 <TabGroup>
@@ -30,7 +36,7 @@
 			<form method="post" action="?/updateAccount" use:enhance>
 				<label class="label">
 					<span>{$i18n.t('account.general.language')}</span>
-					<select class="select" name="language" bind:value={$language}>
+					<select class="select" name="language">
 						<option value="cimode">Translation keys</option>
 						{#each ($i18n.options.supportedLngs || []).filter((l) => l !== 'cimode').sort() as l}
 							<option value={l}>{new Intl.DisplayNames([l], { type: 'language' }).of(l)}</option>
@@ -63,7 +69,27 @@
 				</button>
 			</form>
 		{:else if tabSet === 2}
-			(tab panel 3 contents)
+			<div class="grid grid-cols-3 gap-4">
+				{#each themes as theme}
+					<form
+						method="post"
+						action="?/updateTheme"
+						class="card p-4"
+						data-theme={theme.name}
+						use:enhance
+						on:mouseover={() => applyTheme(theme.name)}
+						on:focus={() => applyTheme(theme.name)}
+						on:mouseout={() => applyTheme(data.theme)}
+						on:blur={() => applyTheme(data.theme)}
+					>
+						<input type="hidden" name="theme" value={theme.name} />
+						<h2 class="h2 capitalize">{theme.icon} {theme.name.replace('-', ' ')}</h2>
+						<button type="submit" class="btn variant-filled-primary mt-4" disabled={false}>
+							<PaintRoller class="mr-2" />{$i18n.t('account.theme.apply')}
+						</button>
+					</form>
+				{/each}
+			</div>
 		{/if}
 	</svelte:fragment>
 </TabGroup>
