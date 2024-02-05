@@ -1,18 +1,14 @@
-import net from 'node:net';
 import dns from 'node:dns/promises';
+import http from 'node:http';
 
 export async function getPublicIp(): Promise<string> {
     return new Promise((resolve, reject) => {
-        const socket = net.connect({ port: 80, host: 'google.com' });
-        socket.on('connect', () => {
-            if (!socket.localAddress) {
-                reject('Socket has no local address, to which an remote socket can connect to');
-            } else {
-                resolve(socket.localAddress);
-            }
-            socket.end();
+        http.get({ host: 'api.ipify.org', port: 80, path: '/' }, (resp) => {
+            resp.on('data', (ip) => {
+                resolve(String(ip));
+            });
+            resp.on('error', reject);
         });
-        socket.on('error', reject);
     });
 }
 
