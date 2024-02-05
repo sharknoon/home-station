@@ -3,7 +3,7 @@ import type { Actions, PageServerLoad } from './$types';
 import db from '$lib/server/db';
 import { eq } from 'drizzle-orm';
 import { users } from '$lib/server/schema';
-import { Argon2id } from 'oslo/password';
+import bcrypt from 'bcrypt';
 import { lucia } from '$lib/server/auth';
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -27,10 +27,10 @@ export const actions: Actions = {
             where: eq(users.username, username.toLowerCase())
         });
         // Hash a fake password if the user does not exist in order to not reveal to the attacker, that this username doesn't exist
-        const validPassword = await new Argon2id().verify(
+        const validPassword = await bcrypt.compare(
+            password,
             existingUser?.hashedPassword ??
-                '$argon2id$v=19$m=19456,t=2,p=1$nY1Tl/Dm4W6xqpedJCf+NA$5qRkCHPRwuZtgy7lGcSRoRASxHq/j1JZ6czHwPWsxbA',
-            password
+                '$2b$10$BObGWttlK4uY36m7fb99YuYoulhSIsFeZ/EUiGqbwzDiTShGYTYue'
         );
         if (!validPassword || !existingUser) {
             return fail(400, { incorrect: true });

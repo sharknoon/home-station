@@ -12,7 +12,7 @@ import {
     testRemoteConnection
 } from '$lib/server/containerengines';
 import { generateId } from 'lucia';
-import { Argon2id } from 'oslo/password';
+import bcrypt from 'bcrypt';
 
 export const load = (async () => {
     const hasUsers = !!(await db.query.users.findFirst());
@@ -58,7 +58,7 @@ export const actions = {
             await db.insert(hostnames).values(hostnameValues).onConflictDoNothing();
             // User setup
             const userId = generateId(15);
-            const hashedPassword = await new Argon2id().hash(password);
+            const hashedPassword = await bcrypt.hash(password, 10);
             await db.insert(users).values({
                 id: userId,
                 username: username.toLowerCase(),

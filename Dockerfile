@@ -3,18 +3,28 @@
 # If you need help, visit the Dockerfile reference guide at
 # https://docs.docker.com/engine/reference/builder/
 
-ARG NODE_VERSION=21.5.0
+ARG ALPINE_VERSION=3
 
 ################################################################################
-# Use node image for base image for all stages.
-FROM node:${NODE_VERSION}-slim as base
+# Use alpine image for base image for all stages.
+FROM alpine:${ALPINE_VERSION} as nodejs
+
+ARG NODE_VERSION=21
+ARG NPM_VERSION=10
+#ARG CADDY_VERSION=2
 
 # Set working directory for all build stages.
 WORKDIR /app
 
+# Install nodejs
+RUN apk add "nodejs-current>${NODE_VERSION}"
+
 ################################################################################
 # Create a stage for installing production dependecies.
-FROM base as deps
+FROM nodejs as deps
+
+# Install npm
+RUN apk add "npm>${NPM_VERSION}"
 
 # Download dependencies as a separate step to take advantage of Docker's caching.
 # Leverage a cache mount to /root/.npm to speed up subsequent builds.
@@ -39,16 +49,16 @@ RUN --mount=type=bind,source=package.json,target=package.json \
 # Copy the rest of the source files into the image.
 COPY . .
 
-# Public static environment variable to tell the build that we are running in a container.
-ENV PUBLIC_CONTAINERIZED=true
-
 # Run the build script.
-RUN npm run build
+RUN PUBLIC_CONTAINERIZED=true npm run build
 
 ################################################################################
 # Create a new stage to run the application with minimal runtime dependencies
 # where the necessary files are copied from the build stage.
-FROM base as final
+FROM nodejs as final
+
+# Install caddy, docker-cli and supervisor
+#RUN apk add "caddy>${CADDY_VERSION}" docker-cli supervisor
 
 # Use production node environment by default.
 ENV NODE_ENV=production
@@ -62,13 +72,11 @@ ENV ORIGIN=http://localhost:3000
 COPY --from=deps /app/node_modules node_modules
 COPY --from=build /app/drizzle drizzle
 COPY --from=build /app/build build
-
-# Hide update notifications from npm. The latest version of the node image doesn't 
-# always ship with the latest version of npm
-RUN npm config set update-notifier false
-
-# Expose the port that the application listens on.
-EXPOSE 3000
+#COPY docker/supervisord.conf /etc/supervisord.conf
+#COPY docker/Caddyfile /etc/caddy/Caddyfile
 
 # Run the application. Set the default type to module skip a package.json file with { "type": "module" }.
+#EXPOSE 80 443
+EXPOSE 3000
+#CMD ["/usr/bin/supervisord"]
 CMD [ "node", "--experimental-default-type=module",  "./build/index.js" ]

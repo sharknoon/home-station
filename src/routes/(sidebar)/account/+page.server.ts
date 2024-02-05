@@ -5,7 +5,7 @@ import type { Actions } from './$types';
 import { fail } from '@sveltejs/kit';
 import { get } from 'svelte/store';
 import i18n from '$lib/i18n';
-import { Argon2id } from 'oslo/password';
+import bcrypt from 'bcrypt';
 import { themes, type Theme } from '$lib/theme';
 
 export const actions: Actions = {
@@ -39,7 +39,7 @@ export const actions: Actions = {
             });
         }
 
-        const hashedPassword = await new Argon2id().hash(password);
+        const hashedPassword = await bcrypt.hash(password, 10);
         await db.update(users).set({ hashedPassword }).where(eq(users.id, locals.user.id));
 
         return { success: true, password: 'password' };
