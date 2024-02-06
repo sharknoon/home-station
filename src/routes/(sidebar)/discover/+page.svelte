@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { HardDriveDownload, Info, LibraryBig } from 'lucide-svelte';
+    import { Globe, HardDriveDownload, Info, LibraryBig, Code, ExternalLink } from 'lucide-svelte';
     import type { PageData } from './$types';
     //import ColorThief from 'colorthief/dist/color-thief.modern.mjs';
     import { getModalStore } from '@skeletonlabs/skeleton';
@@ -38,7 +38,39 @@
                         <div class="text-sm text-surface-700-200-token">{app.developer}</div>
                     </div>
                 </div>
-                <div>{ls(app.description)}</div>
+                <div class="flex gap-2 overflow-x-auto pb-3">
+                    {#if app.links.website}
+                        <a
+                            class="chip variant-soft hover:variant-filled"
+                            href={app.links.website}
+                            target="_blank"
+                        >
+                            <span><Globe class="h-4 w-4" /></span>
+                            <span>{$i18n.t('discover.links.website')}</span>
+                        </a>
+                    {/if}
+                    {#if app.links.repository}
+                        <a
+                            class="chip variant-soft hover:variant-filled"
+                            href={app.links.repository}
+                            target="_blank"
+                        >
+                            <span><Code class="h-4 w-4" /></span>
+                            <span>{$i18n.t('discover.links.repository')}</span>
+                        </a>
+                    {/if}
+                    {#each app.links.custom ?? [] as link}
+                        <a
+                            class="chip variant-soft hover:variant-filled"
+                            href={link.url}
+                            target="_blank"
+                        >
+                            <span><ExternalLink class="h-4 w-4" /></span>
+                            <span>{ls(link.name)}</span>
+                        </a>
+                    {/each}
+                </div>
+                <div class="!-mt-2">{ls(app.description)}</div>
                 <span class="badge variant-filled">{app.category}</span>
             </div>
             <hr />

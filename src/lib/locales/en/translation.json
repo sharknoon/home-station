@@ -44,7 +44,17 @@
         }
     },
     "discover": {
-        "install": "Install"
+        "links": {
+            "website": "Website",
+            "repository": "Repository"
+        },
+        "install": "Install",
+        "app-info-modal": {
+            "additional-information": "Additional information",
+            "id": "ID",
+            "published-at": "Published at",
+            "app-repository": "App repository"
+        }
     },
     "settings": {
         "container-engines": {
