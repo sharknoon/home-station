@@ -2,20 +2,13 @@
     import { HardDriveDownload, Info, LibraryBig } from 'lucide-svelte';
     import type { PageData } from './$types';
     //import ColorThief from 'colorthief/dist/color-thief.modern.mjs';
-    import { getModalStore, type ModalComponent } from '@skeletonlabs/skeleton';
+    import { getModalStore } from '@skeletonlabs/skeleton';
     import AppInfoModal from './appInfoModal.svelte';
-    import type { availableApps } from '$lib/server/schema';
     import i18n, { ls } from '$lib/i18n';
-
-    type App = typeof availableApps.$inferSelect;
 
     export let data: PageData;
 
     const modalStore = getModalStore();
-
-    let currentApp: App;
-    let appInfoModalComponent: ModalComponent;
-    $: appInfoModalComponent = { ref: AppInfoModal, props: { app: currentApp } };
 </script>
 
 <div class="flex justify-end">
@@ -55,10 +48,12 @@
                         type="button"
                         class="btn btn-icon variant-soft"
                         on:click|preventDefault={() => {
-                            currentApp = app;
                             modalStore.trigger({
                                 type: 'component',
-                                component: appInfoModalComponent
+                                component: {
+                                    ref: AppInfoModal,
+                                    props: { app, appRepositoryUrl: app.appRepository.url }
+                                }
                             });
                         }}
                     >

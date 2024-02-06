@@ -1,6 +1,7 @@
 import { sqliteTable, text, integer, primaryKey } from 'drizzle-orm/sqlite-core';
 import type { LocalizedString } from '$lib/i18n';
 import type { AppConfig, AppHttp, AppLinks, AppMessages } from './apprepositories';
+import { relations } from 'drizzle-orm';
 
 export const users = sqliteTable('users', {
     id: text('id').primaryKey(),
@@ -29,7 +30,7 @@ export const sessions = sqliteTable('user_sessions', {
     id: text('id').primaryKey(),
     userId: text('user_id')
         .notNull()
-        .references(() => users.id),
+        .references(() => users.id, { onDelete: 'cascade' }),
     expiresAt: integer('expires_at').notNull()
 });
 
@@ -60,7 +61,7 @@ export const availableApps = sqliteTable(
         id: text('id').notNull(),
         appRepositoryId: integer('app_repository_id')
             .notNull()
-            .references(() => appRepositories.id),
+            .references(() => appRepositories.id, { onDelete: 'cascade' }),
         name: text('name', { mode: 'json' }).notNull().$type<LocalizedString>(),
         description: text('description', { mode: 'json' }).notNull().$type<LocalizedString>(),
         icon: text('icon').notNull(),
@@ -79,6 +80,12 @@ export const availableApps = sqliteTable(
         };
     }
 );
+export const availableAppsRelations = relations(availableApps, ({ one }) => ({
+    appRepository: one(appRepositories, {
+        fields: [availableApps.appRepositoryId],
+        references: [appRepositories.id]
+    })
+}));
 
 // Domains and Hostnames for apps
 export const hostnames = sqliteTable('hostnames', {
