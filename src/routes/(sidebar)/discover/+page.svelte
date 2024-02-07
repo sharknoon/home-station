@@ -1,10 +1,10 @@
 <script lang="ts">
-    import Globe from "lucide-svelte/icons/globe";
-    import HardDriveDownload from "lucide-svelte/icons/hard-drive-download";
-    import Info from "lucide-svelte/icons/info";
-    import LibraryBig from "lucide-svelte/icons/library-big";
-    import Code from "lucide-svelte/icons/code";
-    import ExternalLink from "lucide-svelte/icons/external-link";
+    import Globe from 'lucide-svelte/icons/globe';
+    import HardDriveDownload from 'lucide-svelte/icons/hard-drive-download';
+    import Info from 'lucide-svelte/icons/info';
+    import LibraryBig from 'lucide-svelte/icons/library-big';
+    import Code from 'lucide-svelte/icons/code';
+    import ExternalLink from 'lucide-svelte/icons/external-link';
     import type { PageData } from './$types';
     //import ColorThief from 'colorthief/dist/color-thief.modern.mjs';
     import { getModalStore } from '@skeletonlabs/skeleton';

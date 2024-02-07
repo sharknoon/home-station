@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { availableApps } from '$lib/server/schema';
-    import X from "lucide-svelte/icons/x";
+    import X from 'lucide-svelte/icons/x';
     import type { SvelteComponent } from 'svelte';
     import i18n from '$lib/i18n';
 

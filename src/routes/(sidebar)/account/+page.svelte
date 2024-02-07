@@ -1,8 +1,8 @@
 <script lang="ts">
     import { Tab, TabGroup } from '@skeletonlabs/skeleton';
     import i18n from '$lib/i18n';
-    import PaintRoller from "lucide-svelte/icons/paint-roller";
-    import Save from "lucide-svelte/icons/save";
+    import PaintRoller from 'lucide-svelte/icons/paint-roller';
+    import Save from 'lucide-svelte/icons/save';
     import { enhance } from '$app/forms';
     import type { ActionData, PageData } from './$types';
     import { themes, type Theme } from '$lib/theme';
