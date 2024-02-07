@@ -44,6 +44,8 @@
         }
     },
     "discover": {
+        "app-repositories": "App-Repositories",
+        "add-app-repository": "App-Repository hinzufügen",
         "links": {
             "website": "Webseite",
             "repository": "Repository"

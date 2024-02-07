@@ -7,9 +7,12 @@
     import ExternalLink from 'lucide-svelte/icons/external-link';
     import type { PageData } from './$types';
     //import ColorThief from 'colorthief/dist/color-thief.modern.mjs';
-    import { getModalStore } from '@skeletonlabs/skeleton';
+    import { getModalStore, popup } from '@skeletonlabs/skeleton';
     import AppInfoModal from './appInfoModal.svelte';
     import i18n, { ls } from '$lib/i18n';
+    import Trash2 from 'lucide-svelte/icons/trash-2';
+    import Plus from 'lucide-svelte/icons/plus';
+    import Pencil from 'lucide-svelte/icons/pencil';
 
     export let data: PageData;
 
@@ -17,9 +20,32 @@
 </script>
 
 <div class="flex justify-end">
-    <button type="button" class="btn-icon variant-soft">
+    <button
+        type="button"
+        class="btn-icon variant-soft"
+        use:popup={{ event: 'click', target: 'popupAppRepositories', placement: 'bottom-end' }}
+    >
         <LibraryBig />
     </button>
+    <div class="card p-4 max-w-[36rem] shadow-xl space-y-2" data-popup="popupAppRepositories">
+        <h3 class="h3">{$i18n.t('discover.app-repositories')}</h3>
+        <ul class="list">
+            {#each data.appRepositories as appRepository}
+                <li>
+                    <span class="flex items-center gap-1">
+                        <span class="mr-2">{appRepository.url}</span>
+                        <button class="btn-icon"><Pencil /></button>
+                        <button class="btn-icon text-error-500-400-token"><Trash2 /></button>
+                    </span>
+                </li>
+            {/each}
+        </ul>
+        <button class="btn btn-sm variant-filled-secondary space-x-2">
+            <Plus />
+            <span>{$i18n.t('discover.add-app-repository')}</span>
+        </button>
+        <div class="arrow bg-surface-100-800-token" />
+    </div>
 </div>
 
 <div class="grid grid-cols-4 gap-4">

@@ -5,5 +5,8 @@ export const load = (async () => {
     const apps = await db.query.availableApps.findMany({
         with: { appRepository: { columns: { url: true } } }
     });
-    return { apps };
+    const appRepositories = await db.query.appRepositories.findMany({
+        columns: { password: false }
+    });
+    return { apps, appRepositories };
 }) satisfies PageServerLoad;
