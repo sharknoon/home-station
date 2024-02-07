@@ -2,7 +2,7 @@
     import type { PageData } from './$types';
     import { intlFormatDistance } from 'date-fns';
     import { i18n } from '$lib/i18n';
-    import { Play } from 'lucide-svelte';
+    import Play from "lucide-svelte/icons/play";
     import cronstrue from 'cronstrue';
     import { enhance } from '$app/forms';
     import { onMount } from 'svelte';

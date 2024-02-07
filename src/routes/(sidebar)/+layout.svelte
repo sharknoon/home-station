@@ -1,14 +1,12 @@
 <script lang="ts">
-    import {
-        LayoutGrid,
-        Settings,
-        Sparkles,
-        ChevronDown,
-        LogOut,
-        Search,
-        type Icon,
-        CircleUserRound
-    } from 'lucide-svelte';
+    import type { Icon } from 'lucide-svelte';
+    import LayoutGrid from 'lucide-svelte/icons/layout-grid';
+    import Settings from 'lucide-svelte/icons/settings';
+    import Sparkles from 'lucide-svelte/icons/sparkles';
+    import ChevronDown from 'lucide-svelte/icons/chevron-down';
+    import LogOut from 'lucide-svelte/icons/log-out';
+    import Search from 'lucide-svelte/icons/search';
+    import CircleUserRound from 'lucide-svelte/icons/circle-user-round';
     import Brand from '$lib/components/brand.svelte';
     import type { LayoutData } from './$types';
     import { enhance } from '$app/forms';

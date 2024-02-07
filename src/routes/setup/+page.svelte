@@ -1,7 +1,13 @@
 <script lang="ts">
     import type { ActionData, PageData } from './$types';
     import { Stepper, Step, Accordion, AccordionItem } from '@skeletonlabs/skeleton';
-    import { Minus, Network, Plug2, Plus, RefreshCw, Unplug, AlertTriangle } from 'lucide-svelte';
+    import Minus from "lucide-svelte/icons/minus";
+    import Network from "lucide-svelte/icons/network";
+    import Plug2 from "lucide-svelte/icons/plug-2";
+    import Plus from "lucide-svelte/icons/plus";
+    import RefreshCw from "lucide-svelte/icons/refresh-cw";
+    import Unplug from "lucide-svelte/icons/unplug";
+    import AlertTriangle from "lucide-svelte/icons/alert-triangle";
     import i18n from '$lib/i18n';
     import { enhance } from '$app/forms';
     import { page } from '$app/stores';

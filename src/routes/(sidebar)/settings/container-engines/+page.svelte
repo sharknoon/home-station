@@ -1,5 +1,10 @@
 <script lang="ts">
-    import { Box, Cpu, Database, Layers, List, MemoryStick } from 'lucide-svelte';
+    import Box from "lucide-svelte/icons/box";
+    import Cpu from "lucide-svelte/icons/cpu";
+    import Database from "lucide-svelte/icons/database";
+    import Layers from "lucide-svelte/icons/layers";
+    import List from "lucide-svelte/icons/list";
+    import MemoryStick from "lucide-svelte/icons/memory-stick";
     import type { PageData } from './$types';
     import i18n from '$lib/i18n';
 
