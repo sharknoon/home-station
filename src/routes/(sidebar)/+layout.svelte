@@ -192,9 +192,9 @@
                 <LightSwitch />
                 <button
                     class="btn variant-soft-primary"
-                    use:popup={{ event: 'click', target: 'avatarClick' }}
+                    use:popup={{ event: 'click', target: 'avatarClick', placement: 'bottom-end' }}
                 >
-                    <span class="-translate-y-[0.1rem]">{data.username}</span>
+                    <span class="-translate-y-[0.1rem]">{data.user?.username}</span>
                     <ChevronDown />
                 </button>
                 <form
@@ -250,7 +250,9 @@
                         target="_blank"
                         title="GitHub"
                     >
-                        <svelte:fragment slot="lead"><SimpleIcons icon={siGithub} /></svelte:fragment>
+                        <svelte:fragment slot="lead">
+                            <SimpleIcons icon={siGithub} />
+                        </svelte:fragment>
                     </AppRailAnchor>
                 </svelte:fragment>
             </AppRail>
@@ -270,9 +272,11 @@
                                     <li>
                                         <a {href} class={submenuItemActive(href)}>
                                             <span class="flex-auto truncate">{label}</span>
-                                            {#if badge}<span class="badge variant-filled-secondary"
-                                                    >{badge}</span
-                                                >{/if}
+                                            {#if badge}
+                                                <span class="badge variant-filled-secondary">
+                                                    {badge}
+                                                </span>
+                                            {/if}
                                         </a>
                                     </li>
                                 {/each}

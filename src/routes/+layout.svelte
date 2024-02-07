@@ -13,7 +13,7 @@
     export let data: LayoutData;
 
     initUiFramework();
-    initI18n(data.language);
+    initI18n(data.user?.language);
     initPageLoadSpinner();
 </script>
 

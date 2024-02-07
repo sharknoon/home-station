@@ -24,8 +24,8 @@
 
     // Theme tab
     $: if (form?.theme && form?.success) applyTheme(form.theme);
-    function applyTheme(theme: Theme) {
-        document.body.setAttribute('data-theme', theme);
+    function applyTheme(theme?: Theme) {
+        if (theme) document.body.setAttribute('data-theme', theme);
     }
 </script>
 
@@ -89,8 +89,8 @@
                         use:enhance
                         on:mouseover={() => applyTheme(theme.name)}
                         on:focus={() => applyTheme(theme.name)}
-                        on:mouseout={() => applyTheme(data.theme)}
-                        on:blur={() => applyTheme(data.theme)}
+                        on:mouseout={() => applyTheme(data.user?.theme)}
+                        on:blur={() => applyTheme(data.user?.theme)}
                     >
                         <input type="hidden" name="theme" value={theme.name} />
                         <div class="flex items-center gap-4">
@@ -98,7 +98,7 @@
                                 {theme.icon}
                                 {theme.name.replace('-', ' ')}
                             </h2>
-                            {#if data.theme === theme.name}
+                            {#if data.user?.theme === theme.name}
                                 <span class="badge variant-filled-secondary">
                                     {$i18n.t('account.theme.active')}
                                 </span>
