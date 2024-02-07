@@ -16,7 +16,8 @@
         "db:gen": "drizzle-kit generate:sqlite",
         "db:push": "drizzle-kit push:sqlite",
         "db:view": "drizzle-kit studio",
-        "i18n": "i18next 'src/**/*.{ts,svelte}'"
+        "i18n": "i18next 'src/**/*.{ts,svelte}'",
+        "prepare": "svelte-kit sync"
     },
     "devDependencies": {
         "@playwright/test": "^1.41.2",

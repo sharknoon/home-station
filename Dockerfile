@@ -39,8 +39,10 @@ RUN --mount=type=bind,source=package.json,target=package.json \
 # Create a stage for building the application.
 FROM deps as build
 
-# Download additional development dependencies before building, as some projects require
-# "devDependencies" to be installed to build. If you don't need this, remove this step.
+# Copy over the svelte config file due to this bug: https://github.com/sveltejs/kit/issues/5390
+COPY svelte.config.js .
+
+# Download additional development dependencies before building.
 RUN --mount=type=bind,source=package.json,target=package.json \
     --mount=type=bind,source=package-lock.json,target=package-lock.json \
     --mount=type=cache,target=/root/.npm \
