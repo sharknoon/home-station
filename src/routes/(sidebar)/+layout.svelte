@@ -7,7 +7,7 @@
     import LogOut from 'lucide-svelte/icons/log-out';
     import Search from 'lucide-svelte/icons/search';
     import CircleUserRound from 'lucide-svelte/icons/circle-user-round';
-    import Brand from '$lib/components/brand.svelte';
+    import SimpleIcons from '$lib/components/simpleicons.svelte';
     import { siGithub } from 'simple-icons';
     import type { LayoutData } from './$types';
     import { enhance } from '$app/forms';
@@ -250,7 +250,7 @@
                         target="_blank"
                         title="GitHub"
                     >
-                        <svelte:fragment slot="lead"><Brand icon={siGithub} /></svelte:fragment>
+                        <svelte:fragment slot="lead"><SimpleIcons icon={siGithub} /></svelte:fragment>
                     </AppRailAnchor>
                 </svelte:fragment>
             </AppRail>
