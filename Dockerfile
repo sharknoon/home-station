@@ -39,9 +39,6 @@ RUN --mount=type=bind,source=package.json,target=package.json \
 # Create a stage for building the application.
 FROM deps as build
 
-# Copy over the svelte config file due to this bug: https://github.com/sveltejs/kit/issues/5390
-COPY svelte.config.js .
-
 # Download additional development dependencies before building.
 RUN --mount=type=bind,source=package.json,target=package.json \
     --mount=type=bind,source=package-lock.json,target=package-lock.json \
@@ -51,8 +48,8 @@ RUN --mount=type=bind,source=package.json,target=package.json \
 # Copy the rest of the source files into the image.
 COPY . .
 
-# Run the build script.
-RUN PUBLIC_CONTAINERIZED=true npm run build
+# Create the SvelteKit Types (https://github.com/sveltejs/kit/issues/5390) and run the build script.
+RUN npx svelte-kit sync && PUBLIC_CONTAINERIZED=true npm run build
 
 ################################################################################
 # Create a new stage to run the application with minimal runtime dependencies
