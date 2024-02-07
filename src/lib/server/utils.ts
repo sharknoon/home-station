@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
 import { PUBLIC_CONTAINERIZED } from '$env/static/public';
 import path from 'node:path';
+import { building } from '$app/environment';
 
 /**
  * Checks if a path exists
@@ -70,7 +71,7 @@ const fallbackContainerAppDataPath = '/app/tmp';
 
 if (PUBLIC_CONTAINERIZED === 'true') {
     appDataPath = containerAppDataPath;
-    if (!(await exists(appDataPath))) {
+    if (!(await exists(appDataPath)) && !building) {
         console.warn(
             "Running in container, but the data directory isn't mounted. Using fallback path!"
         );
