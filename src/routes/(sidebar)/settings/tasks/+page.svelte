@@ -8,12 +8,13 @@
     import { onMount } from 'svelte';
     import { ProgressRadial } from '@skeletonlabs/skeleton';
     import type { TaskStats } from '$lib/server/tasks';
+    import logger from '$lib/server/logger';
 
     export let data: PageData;
 
     onMount(() => {
         const evtSource = new EventSource('/settings/tasks/events');
-        evtSource.onerror = (e) => console.error(e);
+        evtSource.onerror = (e) => logger.error(e);
         evtSource.addEventListener('updateStats', (stats: MessageEvent<string>) => {
             const updatedStats = JSON.parse(stats.data) as {
                 id: string;

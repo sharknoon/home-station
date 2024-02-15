@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import { error } from '@sveltejs/kit';
 import path from 'node:path';
-import { getAppDataPath } from '$lib/server/utils.js';
+import { getAppDataPath } from '$lib/server/appdata';
 
 export const GET = async ({ params }) => {
     try {

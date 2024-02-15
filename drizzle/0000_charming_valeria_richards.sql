@@ -1,5 +1,5 @@
 CREATE TABLE `app_repositories` (
-	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`id` text PRIMARY KEY NOT NULL,
 	`url` text NOT NULL,
 	`username` text,
 	`password` text
@@ -7,7 +7,7 @@ CREATE TABLE `app_repositories` (
 --> statement-breakpoint
 CREATE TABLE `available_apps` (
 	`id` text NOT NULL,
-	`app_repository_id` integer NOT NULL,
+	`app_repository_id` text NOT NULL,
 	`name` text NOT NULL,
 	`description` text NOT NULL,
 	`icon` text NOT NULL,
@@ -20,7 +20,7 @@ CREATE TABLE `available_apps` (
 	`http` text NOT NULL,
 	`messages` text,
 	PRIMARY KEY(`app_repository_id`, `id`),
-	FOREIGN KEY (`app_repository_id`) REFERENCES `app_repositories`(`id`) ON UPDATE no action ON DELETE no action
+	FOREIGN KEY (`app_repository_id`) REFERENCES `app_repositories`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
 CREATE TABLE `container_engines` (
@@ -42,7 +42,7 @@ CREATE TABLE `user_sessions` (
 	`id` text PRIMARY KEY NOT NULL,
 	`user_id` text NOT NULL,
 	`expires_at` integer NOT NULL,
-	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action
+	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
 CREATE TABLE `users` (

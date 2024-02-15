@@ -48,7 +48,7 @@ export const containerEngines = sqliteTable('container_engines', {
 
 // Git repositores that host apps
 export const appRepositories = sqliteTable('app_repositories', {
-    id: integer('id').primaryKey({ autoIncrement: true }),
+    id: text('id').primaryKey(),
     url: text('url').notNull().unique(),
     username: text('username'),
     password: text('password')
@@ -59,7 +59,7 @@ export const availableApps = sqliteTable(
     'available_apps',
     {
         id: text('id').notNull(),
-        appRepositoryId: integer('app_repository_id')
+        appRepositoryId: text('app_repository_id')
             .notNull()
             .references(() => appRepositories.id, { onDelete: 'cascade' }),
         name: text('name', { mode: 'json' }).notNull().$type<LocalizedString>(),

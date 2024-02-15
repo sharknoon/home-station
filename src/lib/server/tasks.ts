@@ -4,6 +4,7 @@ import { updateAvailableApps } from '$lib/server/apprepositories';
 import { dev } from '$app/environment';
 import { throttle } from '$lib/server/utils';
 import { deleteExpiredSessions } from '$lib/server/auth';
+import logger from '$lib/server/logger';
 
 export type Task = {
     /** NEVER change this ID, it is used to identify the task in the database */
@@ -78,7 +79,7 @@ if (dev) {
 
 export async function scheduleTasks(): Promise<void> {
     for (const task of tasks) {
-        console.info(`Scheduling task "${task.id}" to run on schedule "${task.schedule}"`);
+        logger.info(`Scheduling task "${task.id}" to run on schedule "${task.schedule}"`);
         const job = new CronJob(task.schedule, async () => await executeTask(task));
         job.start();
         if (task.runImmediately) {
@@ -95,13 +96,13 @@ export async function scheduleTasks(): Promise<void> {
  */
 export async function executeTask(task: Task): Promise<void> {
     const { id, schedule, handler, stats } = task;
-    console.info(`Starting task "${id}"`);
+    logger.info(`Starting task "${id}"`);
     stats.update((stats) => ({ ...stats, progress: 0, running: true }));
     const lastExecution = new Date();
     try {
         await handler(throttle((p) => stats.update((s) => ({ ...s, progress: p }))));
     } catch (error) {
-        console.error(`Error running task "${id}":`, error);
+        logger.error(`Error running task "${id}":`, error);
     }
     const lastDuration = new Date().getTime() - lastExecution.getTime();
     stats.update(() => ({
@@ -112,5 +113,5 @@ export async function executeTask(task: Task): Promise<void> {
         nextExecution: cron.sendAt(schedule).toJSDate()
     }));
     // TODO switch to Intl version as soon as it is released: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DurationFormat/format
-    console.info(`Completed task "${id}" in ${lastDuration}ms`);
+    logger.info(`Completed task "${id}" in ${lastDuration}ms`);
 }

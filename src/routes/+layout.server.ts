@@ -1,5 +1,5 @@
 import type { LayoutServerLoad } from './$types';
-import { getAppDataPersistency } from '$lib/server/utils';
+import { getAppDataPersistency } from '$lib/server/appdata';
 
 // Yes this is a global state for all requests from any user
 const appDataPersistency = await getAppDataPersistency();

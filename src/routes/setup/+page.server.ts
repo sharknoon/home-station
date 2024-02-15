@@ -6,8 +6,6 @@ import { lucia } from '$lib/server/auth';
 import { containerEngines, users, hostnames } from '$lib/server/schema';
 import { detectHostnames } from '$lib/server/network';
 import {
-    getEngines,
-    refreshEngines,
     testLocalConnection,
     testRemoteConnection
 } from '$lib/server/containerengines';
@@ -91,7 +89,7 @@ export const actions = {
             }
             if (!socketPath) socketPath = undefined;
 
-            await testLocalConnection(socketPath);
+            const engine = await testLocalConnection(socketPath);
             await db
                 .insert(containerEngines)
                 .values({
@@ -116,13 +114,6 @@ export const actions = {
                         key: undefined
                     }
                 });
-            await refreshEngines();
-            const engine = getEngines()[0];
-            if (!engine) {
-                return fail(500, {
-                    message: 'An unknown error occurred'
-                });
-            }
             return { type: 'local', success: true, hostname: (await engine.info())?.Name };
         } catch (e) {
             return { type: 'local', error: String(e) };
@@ -148,7 +139,7 @@ export const actions = {
             if (!cert) cert = undefined;
             if (!key) key = undefined;
 
-            await testRemoteConnection(host, ca, cert, key);
+            const engine = await testRemoteConnection(host, ca, cert, key);
             await db
                 .insert(containerEngines)
                 .values({
@@ -173,13 +164,6 @@ export const actions = {
                         key
                     }
                 });
-            await refreshEngines();
-            const engine = getEngines()[0];
-            if (!engine) {
-                return fail(500, {
-                    message: 'An unknown error occurred'
-                });
-            }
             return { type: 'remote', success: true, hostname: (await engine.info())?.Name };
         } catch (e) {
             return { type: 'remote', error: String(e) };

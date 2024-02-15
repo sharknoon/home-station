@@ -1,7 +1,7 @@
 import { navigating } from '$app/stores';
 import { derived, type Readable } from 'svelte/store';
 import { getModalStore, type ModalSettings } from '@skeletonlabs/skeleton';
-import PageLoadModal from '$lib/components/pageloadmodal.svelte';
+import PageLoadModal from '$lib/components/PageLoadModal.svelte';
 import { browser } from '$app/environment';
 
 export function init() {

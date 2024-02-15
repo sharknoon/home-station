@@ -7,7 +7,7 @@
     import LogOut from 'lucide-svelte/icons/log-out';
     import Search from 'lucide-svelte/icons/search';
     import CircleUserRound from 'lucide-svelte/icons/circle-user-round';
-    import SimpleIcons from '$lib/components/simpleicons.svelte';
+    import SimpleIcons from '$lib/components/SimpleIcons.svelte';
     import { siGithub } from 'simple-icons';
     import type { LayoutData } from './$types';
     import { enhance } from '$app/forms';

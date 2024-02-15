@@ -51,11 +51,18 @@
             "repository": "Repository"
         },
         "install": "Installieren",
+        "popup-no-container-engines": {
+            "no-container-engine-available": "Keine Container-Engine verfügbar"
+        },
         "app-info-modal": {
             "additional-information": "Zusätzliche Informationen",
             "id": "ID",
             "published-at": "Veröffentlicht am",
             "app-repository": "App-Repository"
+        },
+        "container-engines-modal": {
+            "select-engine": "Container-Engine auswählen",
+            "select-engine-description": "Sie haben mehrere Container-Engines installiert. Wählen Sie die Container-Engine, auf der Sie die App installieren möchten."
         }
     },
     "settings": {

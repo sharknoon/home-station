@@ -8,15 +8,39 @@
     import type { PageData } from './$types';
     //import ColorThief from 'colorthief/dist/color-thief.modern.mjs';
     import { getModalStore, popup } from '@skeletonlabs/skeleton';
-    import AppInfoModal from './appInfoModal.svelte';
+    import AppInfoModal from './AppInfoModal.svelte';
+    import ContainerEnginesModal from './ContainerEnginesModal.svelte';
     import i18n, { ls } from '$lib/i18n';
     import Trash2 from 'lucide-svelte/icons/trash-2';
     import Plus from 'lucide-svelte/icons/plus';
     import Pencil from 'lucide-svelte/icons/pencil';
+    import { enhance } from '$app/forms';
+    import type { availableApps } from '$lib/server/schema';
+
+    type App = typeof availableApps.$inferSelect;
 
     export let data: PageData;
 
     const modalStore = getModalStore();
+
+    async function installApp(app: App) {
+        if (data.containerEngines.length === 0) {
+            return;
+        }
+        let selectedEngine = data.containerEngines[0].id;
+        if (data.containerEngines.length > 1) {
+            selectedEngine = await new Promise<number>((resolve) => {
+                modalStore.trigger({
+                    type: 'component',
+                    component: {
+                        ref: ContainerEnginesModal,
+                        props: { availableContainerEngines: data.containerEngines }
+                    },
+                    response: (e: number) => resolve(e)
+                });
+            });
+        }
+    }
 </script>
 
 <div class="flex justify-end">
@@ -32,15 +56,21 @@
         <ul class="list">
             {#each data.appRepositories as appRepository}
                 <li>
-                    <span class="flex items-center gap-1">
+                    <form method="post" class="flex items-center gap-1" use:enhance>
+                        <input type="hidden" name="id" value={appRepository.id}>
                         <span class="mr-2">{appRepository.url}</span>
-                        <button class="btn-icon"><Pencil /></button>
-                        <button class="btn-icon text-error-500-400-token"><Trash2 /></button>
-                    </span>
+                        <!-- TODO -->
+                        <button disabled class="btn-icon"><Pencil /></button>
+                        <button
+                            formaction="?/deleteRepository"
+                            class="btn-icon text-error-500-400-token"><Trash2 /></button
+                        >
+                    </form>
                 </li>
             {/each}
         </ul>
-        <button class="btn btn-sm variant-filled-secondary space-x-2">
+        <!-- TODO -->
+        <button disabled class="btn btn-sm variant-filled-secondary space-x-2">
             <Plus />
             <span>{$i18n.t('discover.add-app-repository')}</span>
         </button>
@@ -50,7 +80,7 @@
 
 <div class="grid grid-cols-4 gap-4">
     {#each data.apps as app}
-        <a href="/" class="card card-hover overflow-hidden">
+        <div class="card card-hover overflow-hidden">
             <header class="h-24 max-h-24 p-2 bg-white">
                 <div
                     class="h-full bg-contain bg-no-repeat bg-center"
@@ -110,7 +140,7 @@
                     <button
                         type="button"
                         class="btn btn-icon variant-soft"
-                        on:click|preventDefault={() => {
+                        on:click={() => {
                             modalStore.trigger({
                                 type: 'component',
                                 component: {
@@ -122,17 +152,44 @@
                     >
                         <Info />
                     </button>
-                    <button
-                        type="button"
-                        class="btn variant-filled-primary font-semibold"
-                        on:click|preventDefault={() => {}}
-                    >
-                        <HardDriveDownload class="mr-2" />
-                        {$i18n.t('discover.install')}
-                    </button>
+                    {#if data.containerEngines.length === 0}
+                        <button
+                            use:popup={{
+                                event: 'hover',
+                                target: 'popupNoContainerEngines',
+                                placement: 'top'
+                            }}
+                            type="button"
+                            disabled
+                            class="btn variant-filled-primary font-semibold"
+                        >
+                            <HardDriveDownload class="mr-2" />
+                            {$i18n.t('discover.install')}
+                        </button>
+                        <div
+                            class="card p-4 variant-filled-warning"
+                            data-popup="popupNoContainerEngines"
+                        >
+                            <p>
+                                {$i18n.t(
+                                    'discover.popup-no-container-engines.no-container-engine-available'
+                                )}
+                            </p>
+                            <div class="arrow variant-filled-warning" />
+                        </div>
+                    {:else}
+                        <button
+                            type="button"
+                            class="btn variant-filled-primary font-semibold"
+                            on:click={() => installApp(app)}
+                        >
+                            <HardDriveDownload class="mr-2" />
+                            {$i18n.t('discover.install')}
+                        </button>
+                    {/if}
                 </div>
             </div>
-        </a>
+        </div>
     {/each}
 </div>
 <!-- sort by creation time newest to oldest -->
