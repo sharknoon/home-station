@@ -14,7 +14,8 @@
             "container-engines": "Container engines",
             "domains-and-hostnames": "Domains and hostnames",
             "system": "System",
-            "tasks": "Tasks"
+            "tasks": "Tasks",
+            "logs": "Logs"
         },
         "toast-missing-mount": "The path \"{{- path}}\" was not mounted properly. All data will be lost when the container is stopped or restarted.",
         "search": "Search for apps and settings",
@@ -54,6 +55,7 @@
         "popup-no-container-engines": {
             "no-container-engine-available": "No container engine available"
         },
+        "installing": "Installing...",
         "app-info-modal": {
             "additional-information": "Additional information",
             "id": "ID",

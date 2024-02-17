@@ -10,7 +10,7 @@ import { join } from 'node:path';
 
 export const load = (async () => {
     const apps = await db.query.availableApps.findMany({
-        with: { appRepository: { columns: { url: true } } }
+        with: { appRepository: { columns: { id: true, url: true } } }
     });
     const appRepositories = await db.query.appRepositories.findMany({
         columns: { password: false }
@@ -67,15 +67,18 @@ export const actions: Actions = {
             return fail(400, { containerEngineId, notFound: true });
         }
 
+        
         const dockerode = await getEngine(containerEngine);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const dockerodeCompose = new DockerodeCompose(
             dockerode,
             join(getAppPath(app), "compose.yml"),
             `${app.appRepositoryId}_${app.id}`
         );
 
-        dockerodeCompose.up();
+        //dockerodeCompose.up();
 
+        console.debug(appId, appRepositoryId, containerEngineId);
         // TODO check if the repository and container engine exist
 
         // TODO create app

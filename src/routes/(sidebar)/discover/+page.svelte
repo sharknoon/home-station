@@ -7,7 +7,7 @@
     import ExternalLink from 'lucide-svelte/icons/external-link';
     import type { PageData } from './$types';
     //import ColorThief from 'colorthief/dist/color-thief.modern.mjs';
-    import { getModalStore, popup } from '@skeletonlabs/skeleton';
+    import { ProgressRadial, getModalStore, popup } from '@skeletonlabs/skeleton';
     import AppInfoModal from './AppInfoModal.svelte';
     import ContainerEnginesModal from './ContainerEnginesModal.svelte';
     import i18n, { ls } from '$lib/i18n';
@@ -15,32 +15,12 @@
     import Plus from 'lucide-svelte/icons/plus';
     import Pencil from 'lucide-svelte/icons/pencil';
     import { enhance } from '$app/forms';
-    import type { availableApps } from '$lib/server/schema';
-
-    type App = typeof availableApps.$inferSelect;
 
     export let data: PageData;
 
     const modalStore = getModalStore();
 
-    async function installApp(app: App) {
-        if (data.containerEngines.length === 0) {
-            return;
-        }
-        let selectedEngine = data.containerEngines[0].id;
-        if (data.containerEngines.length > 1) {
-            selectedEngine = await new Promise<number>((resolve) => {
-                modalStore.trigger({
-                    type: 'component',
-                    component: {
-                        ref: ContainerEnginesModal,
-                        props: { availableContainerEngines: data.containerEngines }
-                    },
-                    response: (e: number) => resolve(e)
-                });
-            });
-        }
-    }
+    let appsLoading: string[] = [];
 </script>
 
 <div class="flex justify-end">
@@ -57,7 +37,7 @@
             {#each data.appRepositories as appRepository}
                 <li>
                     <form method="post" class="flex items-center gap-1" use:enhance>
-                        <input type="hidden" name="id" value={appRepository.id}>
+                        <input type="hidden" name="id" value={appRepository.id} />
                         <span class="mr-2">{appRepository.url}</span>
                         <!-- TODO -->
                         <button disabled class="btn-icon"><Pencil /></button>
@@ -136,7 +116,19 @@
             </div>
             <hr />
             <div class="p-4">
-                <div class="flex justify-between">
+                <form
+                    method="post"
+                    class="flex justify-between"
+                    use:enhance={() => {
+                        appsLoading = [...appsLoading, app.id];
+                        return async ({ update }) => {
+                            appsLoading = appsLoading.filter((id) => id !== app.id);
+                            update();
+                        };
+                    }}
+                >
+                    <input type="hidden" name="appId" value={app.id} />
+                    <input type="hidden" name="appRepositoryId" value={app.appRepository.id} />
                     <button
                         type="button"
                         class="btn btn-icon variant-soft"
@@ -177,17 +169,62 @@
                             </p>
                             <div class="arrow variant-filled-warning" />
                         </div>
+                    {:else if data.containerEngines.length === 1}
+                        <input
+                            type="hidden"
+                            name="containerEngineId"
+                            value={data.containerEngines[0].id}
+                        />
+                        <button
+                            type="submit"
+                            formaction="?/installApp"
+                            class="btn variant-filled-primary font-semibold"
+                        >
+                            {#if appsLoading.includes(app.id)}
+                                <ProgressRadial
+                                    class="h-6 w-6 mr-2 -ml-2"
+                                    stroke={100}
+                                    meter="stroke-surface-50 dark:stroke-surface-900"
+                                    value={undefined}
+                                />
+                                {$i18n.t('discover.installing')}
+                            {:else}
+                                <HardDriveDownload class="mr-2" />
+                                {$i18n.t('discover.install')}
+                            {/if}
+                        </button>
                     {:else}
                         <button
                             type="button"
                             class="btn variant-filled-primary font-semibold"
-                            on:click={() => installApp(app)}
+                            on:click={() =>
+                                modalStore.trigger({
+                                    type: 'component',
+                                    component: {
+                                        ref: ContainerEnginesModal,
+                                        props: {
+                                            appId: app.id,
+                                            appRepositoryId: app.appRepository.id,
+                                            availableContainerEngines: data.containerEngines
+                                        }
+                                    }
+                                })}
                         >
-                            <HardDriveDownload class="mr-2" />
-                            {$i18n.t('discover.install')}
+                            {#if appsLoading.includes(app.id)}
+                                <ProgressRadial
+                                    class="h-6 w-6 mr-2 -ml-2"
+                                    stroke={100}
+                                    meter="stroke-surface-50 dark:stroke-surface-900"
+                                    value={undefined}
+                                />
+                                {$i18n.t('discover.installing')}
+                            {:else}
+                                <HardDriveDownload class="mr-2" />
+                                {$i18n.t('discover.install')}
+                            {/if}
                         </button>
                     {/if}
-                </div>
+                </form>
             </div>
         </div>
     {/each}

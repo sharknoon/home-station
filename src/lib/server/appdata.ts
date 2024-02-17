@@ -14,15 +14,17 @@ const fallbackContainerAppDataPath = '/app/tmp';
 
 if (PUBLIC_CONTAINERIZED === 'true') {
     appDataPath = containerAppDataPath;
-    if (!(await exists(appDataPath)) && !building) {
-        logger.warn(
-            "Running in container, but the data directory isn't mounted. Using fallback path!"
-        );
-        logger.warn('-----------------------------------------------------');
-        logger.warn('| ALL DATA WILL BE LOST WHEN THE SERVER STOPS!      |');
-        logger.warn('| Please mount the "/app/data" directory like this: |');
-        logger.warn('| docker run -v /path/to/data:/app/data ...         |');
-        logger.warn('-----------------------------------------------------');
+    if (!(await exists(appDataPath))) {
+        if (!building) {
+            logger.warn(
+                "Running in container, but the data directory isn't mounted. Using fallback path!"
+            );
+            logger.warn('-----------------------------------------------------');
+            logger.warn('| ALL DATA WILL BE LOST WHEN THE SERVER STOPS!      |');
+            logger.warn('| Please mount the "/app/data" directory like this: |');
+            logger.warn('| docker run -v /path/to/data:/app/data ...         |');
+            logger.warn('-----------------------------------------------------');
+        }
         appDataPath = fallbackContainerAppDataPath;
         await fs.mkdir(appDataPath, { recursive: true });
     }

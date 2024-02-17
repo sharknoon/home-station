@@ -79,7 +79,10 @@
                 },
                 {
                     title: $i18n.t('sidebar.settings.system'),
-                    list: [{ label: $i18n.t('sidebar.settings.tasks'), href: '/settings/tasks' }]
+                    list: [
+                        { label: $i18n.t('sidebar.settings.tasks'), href: '/settings/tasks' },
+                        { label: $i18n.t('sidebar.settings.logs'), href: '/settings/logs' }
+                    ]
                 }
             ]
         }

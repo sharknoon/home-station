@@ -20,9 +20,10 @@ try {
         sqlite = new DatabaseConstructor(databasePath);
     } else {
         sqlite = new DatabaseConstructor(':memory:');
-        logger.warn(
-            'Connecting to the database in memory. All data will be lost when the server stops!'
-        );
+        logger.info('Connecting to the database in memory');
+        if (!building) {
+            logger.warn('All data will be lost when the server stops!');
+        }
     }
     db = drizzle(sqlite, { schema });
     logger.info('Successfully connected to the database');
