@@ -1,6 +1,10 @@
 import dns from 'node:dns/promises';
 import http from 'node:http';
 
+/**
+ * Returns the public IP address of this server
+ * @returns The public IP address
+ */
 export async function getPublicIp(): Promise<string> {
     return new Promise((resolve, reject) => {
         http.get({ host: 'api.ipify.org', port: 80, path: '/' }, (resp) => {

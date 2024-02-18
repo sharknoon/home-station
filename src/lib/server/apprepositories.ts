@@ -92,11 +92,16 @@ await fs.mkdir(appReposPath, { recursive: true });
  * Returns the path to the local cloned app repository
  * @param appRepository The apprepository object from the database
  * @returns The path to the local cloned app repository
-*/
+ */
 export function getAppRepositoryPath(appRepository: AppRepository): string {
     return path.join(appReposPath, appRepository.id);
 }
 
+/**
+ * Returns the path to a specific app in the local cloned app repository
+ * @param app The app object from the database
+ * @returns The path to the app in the local cloned app repository
+ */
 export function getAppPath(app: AvailableApp): string {
     return path.join(appReposPath, app.appRepositoryId, 'apps', app.id);
 }
@@ -105,7 +110,7 @@ function createAppRepositoryId(url: string): string {
     return url
         .replace('https://', '')
         .replace('http://', '')
-        .replace(/\.git$/, "")
+        .replace(/\.git$/, '')
         .replace(/[^a-z0-9]/gi, '_')
         .toLowerCase();
 }
@@ -138,7 +143,10 @@ export async function createAppRepository(
 
     const id = createAppRepositoryId(url);
 
-    await db.insert(appRepositories).values({ id, url, username, password }).onConflictDoNothing();
+    await db.insert(appRepositories).values({ id, url, username, password }).onConflictDoUpdate({
+        target: appRepositories.id,
+        set: { url, username, password }
+    });
 }
 
 /**
@@ -249,7 +257,11 @@ async function loadAppFromFiles(appYamlPath: string): Promise<App> {
  * @param password An optional password or token
  * @returns A promise that resolves to true if the credentials are valid, false otherwise
  */
-function testCredentials(url: string, username?: string, password?: string): Promise<boolean> {
+async function testCredentials(
+    url: string,
+    username?: string,
+    password?: string
+): Promise<boolean> {
     return new Promise((resolve) => {
         getRemoteInfo2({
             http,
@@ -257,6 +269,8 @@ function testCredentials(url: string, username?: string, password?: string): Pro
             onAuthFailure: () => resolve(false),
             onAuthSuccess: () => resolve(true),
             url
-        });
+        })
+            .catch(() => resolve(false))
+            .then(() => resolve(true));
     });
 }

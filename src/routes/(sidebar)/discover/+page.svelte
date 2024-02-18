@@ -1,20 +1,19 @@
 <script lang="ts">
+    import { enhance } from '$app/forms';
+    import type { PageData } from './$types';
+    import { ProgressRadial, getModalStore, popup } from '@skeletonlabs/skeleton';
     import Globe from 'lucide-svelte/icons/globe';
     import HardDriveDownload from 'lucide-svelte/icons/hard-drive-download';
     import Info from 'lucide-svelte/icons/info';
     import LibraryBig from 'lucide-svelte/icons/library-big';
     import Code from 'lucide-svelte/icons/code';
     import ExternalLink from 'lucide-svelte/icons/external-link';
-    import type { PageData } from './$types';
-    //import ColorThief from 'colorthief/dist/color-thief.modern.mjs';
-    import { ProgressRadial, getModalStore, popup } from '@skeletonlabs/skeleton';
-    import AppInfoModal from './AppInfoModal.svelte';
-    import ContainerEnginesModal from './ContainerEnginesModal.svelte';
-    import i18n, { ls } from '$lib/i18n';
     import Trash2 from 'lucide-svelte/icons/trash-2';
     import Plus from 'lucide-svelte/icons/plus';
     import Pencil from 'lucide-svelte/icons/pencil';
-    import { enhance } from '$app/forms';
+    import i18n, { ls } from '$lib/i18n';
+    import AppInfoModal from './AppInfoModal.svelte';
+    import ContainerEnginesModal from './ContainerEnginesModal.svelte';
 
     export let data: PageData;
 

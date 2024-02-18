@@ -11,17 +11,19 @@ import logger from '$lib/server/logger';
 export let sqlite: Database;
 export let db: BetterSQLite3Database<typeof schema>;
 
+const testing = process.env.NODE_ENV === 'test';
+
 // Create the connection to the better-sqlite3 database and run migrations
 try {
     const appDataPersitency = await getAppDataPersistency();
-    if (appDataPersitency.isPersistent && !building) {
+    if (appDataPersitency.isPersistent && !building && !testing) {
         const databasePath = path.join(appDataPersitency.currentAppDataPath, 'db.sqlite');
         logger.info(`Connecting to the database "${databasePath}"`);
         sqlite = new DatabaseConstructor(databasePath);
     } else {
         sqlite = new DatabaseConstructor(':memory:');
         logger.info('Connecting to the database in memory');
-        if (!building) {
+        if (!building && !testing) {
             logger.warn('All data will be lost when the server stops!');
         }
     }
