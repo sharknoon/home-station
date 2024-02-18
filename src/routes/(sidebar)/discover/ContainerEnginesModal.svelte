@@ -1,15 +1,15 @@
 <script lang="ts">
     import type { SvelteComponent } from 'svelte';
-    import X from 'lucide-svelte/icons/x';
-    import type { containerEngines } from '$lib/server/schema';
-    import i18n from '$lib/i18n';
     import { enhance } from '$app/forms';
+    import X from 'lucide-svelte/icons/x';
+    import type { ContainerEngine } from '$lib/server/containerengines';
+    import i18n from '$lib/i18n';
 
-    type ContainerEngine = Pick<typeof containerEngines.$inferSelect, 'id' | 'name' | 'type'>;
+    type AvailableContainerEngine = Pick<ContainerEngine, 'id' | 'name' | 'type'>;
 
     export let appId: string;
-    export let appRepositoryId: string;
-    export let availableContainerEngines: ContainerEngine[];
+    export let marketplaceId: string;
+    export let availableContainerEngines: AvailableContainerEngine[];
     export let parent: SvelteComponent;
 
     let form: HTMLFormElement | null = null;
@@ -29,7 +29,7 @@
         use:enhance
     >
         <input type="hidden" name="appId" value={appId} />
-        <input type="hidden" name="appRepositoryId" value={appRepositoryId} />
+        <input type="hidden" name="marketplaceId" value={marketplaceId} />
         {#each availableContainerEngines as engine}
             <label>
                 <input

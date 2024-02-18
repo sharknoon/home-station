@@ -1,24 +1,24 @@
 import type { Actions, PageServerLoad } from './$types';
 import db from '$lib/server/db';
 import { fail } from '@sveltejs/kit';
-import { deleteAppRepository, getAppPath } from '$lib/server/apprepositories';
-import { availableApps, containerEngines } from '$lib/server/schema';
+import { deleteMarketplace, getMarketplaceAppPath } from '$lib/server/marketplaces';
+import { marketplaceApps, containerEngines, apps } from '$lib/server/schema';
 import { and, eq } from 'drizzle-orm';
 import DockerodeCompose from 'dockerode-compose';
 import { getEngine } from '$lib/server/containerengines';
 import { join } from 'node:path';
 
 export const load = (async () => {
-    const apps = await db.query.availableApps.findMany({
-        with: { appRepository: { columns: { id: true, url: true } } }
+    const marketplaceApps = await db.query.marketplaceApps.findMany({
+        with: { marketplace: { columns: { id: true, gitRemoteUrl: true } } }
     });
-    const appRepositories = await db.query.appRepositories.findMany({
-        columns: { password: false }
+    const marketplaces = await db.query.marketplaces.findMany({
+        columns: { gitPassword: false }
     });
     const containerEngines = await db.query.containerEngines.findMany({
         columns: { id: true, name: true, type: true }
     });
-    return { apps, appRepositories, containerEngines };
+    return { marketplaceApps, marketplaces, containerEngines };
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
@@ -32,34 +32,34 @@ export const actions: Actions = {
 
         // TODO check if the repository is used by an app
 
-        await deleteAppRepository(id);
+        await deleteMarketplace(id);
     },
     installApp: async ({ request }) => {
+        // Get necessary data
         const data = await request.formData();
         const appId = data.get('appId')?.toString() ?? '';
-        const appRepositoryId = data.get('appRepositoryId')?.toString() ?? '';
+        const marketplaceId = data.get('marketplaceId')?.toString() ?? '';
         const containerEngineId = parseInt(data.get('containerEngineId')?.toString() ?? '');
 
+        // Validation
         if (!appId) {
             return fail(400, { appId, invalid: true });
         }
-        if (!appRepositoryId) {
-            return fail(400, { appRepositoryId, invalid: true });
+        if (!marketplaceId) {
+            return fail(400, { marketplaceId, invalid: true });
         }
         if (!containerEngineId) {
             return fail(400, { containerEngineId, invalid: true });
         }
-
-        const app = await db.query.availableApps.findFirst({
+        const marketplaceApp = await db.query.marketplaceApps.findFirst({
             where: and(
-                eq(availableApps.id, appId),
-                eq(availableApps.appRepositoryId, appRepositoryId)
+                eq(marketplaceApps.appId, appId),
+                eq(marketplaceApps.marketplaceId, marketplaceId)
             )
         });
-        if (!app) {
+        if (!marketplaceApp) {
             return fail(400, { appId, notFound: true });
         }
-
         const containerEngine = await db.query.containerEngines.findFirst({
             where: eq(containerEngines.id, containerEngineId)
         });
@@ -67,18 +67,27 @@ export const actions: Actions = {
             return fail(400, { containerEngineId, notFound: true });
         }
 
-        
+        // Install the app
+        await db
+            .insert(apps)
+            .values({
+                appId: marketplaceApp.appId,
+                marketplaceId: marketplaceApp.marketplaceId,
+                containerEngineId: containerEngine.id,
+                installedAt: Date.now()
+            })
+            .onConflictDoNothing();
         const dockerode = await getEngine(containerEngine);
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const dockerodeCompose = new DockerodeCompose(
             dockerode,
-            join(getAppPath(app), "compose.yml"),
-            `${app.appRepositoryId}_${app.id}`
+            join(getMarketplaceAppPath(marketplaceApp), 'compose.yml'),
+            `${marketplaceApp.marketplaceId}_${marketplaceApp.appId}`
         );
 
         //dockerodeCompose.up();
 
-        console.debug(appId, appRepositoryId, containerEngineId);
+        console.debug(appId, marketplaceId, containerEngineId);
         // TODO check if the repository and container engine exist
 
         // TODO create app

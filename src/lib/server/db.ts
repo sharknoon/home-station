@@ -4,7 +4,7 @@ import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
 import DatabaseConstructor, { type Database } from 'better-sqlite3';
 import * as schema from '$lib/server/schema';
 import { getAppDataPersistency } from '$lib/server/appdata';
-import { appRepositories } from '$lib/server/schema';
+import { marketplaces } from '$lib/server/schema';
 import { building } from '$app/environment';
 import logger from '$lib/server/logger';
 
@@ -34,7 +34,7 @@ try {
     migrate(db, { migrationsFolder: 'drizzle' });
     logger.info('Migrations completed');
 } catch (error) {
-    logger.emerg('Failed to connect to the database: ' + error);
+    logger.error('Failed to connect to the database: ' + error);
     process.exit(1);
 }
 
@@ -44,14 +44,15 @@ try {
     if (!(await db.query.users.findFirst())) {
         logger.info('Seeding the database');
 
-        // Add the default app repository
-        if (!(await db.query.appRepositories.findFirst())) {
-            await db.insert(appRepositories).values({
-                id: 'github_com_home_station_org_apps',
-                url: 'https://github.com/home-station-org/apps.git',
+        // Add the default marketplace
+        if (!(await db.query.marketplaces.findFirst())) {
+            await db.insert(marketplaces).values({
+                id: 'github-com-home-station-org-apps',
+                gitRemoteUrl: 'https://github.com/home-station-org/apps.git',
                 // TODO remove username and token once public
-                username: 'Sharknoon',
-                password: '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'
+                gitPassword: 'Sharknoon',
+                gitUsername:
+                    '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'
             });
         }
 

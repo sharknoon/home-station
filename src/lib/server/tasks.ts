@@ -1,6 +1,6 @@
 import { writable, type Writable } from 'svelte/store';
 import cron, { CronJob } from 'cron';
-import { updateAvailableApps } from '$lib/server/apprepositories';
+import { updateMarketplaceApps } from '$lib/server/marketplaces';
 import { dev } from '$app/environment';
 import { throttle } from '$lib/server/utils';
 import { deleteExpiredSessions } from '$lib/server/auth';
@@ -8,7 +8,7 @@ import logger from '$lib/server/logger';
 
 export type Task = {
     /** NEVER change this ID, it is used to identify the task in the database */
-    id: 'update-available-apps' | 'delete-expired-sessions' | 'test';
+    id: 'update-marketplace-apps' | 'delete-expired-sessions' | 'test';
     schedule: string;
     runImmediately?: boolean;
     /** Do not call this directly, use executeTask() instead */
@@ -27,11 +27,11 @@ export type TaskStats = {
 
 export const tasks: Task[] = [
     {
-        // t('tasks.update-available-apps') This is for i18next to automatically create a locale file entry
-        id: 'update-available-apps',
+        // t('tasks.update-marketplace-apps') This is for i18next to automatically create a locale file entry
+        id: 'update-marketplace-apps',
         schedule: '*/30 * * * *',
         runImmediately: true,
-        handler: updateAvailableApps,
+        handler: updateMarketplaceApps,
         stats: getDefaultStats('*/30 * * * *')
     },
     {

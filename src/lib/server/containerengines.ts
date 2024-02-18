@@ -1,7 +1,7 @@
 import Docker from 'dockerode';
 import type { containerEngines } from './schema';
 
-type ContainerEngine = typeof containerEngines.$inferSelect;
+export type ContainerEngine = typeof containerEngines.$inferSelect;
 
 export async function getEngine(engine: ContainerEngine): Promise<Docker> {
     switch (engine?.type ?? 'local') {

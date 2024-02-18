@@ -72,7 +72,7 @@ export async function getAppDataPersistency(): Promise<{
 }
 
 /**
- * Gets the path to the app data directory to store application data like the database, cloned app repositories, etc.
+ * Gets the path to the app data directory to store application data like the database, cloned marketplace repositories, etc.
  * @returns The path to the app data directory
  */
 export async function getAppDataPath(): Promise<string> {

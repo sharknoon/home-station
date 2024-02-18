@@ -1,13 +1,11 @@
 <script lang="ts">
-    import type { availableApps } from '$lib/server/schema';
     import X from 'lucide-svelte/icons/x';
     import type { SvelteComponent } from 'svelte';
     import i18n from '$lib/i18n';
+    import type { MarketplaceApp } from '$lib/server/marketplaces';
 
-    type App = typeof availableApps.$inferSelect;
-
-    export let app: App;
-    export let appRepositoryUrl: string;
+    export let marketplaceApp: MarketplaceApp;
+    export let marketplaceUrl: string;
     export let parent: SvelteComponent;
 
     const dateTimeFormatter = new Intl.DateTimeFormat($i18n.language, {
@@ -21,14 +19,14 @@
 <div class="card variant-filled shadow-2xl p-4 relative">
     <h3 class="h3">{$i18n.t('discover.app-info-modal.additional-information')}</h3>
     <button class="absolute top-2 right-2 btn btn-icon" on:click={parent.onClose}><X /></button>
-    <div>{$i18n.t('discover.app-info-modal.id')}: <code>{app.id}</code></div>
+    <div>{$i18n.t('discover.app-info-modal.id')}: <code>{marketplaceApp.appId}</code></div>
     <div>
         {$i18n.t('discover.app-info-modal.published-at')}: {dateTimeFormatter.format(
-            new Date(app.publishedAt)
+            new Date(marketplaceApp.publishedAt)
         )}
     </div>
     <div>
-        {$i18n.t('discover.app-info-modal.app-repository')}:
-        <a href={appRepositoryUrl} target="_blank" class="anchor">{appRepositoryUrl}</a>
+        {$i18n.t('discover.app-info-modal.marketplace')}:
+        <a href={marketplaceUrl} target="_blank" class="anchor">{marketplaceUrl}</a>
     </div>
 </div>

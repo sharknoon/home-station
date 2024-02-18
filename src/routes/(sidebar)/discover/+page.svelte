@@ -26,18 +26,18 @@
     <button
         type="button"
         class="btn-icon variant-soft"
-        use:popup={{ event: 'click', target: 'popupAppRepositories', placement: 'bottom-end' }}
+        use:popup={{ event: 'click', target: 'popupMarketplaces', placement: 'bottom-end' }}
     >
         <LibraryBig />
     </button>
-    <div class="card p-4 max-w-[36rem] shadow-xl space-y-2" data-popup="popupAppRepositories">
-        <h3 class="h3">{$i18n.t('discover.app-repositories')}</h3>
+    <div class="card p-4 max-w-[36rem] shadow-xl space-y-2" data-popup="popupMarketplaces">
+        <h3 class="h3">{$i18n.t('discover.marketplaces')}</h3>
         <ul class="list">
-            {#each data.appRepositories as appRepository}
+            {#each data.marketplaces as marketplace}
                 <li>
                     <form method="post" class="flex items-center gap-1" use:enhance>
-                        <input type="hidden" name="id" value={appRepository.id} />
-                        <span class="mr-2">{appRepository.url}</span>
+                        <input type="hidden" name="id" value={marketplace.id} />
+                        <span class="mr-2">{marketplace.gitRemoteUrl}</span>
                         <!-- TODO -->
                         <button disabled class="btn-icon"><Pencil /></button>
                         <button
@@ -51,14 +51,14 @@
         <!-- TODO -->
         <button disabled class="btn btn-sm variant-filled-secondary space-x-2">
             <Plus />
-            <span>{$i18n.t('discover.add-app-repository')}</span>
+            <span>{$i18n.t('discover.add-marketplace')}</span>
         </button>
         <div class="arrow bg-surface-100-800-token" />
     </div>
 </div>
 
 <div class="grid grid-cols-4 gap-4">
-    {#each data.apps as app}
+    {#each data.marketplaceApps as app}
         <div class="card card-hover overflow-hidden">
             <header class="h-24 max-h-24 p-2 bg-white">
                 <div
@@ -119,15 +119,15 @@
                     method="post"
                     class="flex justify-between"
                     use:enhance={() => {
-                        appsLoading = [...appsLoading, app.id];
+                        appsLoading = [...appsLoading, app.appId];
                         return async ({ update }) => {
-                            appsLoading = appsLoading.filter((id) => id !== app.id);
+                            appsLoading = appsLoading.filter((id) => id !== app.appId);
                             update();
                         };
                     }}
                 >
-                    <input type="hidden" name="appId" value={app.id} />
-                    <input type="hidden" name="appRepositoryId" value={app.appRepository.id} />
+                    <input type="hidden" name="appId" value={app.appId} />
+                    <input type="hidden" name="marketplaceId" value={app.marketplace.id} />
                     <button
                         type="button"
                         class="btn btn-icon variant-soft"
@@ -136,7 +136,7 @@
                                 type: 'component',
                                 component: {
                                     ref: AppInfoModal,
-                                    props: { app, appRepositoryUrl: app.appRepository.url }
+                                    props: { app, marketplaceUrl: app.marketplace.gitRemoteUrl }
                                 }
                             });
                         }}
@@ -179,7 +179,7 @@
                             formaction="?/installApp"
                             class="btn variant-filled-primary font-semibold"
                         >
-                            {#if appsLoading.includes(app.id)}
+                            {#if appsLoading.includes(app.appId)}
                                 <ProgressRadial
                                     class="h-6 w-6 mr-2 -ml-2"
                                     stroke={100}
@@ -202,14 +202,14 @@
                                     component: {
                                         ref: ContainerEnginesModal,
                                         props: {
-                                            appId: app.id,
-                                            appRepositoryId: app.appRepository.id,
+                                            appId: app.appId,
+                                            marketplaceId: app.marketplace.id,
                                             availableContainerEngines: data.containerEngines
                                         }
                                     }
                                 })}
                         >
-                            {#if appsLoading.includes(app.id)}
+                            {#if appsLoading.includes(app.appId)}
                                 <ProgressRadial
                                     class="h-6 w-6 mr-2 -ml-2"
                                     stroke={100}

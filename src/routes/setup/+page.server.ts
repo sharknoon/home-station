@@ -5,10 +5,7 @@ import db from '$lib/server/db';
 import { lucia } from '$lib/server/auth';
 import { containerEngines, users, hostnames } from '$lib/server/schema';
 import { detectHostnames } from '$lib/server/network';
-import {
-    testLocalConnection,
-    testRemoteConnection
-} from '$lib/server/containerengines';
+import { testLocalConnection, testRemoteConnection } from '$lib/server/containerengines';
 import { generateId } from 'lucia';
 import bcrypt from 'bcrypt';
 

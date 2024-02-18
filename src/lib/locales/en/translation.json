@@ -1,6 +1,6 @@
 {
     "tasks": {
-        "update-available-apps": "Fetch apps from app repositories",
+        "update-marketplace-apps": "Fetch apps from marketplaces",
         "delete-expired-sessions": "Delete expired login-sessions",
         "test": "[DEV] Test task"
     },
@@ -45,8 +45,8 @@
         }
     },
     "discover": {
-        "app-repositories": "App repositories",
-        "add-app-repository": "Add app repository",
+        "marketplaces": "Marketplace",
+        "add-marketplace": "Add marketplace",
         "links": {
             "website": "Website",
             "repository": "Repository"
@@ -60,7 +60,7 @@
             "additional-information": "Additional information",
             "id": "ID",
             "published-at": "Published at",
-            "app-repository": "App repository"
+            "marketplace": "Marketplace"
         },
         "container-engines-modal": {
             "select-engine": "Select container engine",
