@@ -41,15 +41,20 @@ try {
 // Seed the database
 try {
     // Only seed the database if it's empty
-    if (!(await db.query.users.findFirst()) && !(await db.query.appRepositories.findFirst())) {
-        // TODO remove and delete token once public
+    if (!(await db.query.users.findFirst())) {
         logger.info('Seeding the database');
-        await db.insert(appRepositories).values({
-            id: 'github_com_sharknoon_home_station',
-            url: 'https://github.com/Sharknoon/home-station.git',
-            username: 'Sharknoon',
-            password: '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'
-        });
+
+        // Add the default app repository
+        if (!(await db.query.appRepositories.findFirst())) {
+            await db.insert(appRepositories).values({
+                id: 'github_com_home_station_org_apps',
+                url: 'https://github.com/home-station-org/apps.git',
+                // TODO remove username and token once public
+                username: 'Sharknoon',
+                password: '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'
+            });
+        }
+
         logger.info('Successfully seeded the database');
     }
 } catch (error) {

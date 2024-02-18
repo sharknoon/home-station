@@ -1,6 +1,6 @@
 services:
     home-station:
-        #image: ghcr.io/sharknoon/home-station:latest
+        #image: ghcr.io/home-station-org/home-station:latest
         build:
             context: .
         ports:

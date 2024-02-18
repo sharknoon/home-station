@@ -1,10 +1,23 @@
-import { describe, it, expect } from 'vitest';
-import { createAppRepository, deleteAppRepository, getAppPath, getAppRepositoryPath } from './apprepositories';
+import { describe, it, expect, afterEach } from 'vitest';
+import {
+    createAppRepository,
+    deleteAppRepository,
+    getAppPath,
+    getAppRepositoryPath,
+    updateAvailableApps
+} from './apprepositories';
 import { getAppDataPath } from './appdata';
 import path from 'node:path';
 import db from './db';
 import { eq } from 'drizzle-orm';
-import { appRepositories } from './schema';
+import { appRepositories, availableApps } from './schema';
+import fs from 'fs/promises';
+
+afterEach(async () => {
+    await db.delete(appRepositories);
+    const appReposPath = path.join(await getAppDataPath(), 'appRepositories')
+    await fs.rm(appReposPath, { recursive: true, force: true });
+});
 
 describe('getAppRepositoryPath', () => {
     it('should return the correct path', async () => {
@@ -53,10 +66,13 @@ describe('createAppRepository', () => {
 
     it('should create a new app repository with authentication', async () => {
         // Test input
-        const url = 'https://github.com/Sharknoon/home-station.git';
-        // TODO remove once public
+        const url = 'https://github.com/home-station-org/private-repository-access-test.git';
         const username = 'Sharknoon';
-        const password = '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';
+        // This token is heavily restricted and only used for testing purposes
+        // It has only access to the empty repository "home-station-org/private-repository-access-test"
+        // The following access rights were granted: repository contents read-only, metadata read-only
+        const password =
+            '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';
 
         // Call the function to be tested
         await createAppRepository(url, username, password);
@@ -66,7 +82,9 @@ describe('createAppRepository', () => {
             where: eq(appRepositories.url, url)
         });
         expect(newAppRepositoriy).not.toBe(null);
-        expect(newAppRepositoriy?.id).toBe('github_com_sharknoon_home_station');
+        expect(newAppRepositoriy?.id).toBe(
+            'github_com_home_station_org_private_repository_access_test'
+        );
         expect(newAppRepositoriy!.url).toBe(url);
         expect(newAppRepositoriy!.username).toBe(username);
         expect(newAppRepositoriy!.password).toBe(password);
@@ -110,7 +128,9 @@ describe('deleteAppRepository', () => {
         // Test preparation
         const url = 'https://github.com/octocat/Hello-World.git';
         await createAppRepository(url);
-        expect(await db.query.appRepositories.findFirst({ where: eq(appRepositories.url, url) })).toBeTruthy();
+        expect(
+            await db.query.appRepositories.findFirst({ where: eq(appRepositories.url, url) })
+        ).toBeTruthy();
 
         // Call the function to be tested
         await deleteAppRepository('github_com_octocat_hello_world');
@@ -120,5 +140,34 @@ describe('deleteAppRepository', () => {
             where: eq(appRepositories.id, 'github_com_octocat_hello_world')
         });
         expect(deletedAppRepository).toBeFalsy();
+    });
+});
+
+describe('updateAvailableApps', () => {
+    it('should update the available apps', async () => {
+        // Test preparation
+        const url = 'https://github.com/home-station-org/apps.git';
+        // TODO remove once public
+        const username = 'Sharknoon';
+        const password =
+            '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';
+        await createAppRepository(url, username, password);
+
+        expect(
+            await db.query.appRepositories.findFirst({ where: eq(appRepositories.url, url) })
+        ).toBeTruthy();
+
+        // Call the function to be tested
+        await updateAvailableApps(() => {});
+
+        // Assert the expected behavior or outcome
+        const path = getAppRepositoryPath({ id: 'github_com_home_station_org_apps', url });
+        expect(await fs.stat(path)).toBeTruthy();
+        expect(await fs.stat(path + '/apps')).toBeTruthy();
+        expect((await fs.readdir(path + '/apps')).length).toBeGreaterThan(0);
+        const apps = await db.query.availableApps.findMany({
+            where: eq(availableApps.appRepositoryId, 'github_com_home_station_org_apps')
+        });
+        expect(apps.length).toBeGreaterThan(0);
     });
 });

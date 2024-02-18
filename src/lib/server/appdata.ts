@@ -2,8 +2,11 @@ import { PUBLIC_CONTAINERIZED } from '$env/static/public';
 import { building } from '$app/environment';
 import path from 'node:path';
 import fs from 'node:fs/promises';
+import os from 'node:os';
 import { exists } from '$lib/server/utils';
 import logger from '$lib/server/logger';
+
+const testing = process.env.NODE_ENV === 'test';
 
 // This is the main app path. In a container it must be mounted as a volume
 let appDataPath: string;
@@ -30,21 +33,11 @@ if (PUBLIC_CONTAINERIZED === 'true') {
     }
     logger.info(`Running in container, using "${appDataPath}" as data directory`);
 } else {
-    let homePath;
-    switch (process.platform) {
-        case 'win32':
-            homePath = process.env.APPDATA;
-            break;
-        default:
-            homePath = process.env.HOME;
+    if (!testing) {
+        appDataPath = path.join(os.homedir(), '.home-station');
+    } else {
+        appDataPath = path.join(os.tmpdir(), '.home-station');
     }
-    if (!homePath) {
-        logger.error(
-            'Could not find app-data/home directory path. Please make sure that the environment variable "HOME" (macOS/Linux) or "APPDATA" (Windows) is set.'
-        );
-        process.exit(1);
-    }
-    appDataPath = path.join(homePath, '.home-station');
     await fs.mkdir(appDataPath, { recursive: true });
     logger.info(`Running on "${process.platform}", using "${appDataPath}" as data directory`);
 }

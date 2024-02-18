@@ -249,7 +249,7 @@
                 {/each}
                 <svelte:fragment slot="trail">
                     <AppRailAnchor
-                        href="https://github.com/Sharknoon/home-station"
+                        href="https://github.com/home-station-org/home-station"
                         target="_blank"
                         title="GitHub"
                     >
