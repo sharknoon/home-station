@@ -30,29 +30,38 @@
     >
         <LibraryBig />
     </button>
-    <div class="card p-4 max-w-[36rem] shadow-xl space-y-2" data-popup="popupMarketplaces">
-        <h3 class="h3">{$i18n.t('discover.marketplaces')}</h3>
-        <ul class="list">
-            {#each data.marketplaces as marketplace}
-                <li>
-                    <form method="post" class="flex items-center gap-1" use:enhance>
-                        <input type="hidden" name="id" value={marketplace.id} />
-                        <span class="mr-2">{marketplace.gitRemoteUrl}</span>
-                        <!-- TODO -->
-                        <button disabled class="btn-icon"><Pencil /></button>
-                        <button
-                            formaction="?/deleteRepository"
-                            class="btn-icon text-error-500-400-token"><Trash2 /></button
-                        >
-                    </form>
-                </li>
-            {/each}
-        </ul>
-        <!-- TODO -->
-        <button disabled class="btn btn-sm variant-filled-secondary space-x-2">
-            <Plus />
-            <span>{$i18n.t('discover.add-marketplace')}</span>
-        </button>
+    <div class="card p-4 max-w-[36rem] shadow-xl" data-popup="popupMarketplaces">
+        <div class="space-y-2">
+            <h3 class="h3">{$i18n.t('discover.marketplaces')}</h3>
+            <ul class="list">
+                {#each data.marketplaces as marketplace}
+                    <li>
+                        <form method="post" class="flex items-center gap-1" use:enhance>
+                            <input type="hidden" name="id" value={marketplace.id} />
+                            <span class="mr-2">{marketplace.gitRemoteUrl}</span>
+                            <!-- TODO -->
+                            <button disabled class="btn-icon"><Pencil /></button>
+                            <button
+                                formaction="?/deleteRepository"
+                                class="btn-icon text-error-500-400-token"><Trash2 /></button
+                            >
+                        </form>
+                    </li>
+                {/each}
+            </ul>
+            <!-- TODO -->
+            <button disabled class="btn btn-sm variant-filled-primary space-x-2">
+                <Plus />
+                <span>{$i18n.t('discover.add-marketplace')}</span>
+            </button>
+            <!-- TODO -->
+            {#if !data.marketplaces.some((marketplace) => marketplace.gitRemoteUrl === "https://github.com/home-station-org/apps.git")}
+                <button disabled class="btn btn-sm variant-filled-secondary space-x-2 ml-2">
+                    <Plus />
+                    <span>{$i18n.t('discover.add-default-marketplace')}</span>
+                </button>
+            {/if}
+        </div>
         <div class="arrow bg-surface-100-800-token" />
     </div>
 </div>

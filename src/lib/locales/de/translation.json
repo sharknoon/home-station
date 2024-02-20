@@ -47,6 +47,7 @@
     "discover": {
         "marketplaces": "Marktplätze",
         "add-marketplace": "Marktplatz hinzufügen",
+        "add-default-marketplace": "Standard-Marktplatz hinzufügen",
         "links": {
             "website": "Webseite",
             "repository": "Repository"

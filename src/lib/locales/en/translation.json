@@ -47,6 +47,7 @@
     "discover": {
         "marketplaces": "Marketplace",
         "add-marketplace": "Add marketplace",
+        "add-default-marketplace": "Add default marketplace",
         "links": {
             "website": "Website",
             "repository": "Repository"
