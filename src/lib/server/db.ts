@@ -50,9 +50,9 @@ try {
                 id: 'github-com-home-station-org-apps',
                 gitRemoteUrl: 'https://github.com/home-station-org/apps.git',
                 // TODO remove username and token once public
-                gitPassword: 'Sharknoon',
-                gitUsername:
-                    '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'
+                gitUsername: 'Sharknoon',
+                gitPassword:
+                    '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'
             });
         }
 
