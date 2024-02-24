@@ -2,8 +2,11 @@
     "name": "home-station",
     "version": "0.0.1",
     "private": true,
+    "workspaces": [
+        "packages/*"
+    ],
     "scripts": {
-        "dev": "vite dev",
+        "dev": "npm run -w home-station vite dev",
         "build": "vite build",
         "preview": "vite preview",
         "test": "npm run test:integration && npm run test:unit",
@@ -15,7 +18,6 @@
         "test:unit": "vitest run",
         "db:gen": "drizzle-kit generate:sqlite",
         "db:push": "drizzle-kit push:sqlite",
-        "db:ui": "drizzle-kit studio",
         "i18n": "i18next 'src/**/*.{ts,svelte}'"
     },
     "devDependencies": {
@@ -53,26 +55,5 @@
         "vite": "^5.1.3",
         "vitest": "^1.3.0"
     },
-    "type": "module",
-    "dependencies": {
-        "@floating-ui/dom": "^1.6.3",
-        "@lucia-auth/adapter-drizzle": "^1.0.2",
-        "@sveltejs/adapter-auto": "^3.1.1",
-        "bcrypt": "^5.1.1",
-        "better-sqlite3": "^9.4.1",
-        "cron": "^3.1.6",
-        "cronstrue": "^2.48.0",
-        "date-fns": "^3.3.1",
-        "dockerode": "^4.0.2",
-        "dockerode-compose": "^1.4.0",
-        "drizzle-orm": "^0.29.3",
-        "i18next": "^23.8.3",
-        "i18next-browser-languagedetector": "^7.2.0",
-        "isomorphic-git": "^1.25.5",
-        "js-yaml": "^4.1.0",
-        "lucia": "^3.0.1",
-        "lucide-svelte": "^0.331.0",
-        "simple-icons": "^11.4.0",
-        "winston": "^3.11.0"
-    }
+    "type": "module"
 }
