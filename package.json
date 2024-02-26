@@ -5,11 +5,5 @@
     "workspaces": [
         "packages/*"
     ],
-    "scripts": {
-        "dev": "npm run -w home-station dev",
-        "lint": "prettier --check . && eslint .",
-        "format": "prettier --write .",
-        "i18n": "i18next './**/*.{ts,svelte}'"
-    },
     "type": "module"
 }
