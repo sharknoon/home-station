@@ -1,0 +1,469 @@
+{
+  "../../node_modules/@sveltejs/kit/src/runtime/components/error.svelte": {
+    "file": "entries/fallbacks/error.svelte.js",
+    "src": "../../node_modules/@sveltejs/kit/src/runtime/components/error.svelte",
+    "isEntry": true,
+    "imports": [
+      "_utils2.js",
+      "_ssr.js",
+      "_stores3.js"
+    ]
+  },
+  "../../node_modules/@sveltejs/kit/src/runtime/server/index.js": {
+    "file": "index.js",
+    "src": "../../node_modules/@sveltejs/kit/src/runtime/server/index.js",
+    "isEntry": true,
+    "imports": [
+      "_prod-ssr.js",
+      "_server.js",
+      "_index.js",
+      "_exports.js",
+      "_utils.js",
+      "_index2.js",
+      "_internal.js",
+      "_environment.js"
+    ]
+  },
+  ".svelte-kit/generated/server/internal.js": {
+    "file": "internal.js",
+    "src": ".svelte-kit/generated/server/internal.js",
+    "isEntry": true,
+    "imports": [
+      "_internal.js",
+      "_environment.js",
+      "_server.js"
+    ]
+  },
+  "_Icon.js": {
+    "file": "chunks/Icon.js",
+    "imports": [
+      "_utils2.js",
+      "_ssr.js"
+    ]
+  },
+  "_ProgressBar.svelte_svelte_type_style_lang.js": {
+    "file": "chunks/ProgressBar.svelte_svelte_type_style_lang.js",
+    "imports": [
+      "_index2.js",
+      "_utils2.js"
+    ],
+    "css": [
+      "_app/immutable/assets/ProgressBar.oq5aOWfL.css"
+    ]
+  },
+  "_ProgressRadial.js": {
+    "file": "chunks/ProgressRadial.js",
+    "imports": [
+      "_utils2.js",
+      "_ssr.js"
+    ]
+  },
+  "_appdata.js": {
+    "file": "chunks/appdata.js"
+  },
+  "_auth.js": {
+    "file": "chunks/auth.js",
+    "imports": [
+      "_db.js",
+      "_prod-ssr.js"
+    ]
+  },
+  "_client.js": {
+    "file": "chunks/client.js",
+    "imports": [
+      "_exports.js"
+    ]
+  },
+  "_containerengines.js": {
+    "file": "chunks/containerengines.js"
+  },
+  "_db.js": {
+    "file": "chunks/db.js",
+    "imports": [
+      "_appdata.js",
+      "_environment.js"
+    ]
+  },
+  "_environment.js": {
+    "file": "chunks/environment.js"
+  },
+  "_exports.js": {
+    "file": "chunks/exports.js"
+  },
+  "_i18n.js": {
+    "file": "chunks/i18n.js",
+    "imports": [
+      "_index2.js",
+      "_utils2.js"
+    ]
+  },
+  "_index.js": {
+    "file": "chunks/index.js"
+  },
+  "_index2.js": {
+    "file": "chunks/index2.js",
+    "imports": [
+      "_utils2.js"
+    ]
+  },
+  "_index3.js": {
+    "file": "chunks/index3.js",
+    "imports": [
+      "_utils2.js"
+    ]
+  },
+  "_internal.js": {
+    "file": "chunks/internal.js",
+    "imports": [
+      "_ssr.js",
+      "_environment.js",
+      "_server.js"
+    ],
+    "dynamicImports": [
+      "src/hooks.server.ts"
+    ]
+  },
+  "_marketplaces.js": {
+    "file": "chunks/marketplaces.js",
+    "imports": [
+      "_db.js",
+      "_appdata.js"
+    ]
+  },
+  "_plus.js": {
+    "file": "chunks/plus.js",
+    "imports": [
+      "_ssr.js",
+      "_Icon.js"
+    ]
+  },
+  "_prod-ssr.js": {
+    "file": "chunks/prod-ssr.js"
+  },
+  "_server.js": {
+    "file": "chunks/server.js"
+  },
+  "_ssr.js": {
+    "file": "chunks/ssr.js",
+    "imports": [
+      "_utils2.js"
+    ]
+  },
+  "_stores.js": {
+    "file": "chunks/stores.js",
+    "imports": [
+      "_index2.js",
+      "_ssr.js"
+    ]
+  },
+  "_stores2.js": {
+    "file": "chunks/stores2.js",
+    "imports": [
+      "_index2.js",
+      "_ssr.js"
+    ]
+  },
+  "_stores3.js": {
+    "file": "chunks/stores3.js",
+    "imports": [
+      "_ssr.js",
+      "_client.js"
+    ]
+  },
+  "_tasks.js": {
+    "file": "chunks/tasks.js",
+    "imports": [
+      "_index2.js",
+      "_marketplaces.js",
+      "_auth.js",
+      "_appdata.js"
+    ]
+  },
+  "_theme.js": {
+    "file": "chunks/theme.js"
+  },
+  "_utils.js": {
+    "file": "chunks/utils.js"
+  },
+  "_utils2.js": {
+    "file": "chunks/utils2.js"
+  },
+  "src/hooks.server.ts": {
+    "file": "chunks/hooks.server.js",
+    "src": "src/hooks.server.ts",
+    "isDynamicEntry": true,
+    "imports": [
+      "_tasks.js",
+      "_db.js",
+      "_index.js",
+      "_auth.js"
+    ]
+  },
+  "src/routes/(sidebar)/+layout.svelte": {
+    "file": "entries/pages/(sidebar)/_layout.svelte.js",
+    "src": "src/routes/(sidebar)/+layout.svelte",
+    "isEntry": true,
+    "imports": [
+      "_utils2.js",
+      "_ssr.js",
+      "_Icon.js",
+      "_client.js",
+      "_stores3.js",
+      "_stores2.js",
+      "_ProgressBar.svelte_svelte_type_style_lang.js",
+      "_index3.js",
+      "_i18n.js"
+    ]
+  },
+  "src/routes/(sidebar)/+page.server.ts": {
+    "file": "entries/pages/(sidebar)/_page.server.ts.js",
+    "src": "src/routes/(sidebar)/+page.server.ts",
+    "isEntry": true,
+    "imports": [
+      "_index.js",
+      "_auth.js"
+    ]
+  },
+  "src/routes/(sidebar)/+page.svelte": {
+    "file": "entries/pages/(sidebar)/_page.svelte.js",
+    "src": "src/routes/(sidebar)/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_ssr.js"
+    ]
+  },
+  "src/routes/(sidebar)/account/+page.server.ts": {
+    "file": "entries/pages/(sidebar)/account/_page.server.ts.js",
+    "src": "src/routes/(sidebar)/account/+page.server.ts",
+    "isEntry": true,
+    "imports": [
+      "_db.js",
+      "_index.js",
+      "_utils2.js",
+      "_i18n.js",
+      "_theme.js"
+    ]
+  },
+  "src/routes/(sidebar)/account/+page.svelte": {
+    "file": "entries/pages/(sidebar)/account/_page.svelte.js",
+    "src": "src/routes/(sidebar)/account/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_utils2.js",
+      "_ssr.js",
+      "_ProgressBar.svelte_svelte_type_style_lang.js",
+      "_i18n.js",
+      "_Icon.js",
+      "_client.js",
+      "_theme.js"
+    ]
+  },
+  "src/routes/(sidebar)/discover/+page.server.ts": {
+    "file": "entries/pages/(sidebar)/discover/_page.server.ts.js",
+    "src": "src/routes/(sidebar)/discover/+page.server.ts",
+    "isEntry": true,
+    "imports": [
+      "_db.js",
+      "_index.js",
+      "_marketplaces.js",
+      "_containerengines.js"
+    ]
+  },
+  "src/routes/(sidebar)/discover/+page.svelte": {
+    "file": "entries/pages/(sidebar)/discover/_page.svelte.js",
+    "src": "src/routes/(sidebar)/discover/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_utils2.js",
+      "_ssr.js",
+      "_client.js",
+      "_stores.js",
+      "_ProgressBar.svelte_svelte_type_style_lang.js",
+      "_ProgressRadial.js",
+      "_Icon.js",
+      "_plus.js",
+      "_i18n.js"
+    ]
+  },
+  "src/routes/(sidebar)/settings/container-engines/+page.server.ts": {
+    "file": "entries/pages/(sidebar)/settings/container-engines/_page.server.ts.js",
+    "src": "src/routes/(sidebar)/settings/container-engines/+page.server.ts",
+    "isEntry": true,
+    "imports": [
+      "_db.js",
+      "_containerengines.js"
+    ]
+  },
+  "src/routes/(sidebar)/settings/container-engines/+page.svelte": {
+    "file": "entries/pages/(sidebar)/settings/container-engines/_page.svelte.js",
+    "src": "src/routes/(sidebar)/settings/container-engines/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_utils2.js",
+      "_ssr.js",
+      "_Icon.js",
+      "_i18n.js"
+    ]
+  },
+  "src/routes/(sidebar)/settings/domains-and-hostnames/+page.server.ts": {
+    "file": "entries/pages/(sidebar)/settings/domains-and-hostnames/_page.server.ts.js",
+    "src": "src/routes/(sidebar)/settings/domains-and-hostnames/+page.server.ts",
+    "isEntry": true,
+    "imports": [
+      "_db.js"
+    ]
+  },
+  "src/routes/(sidebar)/settings/domains-and-hostnames/+page.svelte": {
+    "file": "entries/pages/(sidebar)/settings/domains-and-hostnames/_page.svelte.js",
+    "src": "src/routes/(sidebar)/settings/domains-and-hostnames/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_ssr.js"
+    ]
+  },
+  "src/routes/(sidebar)/settings/logs/+page.svelte": {
+    "file": "entries/pages/(sidebar)/settings/logs/_page.svelte.js",
+    "src": "src/routes/(sidebar)/settings/logs/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_ssr.js"
+    ]
+  },
+  "src/routes/(sidebar)/settings/tasks/+page.server.ts": {
+    "file": "entries/pages/(sidebar)/settings/tasks/_page.server.ts.js",
+    "src": "src/routes/(sidebar)/settings/tasks/+page.server.ts",
+    "isEntry": true,
+    "imports": [
+      "_tasks.js",
+      "_utils2.js",
+      "_index.js"
+    ]
+  },
+  "src/routes/(sidebar)/settings/tasks/+page.svelte": {
+    "file": "entries/pages/(sidebar)/settings/tasks/_page.svelte.js",
+    "src": "src/routes/(sidebar)/settings/tasks/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_utils2.js",
+      "_ssr.js",
+      "_i18n.js",
+      "_Icon.js",
+      "_client.js",
+      "_ProgressBar.svelte_svelte_type_style_lang.js",
+      "_ProgressRadial.js"
+    ]
+  },
+  "src/routes/(sidebar)/settings/users/+page.server.ts": {
+    "file": "entries/pages/(sidebar)/settings/users/_page.server.ts.js",
+    "src": "src/routes/(sidebar)/settings/users/+page.server.ts",
+    "isEntry": true,
+    "imports": [
+      "_db.js"
+    ]
+  },
+  "src/routes/(sidebar)/settings/users/+page.svelte": {
+    "file": "entries/pages/(sidebar)/settings/users/_page.svelte.js",
+    "src": "src/routes/(sidebar)/settings/users/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_utils2.js",
+      "_ssr.js",
+      "_i18n.js"
+    ]
+  },
+  "src/routes/+layout.server.ts": {
+    "file": "entries/pages/_layout.server.ts.js",
+    "src": "src/routes/+layout.server.ts",
+    "isEntry": true,
+    "imports": [
+      "_appdata.js"
+    ]
+  },
+  "src/routes/+layout.svelte": {
+    "file": "entries/pages/_layout.svelte.js",
+    "src": "src/routes/+layout.svelte",
+    "isEntry": true,
+    "imports": [
+      "_ssr.js",
+      "_ProgressBar.svelte_svelte_type_style_lang.js",
+      "_utils2.js",
+      "_stores.js",
+      "_index3.js",
+      "_index2.js",
+      "_stores2.js",
+      "_i18n.js",
+      "_stores3.js"
+    ],
+    "css": [
+      "_app/immutable/assets/_layout.axs1rkdi.css"
+    ]
+  },
+  "src/routes/[...path]/+server.ts": {
+    "file": "entries/endpoints/_...path_/_server.ts.js",
+    "src": "src/routes/[...path]/+server.ts",
+    "isEntry": true,
+    "imports": [
+      "_appdata.js",
+      "_server.js",
+      "_utils.js"
+    ]
+  },
+  "src/routes/events/+server.ts": {
+    "file": "entries/endpoints/events/_server.ts.js",
+    "src": "src/routes/events/+server.ts",
+    "isEntry": true,
+    "imports": [
+      "_environment.js",
+      "_tasks.js"
+    ]
+  },
+  "src/routes/login/+page.server.ts": {
+    "file": "entries/pages/login/_page.server.ts.js",
+    "src": "src/routes/login/+page.server.ts",
+    "isEntry": true,
+    "imports": [
+      "_index.js",
+      "_db.js",
+      "_auth.js"
+    ]
+  },
+  "src/routes/login/+page.svelte": {
+    "file": "entries/pages/login/_page.svelte.js",
+    "src": "src/routes/login/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_utils2.js",
+      "_ssr.js",
+      "_client.js",
+      "_i18n.js"
+    ]
+  },
+  "src/routes/setup/+page.server.ts": {
+    "file": "entries/pages/setup/_page.server.ts.js",
+    "src": "src/routes/setup/+page.server.ts",
+    "isEntry": true,
+    "imports": [
+      "_index.js",
+      "_db.js",
+      "_auth.js",
+      "_containerengines.js"
+    ]
+  },
+  "src/routes/setup/+page.svelte": {
+    "file": "entries/pages/setup/_page.svelte.js",
+    "src": "src/routes/setup/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_utils2.js",
+      "_ssr.js",
+      "_ProgressBar.svelte_svelte_type_style_lang.js",
+      "_index2.js",
+      "_index3.js",
+      "_Icon.js",
+      "_plus.js",
+      "_i18n.js",
+      "_client.js",
+      "_stores3.js"
+    ]
+  }
+}
