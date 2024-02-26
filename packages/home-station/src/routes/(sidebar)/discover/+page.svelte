@@ -55,7 +55,7 @@
                 <span>{$i18n.t('discover.add-marketplace')}</span>
             </button>
             <!-- TODO -->
-            {#if !data.marketplaces.some((marketplace) => marketplace.gitRemoteUrl === "https://github.com/home-station-org/apps.git")}
+            {#if !data.marketplaces.some((marketplace) => marketplace.gitRemoteUrl === 'https://github.com/home-station-org/apps.git')}
                 <button disabled class="btn btn-sm variant-filled-secondary space-x-2 ml-2">
                     <Plus />
                     <span>{$i18n.t('discover.add-default-marketplace')}</span>

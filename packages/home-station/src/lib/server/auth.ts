@@ -1,5 +1,5 @@
 import { Lucia } from 'lucia';
-import { db } from '$lib/server/db';
+import db from '$lib/server/db';
 import { dev } from '$app/environment';
 import { DrizzleSQLiteAdapter } from '@lucia-auth/adapter-drizzle';
 import { sessions, users } from './schema';
