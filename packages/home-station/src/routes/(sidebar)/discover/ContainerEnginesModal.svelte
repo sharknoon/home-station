@@ -8,7 +8,7 @@
     type AvailableContainerEngine = Pick<ContainerEngine, 'id' | 'name' | 'type'>;
 
     export let appId: string;
-    export let marketplaceId: string;
+    export let marketplaceUrl: string;
     export let availableContainerEngines: AvailableContainerEngine[];
     export let parent: SvelteComponent;
 
@@ -29,7 +29,7 @@
         use:enhance
     >
         <input type="hidden" name="appId" value={appId} />
-        <input type="hidden" name="marketplaceId" value={marketplaceId} />
+        <input type="hidden" name="marketplaceId" value={marketplaceUrl} />
         {#each availableContainerEngines as engine}
             <label>
                 <input

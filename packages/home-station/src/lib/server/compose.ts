@@ -1,5 +1,6 @@
 import { getEngine, type ContainerEngine } from '$lib/server/containerengines';
 import db from '$lib/server/db';
+import { exec } from './terminal';
 
 export async function listStacks(engine?: ContainerEngine): Promise<string[]> {
     const engines = engine ? [engine] : await db.query.containerEngines.findMany();
@@ -13,4 +14,10 @@ export async function listStacks(engine?: ContainerEngine): Promise<string[]> {
         }
     }
     return Array.from(stacks);
+}
+
+export async function up(cwd: string, composeFile?: string): Promise<void> {
+    console.log('up', cwd, composeFile);
+    const composeFiles = composeFile ? ['-f', composeFile] : [];
+    await exec('docker', ['compose', '--progress', 'plain', ...composeFiles, 'up', '-d'], cwd);
 }

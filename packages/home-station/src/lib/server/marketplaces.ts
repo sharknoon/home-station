@@ -94,7 +94,8 @@ await fs.mkdir(marketplacesPath, { recursive: true });
  * @returns The path to the local cloned marketplace repository
  */
 export function getMarketplacePath(marketplace: Marketplace): string {
-    return path.join(marketplacesPath, marketplace.id);
+    const dirName = getDirectoryNameFromUrl(marketplace.gitRemoteUrl);
+    return path.join(marketplacesPath, dirName);
 }
 
 /**
@@ -103,10 +104,11 @@ export function getMarketplacePath(marketplace: Marketplace): string {
  * @returns The path to the app in the local cloned marketplace repository
  */
 export function getMarketplaceAppPath(app: MarketplaceApp): string {
-    return path.join(marketplacesPath, app.marketplaceId, 'apps', app.appId);
+    const dirName = getDirectoryNameFromUrl(app.marketplaceUrl);
+    return path.join(marketplacesPath, dirName, 'apps', app.id);
 }
 
-function createMarketplaceIdFromUrl(url: string): string {
+function getDirectoryNameFromUrl(url: string): string {
     return url
         .replace('https://', '')
         .replace('http://', '')
@@ -142,25 +144,23 @@ export async function createMarketplace(
         throw new Error('Invalid credentials');
     }
 
-    const id = createMarketplaceIdFromUrl(gitRemoteUrl);
-
     await db
         .insert(marketplaces)
-        .values({ id, gitRemoteUrl, gitUsername, gitPassword })
+        .values({ gitRemoteUrl, gitUsername, gitPassword })
         .onConflictDoUpdate({
-            target: marketplaces.id,
+            target: marketplaces.gitRemoteUrl,
             set: { gitRemoteUrl, gitUsername, gitPassword }
         });
 }
 
 /**
  * Deletes an marketplace from the database and removes the local cloned repository
- * @param id The id of the marketplace to delete
+ * @param url The url of the marketplace to delete
  */
-export async function deleteMarketplace(id: string): Promise<void> {
+export async function deleteMarketplace(url: string): Promise<void> {
     const deletedMarketplace = await db
         .delete(marketplaces)
-        .where(eq(marketplaces.id, id))
+        .where(eq(marketplaces.gitRemoteUrl, url))
         .returning();
     // For loop unnecessary, but it's easier and more safe to implement than deletedMarketplace[0]
     for (const marketplace of deletedMarketplace) {
@@ -186,8 +186,7 @@ export async function updateMarketplaceApps(
                 const appYamlPath = path.join(marketplacePath, 'apps', appId, 'app.yml');
                 const app = await loadAppFromFiles(appYamlPath);
                 apps.push({
-                    appId: app.id,
-                    marketplaceId: marketplace.id,
+                    marketplaceUrl: marketplace.gitRemoteUrl,
                     ...app
                 });
             } catch (e) {

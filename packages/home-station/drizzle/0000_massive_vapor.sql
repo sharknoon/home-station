@@ -1,13 +1,3 @@
-CREATE TABLE `apps` (
-	`app_id` text NOT NULL,
-	`marketplace_id` text NOT NULL,
-	`container_engine_id` integer NOT NULL,
-	`installed_at` integer NOT NULL,
-	PRIMARY KEY(`app_id`, `marketplace_id`),
-	FOREIGN KEY (`container_engine_id`) REFERENCES `container_engines`(`id`) ON UPDATE no action ON DELETE cascade,
-	FOREIGN KEY (`app_id`,`marketplace_id`) REFERENCES `marketplace_apps`(`app_id`,`marketplace_id`) ON UPDATE no action ON DELETE no action
-);
---> statement-breakpoint
 CREATE TABLE `container_engines` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`name` text NOT NULL,
@@ -24,8 +14,8 @@ CREATE TABLE `hostnames` (
 );
 --> statement-breakpoint
 CREATE TABLE `marketplace_apps` (
-	`app_id` text NOT NULL,
-	`marketplace_id` text NOT NULL,
+	`id` text NOT NULL,
+	`marketplace_url` text NOT NULL,
 	`name` text NOT NULL,
 	`description` text NOT NULL,
 	`icon` text NOT NULL,
@@ -37,13 +27,12 @@ CREATE TABLE `marketplace_apps` (
 	`config` text,
 	`http` text NOT NULL,
 	`messages` text,
-	PRIMARY KEY(`app_id`, `marketplace_id`),
-	FOREIGN KEY (`marketplace_id`) REFERENCES `marketplaces`(`id`) ON UPDATE no action ON DELETE cascade
+	PRIMARY KEY(`id`, `marketplace_url`),
+	FOREIGN KEY (`marketplace_url`) REFERENCES `marketplaces`(`git_remote_url`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
 CREATE TABLE `marketplaces` (
-	`id` text PRIMARY KEY NOT NULL,
-	`git_remote_url` text NOT NULL,
+	`git_remote_url` text PRIMARY KEY NOT NULL,
 	`git_username` text,
 	`git_password` text
 );
@@ -64,5 +53,4 @@ CREATE TABLE `users` (
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `container_engines_name_unique` ON `container_engines` (`name`);--> statement-breakpoint
-CREATE UNIQUE INDEX `marketplaces_git_remote_url_unique` ON `marketplaces` (`git_remote_url`);--> statement-breakpoint
 CREATE UNIQUE INDEX `users_username_unique` ON `users` (`username`);

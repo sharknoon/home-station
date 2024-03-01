@@ -11,7 +11,7 @@
     import Trash2 from 'lucide-svelte/icons/trash-2';
     import Plus from 'lucide-svelte/icons/plus';
     import Pencil from 'lucide-svelte/icons/pencil';
-    import i18n, { ls } from '$lib/i18n';
+    import i18n, { ts } from '$lib/i18n';
     import AppInfoModal from './AppInfoModal.svelte';
     import ContainerEnginesModal from './ContainerEnginesModal.svelte';
 
@@ -37,7 +37,7 @@
                 {#each data.marketplaces as marketplace}
                     <li>
                         <form method="post" class="flex items-center gap-1" use:enhance>
-                            <input type="hidden" name="id" value={marketplace.id} />
+                            <input type="hidden" name="url" value={marketplace.gitRemoteUrl} />
                             <span class="mr-2">{marketplace.gitRemoteUrl}</span>
                             <!-- TODO -->
                             <button disabled class="btn-icon"><Pencil /></button>
@@ -54,7 +54,7 @@
                 <Plus />
                 <span>{$i18n.t('discover.add-marketplace')}</span>
             </button>
-            <!-- TODO -->
+            <!-- TODO implement and make default repo dynamic-->
             {#if !data.marketplaces.some((marketplace) => marketplace.gitRemoteUrl === 'https://github.com/home-station-org/apps.git')}
                 <button disabled class="btn btn-sm variant-filled-secondary space-x-2 ml-2">
                     <Plus />
@@ -83,7 +83,7 @@
                         class="object-cover h-20 w-20 rounded-2xl p-2 bg-white"
                     />
                     <div>
-                        <h3 class="h3">{ls(app.name)}</h3>
+                        <h3 class="h3">{ts(app.name)}</h3>
                         <div class="text-sm text-surface-700-200-token">{app.developer}</div>
                     </div>
                 </div>
@@ -115,11 +115,11 @@
                             target="_blank"
                         >
                             <span><ExternalLink class="h-4 w-4" /></span>
-                            <span>{ls(link.name)}</span>
+                            <span>{ts(link.name)}</span>
                         </a>
                     {/each}
                 </div>
-                <div class="!-mt-2">{ls(app.description)}</div>
+                <div class="!-mt-2">{ts(app.description)}</div>
                 <span class="badge variant-filled">{app.category}</span>
             </div>
             <hr />
@@ -128,15 +128,15 @@
                     method="post"
                     class="flex justify-between"
                     use:enhance={() => {
-                        appsLoading = [...appsLoading, app.appId];
+                        appsLoading = [...appsLoading, app.id];
                         return async ({ update }) => {
-                            appsLoading = appsLoading.filter((id) => id !== app.appId);
+                            appsLoading = appsLoading.filter((id) => id !== app.id);
                             update();
                         };
                     }}
                 >
-                    <input type="hidden" name="appId" value={app.appId} />
-                    <input type="hidden" name="marketplaceId" value={app.marketplace.id} />
+                    <input type="hidden" name="id" value={app.id} />
+                    <input type="hidden" name="marketplaceUrl" value={app.marketplace.gitRemoteUrl} />
                     <button
                         type="button"
                         class="btn btn-icon variant-soft"
@@ -188,7 +188,7 @@
                             formaction="?/installApp"
                             class="btn variant-filled-primary font-semibold"
                         >
-                            {#if appsLoading.includes(app.appId)}
+                            {#if appsLoading.includes(app.id)}
                                 <ProgressRadial
                                     class="h-6 w-6 mr-2 -ml-2"
                                     stroke={100}
@@ -211,14 +211,14 @@
                                     component: {
                                         ref: ContainerEnginesModal,
                                         props: {
-                                            appId: app.appId,
-                                            marketplaceId: app.marketplace.id,
+                                            appId: app.id,
+                                            marketplaceUrl: app.marketplace.gitRemoteUrl,
                                             availableContainerEngines: data.containerEngines
                                         }
                                     }
                                 })}
                         >
-                            {#if appsLoading.includes(app.appId)}
+                            {#if appsLoading.includes(app.id)}
                                 <ProgressRadial
                                     class="h-6 w-6 mr-2 -ml-2"
                                     stroke={100}

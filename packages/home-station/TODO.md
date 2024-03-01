@@ -1,0 +1,2 @@
+- Remove Container Engines in schema.ts and replace with agents (agents are just another home-station accessed via API)
+- Change the id of an app to "https://github.com/home-station-org/apps.git:filebrowser:7739405f0eeacbb018524307092f8dd6294f2903" == "<repo-url>:<appid>:<version>"

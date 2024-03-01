@@ -11,7 +11,7 @@ if (!building) {
             controllers.forEach((controller) => controller.enqueue(result));
         });
     }
-    // Update app status like installing, running, stopped etc...
+    // Update app status like installing, running, stopped etc... TODO
 }
 
 export const GET: RequestHandler = async () => {
