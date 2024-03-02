@@ -145,7 +145,7 @@
                                 type: 'component',
                                 component: {
                                     ref: AppInfoModal,
-                                    props: { app, marketplaceUrl: app.marketplace.gitRemoteUrl }
+                                    props: { marketplaceApp: app, marketplaceUrl: app.marketplace.gitRemoteUrl }
                                 }
                             });
                         }}
@@ -188,6 +188,7 @@
                             formaction="?/installApp"
                             class="btn variant-filled-primary font-semibold"
                         >
+                        <!-- TODO in svelte 5 convert to snippet -->
                             {#if appsLoading.includes(app.id)}
                                 <ProgressRadial
                                     class="h-6 w-6 mr-2 -ml-2"
