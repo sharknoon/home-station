@@ -63,10 +63,12 @@ export default i18n;
 
 /**
  * This function is similar to the t() function, but for LocalizedStrings.
+ * A LocalizedString is a json object with the locale as key and the translation as the value.
+ * This makes is easier to handle translations that need to be dynamic, e.g. from the app.yml files.
  * @param localizedString The localiozed string to be translated
  * @returns The localized string in the current language
  */
-export function ls(localizedString: LocalizedString): string {
+export function ts(localizedString: LocalizedString): string {
     const language = get(i18n).language;
     if (language in localizedString && localizedString[language as keyof LocalizedString]) {
         return localizedString[language as keyof LocalizedString] as string;

@@ -1,10 +1,11 @@
-import { writable, type Writable } from 'svelte/store';
 import cron, { CronJob } from 'cron';
 import { updateMarketplaceApps } from '$lib/server/marketplaces';
 import { dev } from '$app/environment';
 import { throttle } from '$lib/server/utils';
 import { deleteExpiredSessions } from '$lib/server/auth';
 import logger from '$lib/server/logger';
+import { writable, type Writable } from 'svelte/store';
+import { sendEvent } from '$lib/server/events';
 
 export type Task = {
     /** NEVER change this ID, it is used to identify the task in the database */
@@ -44,16 +45,6 @@ export const tasks: Task[] = [
     }
 ];
 
-function getDefaultStats(schedule: string): Writable<TaskStats> {
-    return writable({
-        progress: 0,
-        running: false,
-        lastExecution: undefined,
-        lastDuration: undefined,
-        nextExecution: cron.sendAt(schedule).toJSDate()
-    });
-}
-
 // Test the task execution and the progress callback
 if (dev) {
     tasks.push({
@@ -67,18 +58,24 @@ if (dev) {
                 progressCallback((i + 1) / 100);
             }
         },
-        stats: writable({
-            progress: 0,
-            running: false,
-            lastExecution: undefined,
-            lastDuration: undefined,
-            nextExecution: cron.sendAt('0 0 1 * *').toJSDate()
-        })
+        stats: getDefaultStats('0 0 1 * *')
+    });
+}
+
+function getDefaultStats(schedule: string): Writable<TaskStats> {
+    return writable({
+        progress: 0,
+        running: false,
+        lastExecution: undefined,
+        lastDuration: undefined,
+        nextExecution: cron.sendAt(schedule).toJSDate()
     });
 }
 
 export async function scheduleTasks(): Promise<void> {
     for (const task of tasks) {
+        // Update the stats in the UI
+        task.stats.subscribe((stats) => sendEvent('updateStats', JSON.stringify({ id: task.id, stats })));
         logger.info(`Scheduling task "${task.id}" to run on schedule "${task.schedule}"`);
         const job = new CronJob(task.schedule, async () => await executeTask(task));
         job.start();

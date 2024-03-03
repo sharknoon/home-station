@@ -63,7 +63,7 @@
                     </td>
                     <td>
                         <!-- TODO switch to Intl version as soon as it is released: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DurationFormat/format -->
-                        {task.stats.lastDuration
+                        {task.stats.lastDuration !== undefined
                             ? `${task.stats.lastDuration} ${$i18n.t('settings.tasks.milliseconds')}`
                             : '-'}
                     </td>

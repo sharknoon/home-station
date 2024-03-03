@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, primaryKey, foreignKey } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, integer, primaryKey } from 'drizzle-orm/sqlite-core';
 import type { LocalizedString } from '$lib/i18n';
 import type { Config, Http, Links, Messages } from './marketplaces';
 import { relations } from 'drizzle-orm';
@@ -48,20 +48,20 @@ export const containerEngines = sqliteTable('container_engines', {
 
 // Git repositores that host apps
 export const marketplaces = sqliteTable('marketplaces', {
-    id: text('id').primaryKey(),
-    gitRemoteUrl: text('git_remote_url').notNull().unique(),
+    gitRemoteUrl: text('git_remote_url').primaryKey(),
     gitUsername: text('git_username'),
-    gitPassword: text('git_password')
+    gitPassword: text('git_password'),
 });
 
 // Apps for the marketplace
 export const marketplaceApps = sqliteTable(
     'marketplace_apps',
     {
-        appId: text('app_id').notNull(),
-        marketplaceId: text('marketplace_id')
+        // IDs for apps are only unique within a marketplace
+        id: text('id').notNull(),
+        marketplaceUrl: text('marketplace_url')
             .notNull()
-            .references(() => marketplaces.id, { onDelete: 'cascade' }),
+            .references(() => marketplaces.gitRemoteUrl, { onDelete: 'cascade' }),
         name: text('name', { mode: 'json' }).notNull().$type<LocalizedString>(),
         description: text('description', { mode: 'json' }).notNull().$type<LocalizedString>(),
         icon: text('icon').notNull(),
@@ -76,14 +76,14 @@ export const marketplaceApps = sqliteTable(
     },
     (table) => {
         return {
-            pk: primaryKey({ columns: [table.appId, table.marketplaceId] })
+            pk: primaryKey({ columns: [table.id, table.marketplaceUrl] })
         };
     }
 );
 export const marketplaceAppsRelations = relations(marketplaceApps, ({ one }) => ({
     marketplace: one(marketplaces, {
-        fields: [marketplaceApps.marketplaceId],
-        references: [marketplaces.id]
+        fields: [marketplaceApps.marketplaceUrl],
+        references: [marketplaces.gitRemoteUrl]
     })
 }));
 
@@ -91,33 +91,3 @@ export const marketplaceAppsRelations = relations(marketplaceApps, ({ one }) => 
 export const hostnames = sqliteTable('hostnames', {
     host: text('host').primaryKey()
 });
-
-// Apps that are installed on on of the servers
-export const apps = sqliteTable(
-    'apps',
-    {
-        appId: text('app_id').notNull(),
-        marketplaceId: text('marketplace_id').notNull(),
-        containerEngineId: integer('container_engine_id')
-            .notNull()
-            .references(() => containerEngines.id, { onDelete: 'cascade' }),
-        installedAt: integer('installed_at').notNull()
-    },
-    (table) => {
-        return {
-            pk: primaryKey({ columns: [table.appId, table.marketplaceId] }),
-            marketplaceAppReference: foreignKey({
-                columns: [table.appId, table.marketplaceId],
-                foreignColumns: [marketplaceApps.appId, marketplaceApps.marketplaceId],
-                name: 'marketplace_app_reference'
-                // onDelete: 'cascade' // once it is supported by drizzle-orm
-            })
-        };
-    }
-);
-export const appsRelations = relations(apps, ({ one }) => ({
-    marketplaceApp: one(marketplaceApps, {
-        fields: [apps.appId, apps.marketplaceId],
-        references: [marketplaceApps.appId, marketplaceApps.marketplaceId]
-    })
-}));

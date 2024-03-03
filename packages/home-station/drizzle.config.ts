@@ -5,14 +5,14 @@ import fs from 'node:fs';
 let dbUrl: string | undefined;
 switch (process.platform) {
     case 'win32':
-        dbUrl = process.env.APPDATA;
+        dbUrl = process.env.USERPROFILE;
         break;
     default:
         dbUrl = process.env.HOME;
 }
 if (!dbUrl) {
     console.error(
-        'Could not find app-data/home directory path. Please make sure that the environment variable "HOME" (macOS/Linux) or "APPDATA" (Windows) is set.'
+        'Could not find home directory path. Please make sure that the environment variable "HOME" (macOS/Linux) or "USERPROFILE" (Windows) is set.'
     );
     process.exit(1);
 }
