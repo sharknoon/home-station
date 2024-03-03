@@ -132,7 +132,6 @@ export async function createMarketplace(
     gitRemoteUrl = gitRemoteUrl.trim();
     if (gitRemoteUrl.endsWith('/'))
         gitRemoteUrl = gitRemoteUrl.slice(0, gitRemoteUrl.lastIndexOf('/'));
-    if (!gitRemoteUrl.endsWith('.git')) gitRemoteUrl += '.git';
 
     if (!isValidUrl(gitRemoteUrl)) {
         throw new Error('Invalid URL (example: "https://github.com/<user>/<repo>")');

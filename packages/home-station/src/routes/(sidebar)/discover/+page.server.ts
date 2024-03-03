@@ -5,6 +5,7 @@ import { deleteMarketplace, getMarketplaceAppPath } from '$lib/server/marketplac
 import { marketplaceApps, containerEngines } from '$lib/server/schema';
 import { and, eq } from 'drizzle-orm';
 import { up } from '$lib/server/compose';
+import { sendEvent } from '$lib/server/events';
 
 export const load = (async () => {
     const marketplaceApps = await db.query.marketplaceApps.findMany({
@@ -70,6 +71,10 @@ export const actions: Actions = {
 
         // TODO create app
 
-        await up(getMarketplaceAppPath(marketplaceApp));
+        await up(
+            getMarketplaceAppPath(marketplaceApp),
+            undefined,
+            (progress) => sendEvent('installAppProgress', JSON.stringify({ id, progress }))
+        );
     }
 };

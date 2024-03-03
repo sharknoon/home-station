@@ -58,3 +58,13 @@ export function throttle<T>(
 
     return throttledCallback;
 }
+
+/**
+ * Strips ansi escape sequences from a string
+ * @param str The string to be stripped
+ * @returns The string without ansi codes
+ */
+export function stripAnsi(str: string): string {
+    // eslint-disable-next-line no-control-regex -- This regex is used to remove ansi escape codes that do come directly from the terminal
+    return str.replace(/(?:\x1B|\\u001b)[[(?);]{0,2}(?:;?\d)*./gi, '');
+}

@@ -1,6 +1,6 @@
 import * as pty from '@homebridge/node-pty-prebuilt-multiarch';
 
-export async function exec(file: string, args: string | string[], cwd?: string): Promise<number> {
+export async function exec(file: string, args: string | string[], cwd?: string, dataCallback?: (data: string) => void): Promise<number> {
     return new Promise((resolve) => {
         const ptyProcess = pty.spawn(file, args, {
             name: 'xterm-color',
@@ -9,9 +9,7 @@ export async function exec(file: string, args: string | string[], cwd?: string):
             cwd
         });
 
-        ptyProcess.onData((data) => {
-            process.stdout.write(data);
-        });
+        ptyProcess.onData((data) => dataCallback && dataCallback(data));
 
         ptyProcess.onExit((code) => {
             resolve(code.exitCode);

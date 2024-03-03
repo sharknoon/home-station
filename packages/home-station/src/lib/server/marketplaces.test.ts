@@ -27,9 +27,15 @@ afterEach(async () => {
 
 describe('getMarketplacePath', () => {
     it('should return the correct path', async () => {
-        const marketplace = { id: 'github-com-my-org-my-repo', gitRemoteUrl: '' };
+        const marketplace = { gitRemoteUrl: 'https://github.com/my-org/my-repo' };
         const appdataPath = await getAppDataPath();
-        const expectedPath = path.join(appdataPath, 'marketplaces', marketplace.id);
+        const marketplaceId = marketplace.gitRemoteUrl
+            .replace('https://', '')
+            .replace('http://', '')
+            .replace(/\.git$/, '')
+            .replace(/[^a-z0-9]/gi, '-')
+            .toLowerCase();
+        const expectedPath = path.join(appdataPath, 'marketplaces', marketplaceId);
 
         const result = getMarketplacePath(marketplace);
 
@@ -39,10 +45,15 @@ describe('getMarketplacePath', () => {
 
 describe('getAppPath', () => {
     it('should return the correct path', async () => {
-        const app = { marketplaceId: 'github-com-my-org-my-repo', appId: 'my-app' };
+        const app = { id: 'my-app', marketplaceUrl: 'https://github.com/my-org/my-repo' };
         const appdataPath = await getAppDataPath();
-        const marketplacePath = path.join(appdataPath, 'marketplaces');
-        const expectedPath = path.join(marketplacePath, app.marketplaceId, 'apps', app.appId);
+        const marketplaceId = app.marketplaceUrl
+            .replace('https://', '')
+            .replace('http://', '')
+            .replace(/\.git$/, '')
+            .replace(/[^a-z0-9]/gi, '-')
+            .toLowerCase();
+        const expectedPath = path.join(appdataPath, 'marketplaces', marketplaceId, 'apps', app.id);
 
         // @ts-expect-error We don't need to provide all properties
         const result = getMarketplaceAppPath(app);
@@ -64,7 +75,6 @@ describe('createMarketplace', () => {
             where: eq(marketplaces.gitRemoteUrl, url)
         });
         expect(newMarketplace).not.toBe(null);
-        expect(newMarketplace?.id).toBe('github-com-vitest-dev-vitest');
         expect(newMarketplace!.gitRemoteUrl).toBe(url);
         expect(newMarketplace!.gitUsername).toBe(null);
         expect(newMarketplace!.gitPassword).toBe(null);
@@ -88,9 +98,6 @@ describe('createMarketplace', () => {
             where: eq(marketplaces.gitRemoteUrl, url)
         });
         expect(newMarketplace).not.toBe(null);
-        expect(newMarketplace?.id).toBe(
-            'github-com-home-station-org-private-repository-access-test'
-        );
         expect(newMarketplace!.gitRemoteUrl).toBe(url);
         expect(newMarketplace!.gitUsername).toBe(username);
         expect(newMarketplace!.gitPassword).toBe(password);
@@ -139,11 +146,11 @@ describe('deleteMarketplace', () => {
         ).toBeTruthy();
 
         // Call the function to be tested
-        await deleteMarketplace('github-com-octocat-hello-world');
+        await deleteMarketplace(url);
 
         // Assert the expected behavior or outcome
         const deletedMarketplace = await db.query.marketplaces.findFirst({
-            where: eq(marketplaces.id, 'github-com-octocat-hello-world')
+            where: eq(marketplaces.gitRemoteUrl, url)
         });
         expect(deletedMarketplace).toBeFalsy();
     });
@@ -169,12 +176,12 @@ describe('updateMarketplaceApps', () => {
         await updateMarketplaceApps(() => {});
 
         // Assert the expected behavior or outcome
-        const path = getMarketplacePath({ id: 'github-com-home-station-org-apps', gitRemoteUrl });
+        const path = getMarketplacePath({ gitRemoteUrl });
         expect(await fs.stat(path)).toBeTruthy();
         expect(await fs.stat(path + '/apps')).toBeTruthy();
         expect((await fs.readdir(path + '/apps')).length).toBeGreaterThan(0);
         const apps = await db.query.marketplaceApps.findMany({
-            where: eq(marketplaceApps.marketplaceId, 'github-com-home-station-org-apps')
+            where: eq(marketplaceApps.marketplaceUrl, gitRemoteUrl)
         });
         expect(apps.length).toBeGreaterThan(0);
     });

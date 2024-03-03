@@ -1,14 +1,14 @@
+import { join } from 'node:path';
 import type { Config } from 'tailwindcss';
 import forms from '@tailwindcss/forms';
-import { join } from 'node:path';
 import { skeleton } from '@skeletonlabs/tw-plugin';
 
 const config = {
+    darkMode: 'class',
     content: [
         './src/**/*.{html,js,svelte,ts}',
         join(require.resolve('@skeletonlabs/skeleton'), '../**/*.{html,js,svelte,ts}')
     ],
-    darkMode: 'class',
     theme: {
         extend: {}
     },

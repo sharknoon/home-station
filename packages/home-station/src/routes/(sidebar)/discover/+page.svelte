@@ -14,12 +14,24 @@
     import i18n, { ts } from '$lib/i18n';
     import AppInfoModal from './AppInfoModal.svelte';
     import ContainerEnginesModal from './ContainerEnginesModal.svelte';
+    import { onMount } from 'svelte';
 
     export let data: PageData;
 
     const modalStore = getModalStore();
 
     let appsLoading: string[] = [];
+    let appsProgress: Map<string, number> = new Map();
+
+    onMount(() => {
+        const evtSource = new EventSource('/events');
+        evtSource.onerror = (e) => console.error(e);
+        evtSource.addEventListener('installAppProgress', (stats: MessageEvent<string>) => {
+            const p = JSON.parse(stats.data) as { id: string; progress: number };
+            appsProgress.set(p.id, p.progress);
+            appsProgress = appsProgress;
+        });
+    });
 </script>
 
 <div class="flex justify-end">
@@ -136,7 +148,11 @@
                     }}
                 >
                     <input type="hidden" name="id" value={app.id} />
-                    <input type="hidden" name="marketplaceUrl" value={app.marketplace.gitRemoteUrl} />
+                    <input
+                        type="hidden"
+                        name="marketplaceUrl"
+                        value={app.marketplace.gitRemoteUrl}
+                    />
                     <button
                         type="button"
                         class="btn btn-icon variant-soft"
@@ -145,7 +161,10 @@
                                 type: 'component',
                                 component: {
                                     ref: AppInfoModal,
-                                    props: { marketplaceApp: app, marketplaceUrl: app.marketplace.gitRemoteUrl }
+                                    props: {
+                                        marketplaceApp: app,
+                                        marketplaceUrl: app.marketplace.gitRemoteUrl
+                                    }
                                 }
                             });
                         }}
@@ -188,13 +207,13 @@
                             formaction="?/installApp"
                             class="btn variant-filled-primary font-semibold"
                         >
-                        <!-- TODO in svelte 5 convert to snippet -->
+                            <!-- TODO in svelte 5 convert to snippet -->
                             {#if appsLoading.includes(app.id)}
                                 <ProgressRadial
                                     class="h-6 w-6 mr-2 -ml-2"
                                     stroke={100}
                                     meter="stroke-surface-50 dark:stroke-surface-900"
-                                    value={undefined}
+                                    value={appsProgress.get(app.id)}
                                 />
                                 {$i18n.t('discover.installing')}
                             {:else}
@@ -224,7 +243,7 @@
                                     class="h-6 w-6 mr-2 -ml-2"
                                     stroke={100}
                                     meter="stroke-surface-50 dark:stroke-surface-900"
-                                    value={undefined}
+                                    value={appsProgress.get(app.id)}
                                 />
                                 {$i18n.t('discover.installing')}
                             {:else}
