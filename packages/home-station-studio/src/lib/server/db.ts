@@ -32,7 +32,7 @@ try {
 
 	logger.info('Running migrations');
 	const migrationClient = postgres(postgresUrl, { max: 1 });
-	migrate(drizzle(migrationClient), { migrationsFolder: 'drizzle' });
+	await migrate(drizzle(migrationClient), { migrationsFolder: './drizzle' });
 	logger.info('Migrations completed');
 } catch (error) {
 	logger.error('Failed to connect to the database: ' + error);
