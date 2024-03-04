@@ -24,22 +24,41 @@ export const lucia = new Lucia(adapter, {
 	}
 });
 
+// Check if the needed environment variables are set
+const requiredEnvVars = [
+	'GITHUB_CLIENT_ID',
+	'GITHUB_CLIENT_SECRET',
+	'GITHUB_REDIRECT_URI',
+	'GITLAB_CLIENT_ID',
+	'GITLAB_CLIENT_SECRET',
+	'GITLAB_REDIRECT_URI',
+	'BITBUCKET_CLIENT_ID',
+	'BITBUCKET_CLIENT_SECRET',
+	'BITBUCKET_REDIRECT_URI'
+];
+
+for (const envVar of requiredEnvVars) {
+	if (!process.env[envVar]) {
+		throw new Error(`Environment variable "${envVar}" is not set`);
+	}
+}
+
 export const github = new GitHub(
-	import.meta.env.GITHUB_CLIENT_ID,
-	import.meta.env.GITHUB_CLIENT_SECRET,
-	{ redirectURI: import.meta.env.GITHUB_REDIRECT_URI }
+	process.env.GITHUB_CLIENT_ID!,
+	process.env.GITHUB_CLIENT_SECRET!,
+	{ redirectURI: process.env.GITHUB_REDIRECT_URI! }
 );
 
 export const gitlab = new GitLab(
-	import.meta.env.GITLAB_CLIENT_ID,
-	import.meta.env.GITLAB_CLIENT_SECRET,
-	import.meta.env.GITLAB_REDIRECT_URI
+	process.env.GITLAB_CLIENT_ID!,
+	process.env.GITLAB_CLIENT_SECRET!,
+	process.env.GITLAB_REDIRECT_URI!
 );
 
 export const bitbucket = new Bitbucket(
-	import.meta.env.BITBUCKET_CLIENT_ID,
-	import.meta.env.BITBUCKET_CLIENT_SECRET,
-	import.meta.env.BITBUCKET_REDIRECT_URI
+	process.env.BITBUCKET_CLIENT_ID!,
+	process.env.BITBUCKET_CLIENT_SECRET!,
+	process.env.BITBUCKET_REDIRECT_URI!
 );
 
 declare module 'lucia' {
