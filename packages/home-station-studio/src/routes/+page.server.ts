@@ -6,7 +6,8 @@ export const load: PageServerLoad = async (event) => {
 	if (!event.locals.user) redirect(302, '/login');
 
 	return {
-		userId: event.locals.user.userId
+		userId: event.locals.user.id,
+		username: event.locals.user.username
 	};
 };
 

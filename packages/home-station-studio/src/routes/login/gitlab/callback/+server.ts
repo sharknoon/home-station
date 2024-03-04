@@ -4,7 +4,7 @@ import { gitlab, lucia } from '$lib/server/auth';
 
 import type { RequestEvent } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
-import { and, eq } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { oauthAccounts, users } from '$lib/server/schema';
 import logger from '$lib/server/logger';
 
@@ -21,12 +21,12 @@ export async function GET(event: RequestEvent): Promise<Response> {
 
 	try {
 		const tokens = await gitlab.validateAuthorizationCode(code);
-		const gitlabUserResponse = await fetch('https://gitlab.com/api/v4/user', {
+		const userResponse = await fetch('https://gitlab.com/api/v4/user', {
 			headers: {
 				Authorization: `Bearer ${tokens.accessToken}`
 			}
 		});
-		const gitlabUser: GitLabUser = await gitlabUserResponse.json();
+		const gitlabUser: GitLabUser = await userResponse.json();
 
 		if (!gitlabUser.confirmed_at) {
 			return new Response('Unverified email', {
@@ -34,15 +34,17 @@ export async function GET(event: RequestEvent): Promise<Response> {
 			});
 		}
 
-		const existingAccount = await db.query.oauthAccounts.findFirst({
-			where: and(
-				eq(oauthAccounts.providerId, 'gitlab'),
-				eq(oauthAccounts.providerUserId, String(gitlabUser.id))
-			)
+		const existingUser = await db.query.users.findFirst({
+			where: eq(users.email, gitlabUser.email)
 		});
+		if (existingUser) {
+			await db.insert(oauthAccounts).values({
+				providerId: 'gitlab',
+				providerUserId: String(gitlabUser.id),
+				userId: existingUser.id
+			});
 
-		if (existingAccount) {
-			const session = await lucia.createSession(existingAccount.userId, {});
+			const session = await lucia.createSession(existingUser.id, {});
 			const sessionCookie = lucia.createSessionCookie(session.id);
 			event.cookies.set(sessionCookie.name, sessionCookie.value, {
 				path: '.',

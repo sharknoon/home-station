@@ -3,14 +3,14 @@ import { pgTable, primaryKey, text, timestamp } from 'drizzle-orm/pg-core';
 export const users = pgTable('user', {
 	id: text('id').primaryKey(),
 	username: text('username').notNull(),
-	email: text('email').notNull()
+	email: text('email').notNull().unique()
 });
 
 export const sessions = pgTable('session', {
 	id: text('id').primaryKey(),
 	userId: text('user_id')
 		.notNull()
-		.references(() => users.id),
+		.references(() => users.id, { onDelete: 'cascade' }),
 	expiresAt: timestamp('expires_at', {
 		withTimezone: true,
 		mode: 'date'
@@ -24,7 +24,7 @@ export const oauthAccounts = pgTable(
 		providerUserId: text('provider_user_id').notNull(),
 		userId: text('user_id')
 			.notNull()
-			.references(() => users.id)
+			.references(() => users.id, { onDelete: 'cascade' })
 	},
 	(table) => {
 		return {

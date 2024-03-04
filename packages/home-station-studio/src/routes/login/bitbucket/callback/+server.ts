@@ -4,7 +4,7 @@ import { bitbucket, lucia } from '$lib/server/auth';
 
 import type { RequestEvent } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
-import { and, eq } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { oauthAccounts, users } from '$lib/server/schema';
 import logger from '$lib/server/logger';
 
@@ -21,24 +21,21 @@ export async function GET(event: RequestEvent): Promise<Response> {
 
 	try {
 		const tokens = await bitbucket.validateAuthorizationCode(code);
-		const bitbucketUserResponse = await fetch('https://api.bitbucket.org/2.0/user', {
+		const userResponse = await fetch('https://api.bitbucket.org/2.0/user', {
 			headers: {
 				Authorization: `Bearer ${tokens.accessToken}`
 			}
 		});
-		const bitbucketUser: BitbucketUser = await bitbucketUserResponse.json();
+		const bitbucketUser: BitbucketUser = await userResponse.json();
 
-		const bitbucketEmailsResponse = await fetch(
-			'https://api.bitbucket.org/2.0/user/emails?pagelen=100',
-			{
-				headers: {
-					Authorization: `Bearer ${tokens.accessToken}`
-				}
+		const emailsResponse = await fetch('https://api.bitbucket.org/2.0/user/emails?pagelen=100', {
+			headers: {
+				Authorization: `Bearer ${tokens.accessToken}`
 			}
-		);
-		const bitbucketEmails: BitbucketEmails = await bitbucketEmailsResponse.json();
+		});
+		const emails: BitbucketEmails = await emailsResponse.json();
 
-		const primaryEmail = bitbucketEmails.values.find((email) => email.is_primary) ?? null;
+		const primaryEmail = emails.values.find((email) => email.is_primary) ?? null;
 		if (!primaryEmail) {
 			return new Response('No primary email address', {
 				status: 400
@@ -50,15 +47,17 @@ export async function GET(event: RequestEvent): Promise<Response> {
 			});
 		}
 
-		const existingAccount = await db.query.oauthAccounts.findFirst({
-			where: and(
-				eq(oauthAccounts.providerId, 'bitbucket'),
-				eq(oauthAccounts.providerUserId, String(bitbucketUser.uuid))
-			)
+		const existingUser = await db.query.users.findFirst({
+			where: eq(users.email, primaryEmail.email)
 		});
+		if (existingUser) {
+			await db.insert(oauthAccounts).values({
+				providerId: 'bitbucket',
+				providerUserId: String(bitbucketUser.uuid),
+				userId: existingUser.id
+			});
 
-		if (existingAccount) {
-			const session = await lucia.createSession(existingAccount.userId, {});
+			const session = await lucia.createSession(existingUser.id, {});
 			const sessionCookie = lucia.createSessionCookie(session.id);
 			event.cookies.set(sessionCookie.name, sessionCookie.value, {
 				path: '.',

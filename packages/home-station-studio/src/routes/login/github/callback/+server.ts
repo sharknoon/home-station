@@ -4,7 +4,7 @@ import { github, lucia } from '$lib/server/auth';
 
 import type { RequestEvent } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
-import { and, eq } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { oauthAccounts, users } from '$lib/server/schema';
 import logger from '$lib/server/logger';
 
@@ -21,21 +21,22 @@ export async function GET(event: RequestEvent): Promise<Response> {
 
 	try {
 		const tokens = await github.validateAuthorizationCode(code);
-		const githubUserResponse = await fetch('https://api.github.com/user', {
+		const userResponse = await fetch('https://api.github.com/user', {
 			headers: {
 				Authorization: `Bearer ${tokens.accessToken}`
 			}
 		});
-		const githubUser: GitHubUser = await githubUserResponse.json();
+		const githubUser: GitHubUser = await userResponse.json();
 
-		const githubEmailsResponse = await fetch('https://api.github.com/user/emails?per_page=100', {
+		const emailsResponse = await fetch('https://api.github.com/user/emails?per_page=100', {
 			headers: {
 				Authorization: `Bearer ${tokens.accessToken}`
 			}
 		});
-		const githubEmails: GitHubEmails = await githubEmailsResponse.json();
+		const emails: GitHubEmails = await emailsResponse.json();
 
-		const primaryEmail = githubEmails.find((email) => email.primary) ?? null;
+		console.log(JSON.stringify(emails, null, 2));
+		const primaryEmail = emails.find((email) => email.primary) ?? null;
 		if (!primaryEmail) {
 			return new Response('No primary email address', {
 				status: 400
@@ -47,15 +48,17 @@ export async function GET(event: RequestEvent): Promise<Response> {
 			});
 		}
 
-		const existingAccount = await db.query.oauthAccounts.findFirst({
-			where: and(
-				eq(oauthAccounts.providerId, 'github'),
-				eq(oauthAccounts.providerUserId, String(githubUser.id))
-			)
+		const existingUser = await db.query.users.findFirst({
+			where: eq(users.email, primaryEmail.email)
 		});
+		if (existingUser) {
+			await db.insert(oauthAccounts).values({
+				providerId: 'github',
+				providerUserId: String(githubUser.id),
+				userId: existingUser.id
+			});
 
-		if (existingAccount) {
-			const session = await lucia.createSession(existingAccount.userId, {});
+			const session = await lucia.createSession(existingUser.id, {});
 			const sessionCookie = lucia.createSessionCookie(session.id);
 			event.cookies.set(sessionCookie.name, sessionCookie.value, {
 				path: '.',

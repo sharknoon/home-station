@@ -7,7 +7,9 @@ import type { RequestEvent } from '@sveltejs/kit';
 
 export async function GET(event: RequestEvent): Promise<Response> {
 	const state = generateState();
-	const url = await bitbucket.createAuthorizationURL(state);
+	const url = await bitbucket.createAuthorizationURL(state, {
+		scopes: ['account']
+	});
 
 	event.cookies.set('bitbucket_oauth_state', state, {
 		path: '/',

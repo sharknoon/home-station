@@ -7,7 +7,7 @@ import type { RequestEvent } from '@sveltejs/kit';
 
 export async function GET(event: RequestEvent): Promise<Response> {
 	const state = generateState();
-	const url = await gitlab.createAuthorizationURL(state);
+	const url = await gitlab.createAuthorizationURL(state, { scopes: ['read_user'] });
 
 	event.cookies.set('gitlab_oauth_state', state, {
 		path: '/',
