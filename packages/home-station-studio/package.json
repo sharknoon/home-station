@@ -13,9 +13,9 @@
 		"format": "prettier --write .",
 		"test:integration": "playwright test",
 		"test:unit": "vitest run",
-        "db:gen": "drizzle-kit generate:pg",
-        "db:push": "drizzle-kit push:pg",
-        "i18n": "i18next 'src/**/*.{ts,svelte}'"
+		"db:gen": "drizzle-kit generate:pg",
+		"db:push": "drizzle-kit push:pg",
+		"i18n": "i18next 'src/**/*.{ts,svelte}'"
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.28.1",

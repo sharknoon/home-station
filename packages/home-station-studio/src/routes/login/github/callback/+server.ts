@@ -28,6 +28,25 @@ export async function GET(event: RequestEvent): Promise<Response> {
 		});
 		const githubUser: GitHubUser = await githubUserResponse.json();
 
+		const githubEmailsResponse = await fetch('https://api.github.com/user/emails?per_page=100', {
+			headers: {
+				Authorization: `Bearer ${tokens.accessToken}`
+			}
+		});
+		const githubEmails: GitHubEmails = await githubEmailsResponse.json();
+
+		const primaryEmail = githubEmails.find((email) => email.primary) ?? null;
+		if (!primaryEmail) {
+			return new Response('No primary email address', {
+				status: 400
+			});
+		}
+		if (!primaryEmail.verified) {
+			return new Response('Unverified email', {
+				status: 400
+			});
+		}
+
 		const existingAccount = await db.query.oauthAccounts.findFirst({
 			where: and(
 				eq(oauthAccounts.providerId, 'github'),
@@ -48,12 +67,12 @@ export async function GET(event: RequestEvent): Promise<Response> {
 			await db.insert(users).values({
 				id: userId,
 				username: githubUser.login,
-				email: githubUser.email
-			})
+				email: primaryEmail.email
+			});
 			await db.insert(oauthAccounts).values({
 				providerId: 'github',
 				providerUserId: String(githubUser.id),
-				userId,
+				userId
 			});
 
 			const session = await lucia.createSession(userId, {});
@@ -87,5 +106,12 @@ export async function GET(event: RequestEvent): Promise<Response> {
 interface GitHubUser {
 	id: number;
 	login: string;
-	email: string;
 }
+
+interface GitHubEmail {
+	email: string;
+	primary: boolean;
+	verified: boolean;
+}
+
+type GitHubEmails = GitHubEmail[];

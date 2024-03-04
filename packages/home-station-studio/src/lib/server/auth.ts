@@ -44,11 +44,9 @@ for (const envVar of requiredEnvVars) {
 	}
 }
 
-export const github = new GitHub(
-	env.GITHUB_CLIENT_ID!,
-	env.GITHUB_CLIENT_SECRET!,
-	{ redirectURI: env.GITHUB_REDIRECT_URI! }
-);
+export const github = new GitHub(env.GITHUB_CLIENT_ID!, env.GITHUB_CLIENT_SECRET!, {
+	redirectURI: env.GITHUB_REDIRECT_URI!
+});
 
 export const gitlab = new GitLab(
 	env.GITLAB_CLIENT_ID!,

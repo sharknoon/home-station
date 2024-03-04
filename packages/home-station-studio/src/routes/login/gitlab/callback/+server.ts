@@ -28,6 +28,12 @@ export async function GET(event: RequestEvent): Promise<Response> {
 		});
 		const gitlabUser: GitLabUser = await gitlabUserResponse.json();
 
+		if (!gitlabUser.confirmed_at) {
+			return new Response('Unverified email', {
+				status: 400
+			});
+		}
+
 		const existingAccount = await db.query.oauthAccounts.findFirst({
 			where: and(
 				eq(oauthAccounts.providerId, 'gitlab'),
@@ -88,4 +94,5 @@ interface GitLabUser {
 	id: number;
 	username: string;
 	email: string;
+	confirmed_at: string;
 }

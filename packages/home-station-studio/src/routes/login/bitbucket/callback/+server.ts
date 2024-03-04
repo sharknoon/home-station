@@ -21,22 +21,34 @@ export async function GET(event: RequestEvent): Promise<Response> {
 
 	try {
 		const tokens = await bitbucket.validateAuthorizationCode(code);
-		const bitbucketUserResponse = await fetch("https://api.bitbucket.org/2.0/user", {
+		const bitbucketUserResponse = await fetch('https://api.bitbucket.org/2.0/user', {
 			headers: {
 				Authorization: `Bearer ${tokens.accessToken}`
 			}
-		});		
+		});
 		const bitbucketUser: BitbucketUser = await bitbucketUserResponse.json();
 
-		const bitbucketEmailsResponse = await fetch("https://api.bitbucket.org/2.0/user/emails", {
-			headers: {
-				Authorization: `Bearer ${tokens.accessToken}`
+		const bitbucketEmailsResponse = await fetch(
+			'https://api.bitbucket.org/2.0/user/emails?pagelen=100',
+			{
+				headers: {
+					Authorization: `Bearer ${tokens.accessToken}`
+				}
 			}
-		});		
-		const tmp = await bitbucketEmailsResponse.json();
-		console.log(tmp);
-		const bitbucketEmails: BitbucketEmails = tmp;
-		const bitbucketEmail = /*bitbucketEmails.find((email) => email.is_primary) ||*/ bitbucketEmails[0];
+		);
+		const bitbucketEmails: BitbucketEmails = await bitbucketEmailsResponse.json();
+
+		const primaryEmail = bitbucketEmails.values.find((email) => email.is_primary) ?? null;
+		if (!primaryEmail) {
+			return new Response('No primary email address', {
+				status: 400
+			});
+		}
+		if (!primaryEmail.is_confirmed) {
+			return new Response('Unverified email', {
+				status: 400
+			});
+		}
 
 		const existingAccount = await db.query.oauthAccounts.findFirst({
 			where: and(
@@ -58,12 +70,12 @@ export async function GET(event: RequestEvent): Promise<Response> {
 			await db.insert(users).values({
 				id: userId,
 				username: bitbucketUser.username,
-				email: bitbucketEmail
-			})
+				email: primaryEmail.email
+			});
 			await db.insert(oauthAccounts).values({
 				providerId: 'bitbucket',
 				providerUserId: String(bitbucketUser.uuid),
-				userId,
+				userId
 			});
 
 			const session = await lucia.createSession(userId, {});
@@ -99,4 +111,10 @@ interface BitbucketUser {
 	username: string;
 }
 
-type BitbucketEmails = string[];
+interface BitbucketEmails {
+	values: {
+		email: string;
+		is_primary: boolean;
+		is_confirmed: boolean;
+	}[];
+}

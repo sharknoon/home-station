@@ -13,7 +13,7 @@ const config = {
 		extend: {}
 	},
 	plugins: [
-    forms,
+		forms,
 		skeleton({
 			themes: {
 				preset: [
