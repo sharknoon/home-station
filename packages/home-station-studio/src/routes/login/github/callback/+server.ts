@@ -6,6 +6,7 @@ import type { RequestEvent } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
 import { and, eq } from 'drizzle-orm';
 import { oauthAccounts, users } from '$lib/server/schema';
+import logger from '$lib/server/logger';
 
 export async function GET(event: RequestEvent): Promise<Response> {
 	const code = event.url.searchParams.get('code');
@@ -76,6 +77,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 				status: 400
 			});
 		}
+		logger.error('Failed to authenticate with GitHub: ' + e);
 		return new Response(null, {
 			status: 500
 		});
