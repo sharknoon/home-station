@@ -45,12 +45,12 @@ export async function GET(event: RequestEvent): Promise<Response> {
 		} else {
 			const userId = generateId(15);
 
-			db.insert(users).values({
+			await db.insert(users).values({
 				id: userId,
 				username: gitlabUser.username,
 				email: gitlabUser.email
 			});
-			db.insert(oauthAccounts).values({
+			await db.insert(oauthAccounts).values({
 				providerId: 'gitlab',
 				providerUserId: String(gitlabUser.id),
 				userId

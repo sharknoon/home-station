@@ -55,12 +55,12 @@ export async function GET(event: RequestEvent): Promise<Response> {
 		} else {
 			const userId = generateId(15);
 
-			db.insert(users).values({
+			await db.insert(users).values({
 				id: userId,
 				username: bitbucketUser.username,
 				email: bitbucketEmail
 			})
-			db.insert(oauthAccounts).values({
+			await db.insert(oauthAccounts).values({
 				providerId: 'bitbucket',
 				providerUserId: String(bitbucketUser.uuid),
 				userId,
