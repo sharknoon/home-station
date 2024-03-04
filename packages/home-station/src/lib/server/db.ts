@@ -31,7 +31,7 @@ try {
     logger.info('Successfully connected to the database');
 
     logger.info('Running migrations');
-    migrate(db, { migrationsFolder: './drizzle' });
+    migrate(db, { migrationsFolder: 'drizzle' });
     logger.info('Migrations completed');
 } catch (error) {
     logger.error('Failed to connect to the database: ' + error);

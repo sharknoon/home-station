@@ -1,0 +1,3 @@
+{
+    "buildCommand": "drizzle-kit push:pg && svelte-kit sync && vite build"
+}
