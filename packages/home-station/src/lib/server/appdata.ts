@@ -1,4 +1,5 @@
 import { PUBLIC_CONTAINERIZED } from '$env/static/public';
+import { env } from "$env/dynamic/private";
 import { building } from '$app/environment';
 import path from 'node:path';
 import fs from 'node:fs/promises';
@@ -6,7 +7,7 @@ import os from 'node:os';
 import { exists } from '$lib/server/utils';
 import logger from '$lib/server/logger';
 
-const testing = process.env.NODE_ENV === 'test';
+const testing = env.NODE_ENV === 'test';
 
 // This is the main app path. In a container it must be mounted as a volume
 let appDataPath: string;

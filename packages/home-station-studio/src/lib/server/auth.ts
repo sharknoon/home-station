@@ -4,6 +4,7 @@ import { GitHub, GitLab, Bitbucket } from 'arctic';
 import { DrizzlePostgreSQLAdapter } from '@lucia-auth/adapter-drizzle';
 import { sessions, users } from '$lib/server/schema';
 import { db } from '$lib/server/db';
+import { env } from '$env/dynamic/private';
 
 const adapter = new DrizzlePostgreSQLAdapter(db, sessions, users);
 
@@ -38,27 +39,27 @@ const requiredEnvVars = [
 ];
 
 for (const envVar of requiredEnvVars) {
-	if (!process.env[envVar]) {
+	if (!env[envVar]) {
 		throw new Error(`Environment variable "${envVar}" is not set`);
 	}
 }
 
 export const github = new GitHub(
-	process.env.GITHUB_CLIENT_ID!,
-	process.env.GITHUB_CLIENT_SECRET!,
-	{ redirectURI: process.env.GITHUB_REDIRECT_URI! }
+	env.GITHUB_CLIENT_ID!,
+	env.GITHUB_CLIENT_SECRET!,
+	{ redirectURI: env.GITHUB_REDIRECT_URI! }
 );
 
 export const gitlab = new GitLab(
-	process.env.GITLAB_CLIENT_ID!,
-	process.env.GITLAB_CLIENT_SECRET!,
-	process.env.GITLAB_REDIRECT_URI!
+	env.GITLAB_CLIENT_ID!,
+	env.GITLAB_CLIENT_SECRET!,
+	env.GITLAB_REDIRECT_URI!
 );
 
 export const bitbucket = new Bitbucket(
-	process.env.BITBUCKET_CLIENT_ID!,
-	process.env.BITBUCKET_CLIENT_SECRET!,
-	process.env.BITBUCKET_REDIRECT_URI!
+	env.BITBUCKET_CLIENT_ID!,
+	env.BITBUCKET_CLIENT_SECRET!,
+	env.BITBUCKET_REDIRECT_URI!
 );
 
 declare module 'lucia' {
