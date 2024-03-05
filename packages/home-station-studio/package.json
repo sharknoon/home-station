@@ -14,8 +14,7 @@
 		"test:integration": "playwright test",
 		"test:unit": "vitest run",
 		"db:gen": "drizzle-kit generate:pg",
-		"db:push": "drizzle-kit push:pg",
-		"i18n": "i18next 'src/**/*.{ts,svelte}'"
+		"db:push": "drizzle-kit push:pg"
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.28.1",
@@ -48,9 +47,9 @@
 	"type": "module",
 	"dependencies": {
 		"@lucia-auth/adapter-drizzle": "^1.0.2",
-		"lucia": "^3.0.1",
 		"arctic": "^1.2.1",
 		"drizzle-orm": "^0.29.4",
+		"lucia": "^3.0.1",
 		"postgres": "^3.4.3",
 		"winston": "^3.12.0"
 	}
