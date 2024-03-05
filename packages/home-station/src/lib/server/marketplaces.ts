@@ -16,8 +16,9 @@ import { getAppDataPath } from '$lib/server/appdata';
 import { type LocalizedString } from '$lib/i18n';
 import { eq } from 'drizzle-orm';
 import logger from '$lib/server/logger';
+import { rcompare } from 'semver';
 
-export type RemoteMarketplaceApp = {
+export type AppYaml = {
     id: string;
     name: LocalizedString;
     description: LocalizedString;
@@ -26,7 +27,8 @@ export type RemoteMarketplaceApp = {
     links: Links;
     publishedAt: string;
     developer: string;
-    category: 'File Transfer - Web-based File Managers';
+    category: 'productivity';
+    license: string;
     config?: Config[];
     http: Http[];
     messages?: Messages;
@@ -118,6 +120,28 @@ function getDirectoryNameFromUrl(url: string): string {
 }
 
 /**
+ * Retrieves the latest version of a marketplace app. It uses semver comparisons to get the latest version.
+ * @see https://github.com/npm/node-semver?tab=readme-ov-file#comparison
+ * @param app - The marketplace app to retrieve the latest version for.
+ * @returns A promise that resolves to the latest version of the app, or undefined if no versions are found.
+ */
+export async function getLatestVersion(app: MarketplaceApp): Promise<string | undefined> {
+    const versionsPath = path.join(getMarketplaceAppPath(app), 'versions');
+    let versions: string[] = [];
+    try {
+        versions = await fs.readdir(versionsPath);
+    } catch {
+        logger.warn(`No "versions" directory found in "${getMarketplaceAppPath(app)}"!`);
+        return undefined;
+    }
+    if (versions.length === 0) {
+        logger.warn(`No versions found in "${versionsPath}"!`);
+        return undefined;
+    }
+    return versions.sort(rcompare)[0];
+}
+
+/**
  * Adds a new marketplace repository to the database and tests if the credentials are valid (if provided).
  * The promise is rejected, if the credentials are invalid.
  * @param gitRemoteUrl The git remote URL of the marketplace repository
@@ -178,16 +202,15 @@ export async function updateMarketplaceApps(
     const marketplaces = await db.query.marketplaces.findMany();
     const apps: MarketplaceApp[] = [];
     for (const marketplace of marketplaces) {
-        const appIds = await pullMarketplaceRepository(marketplace, progress);
+        await pullMarketplaceRepository(marketplace, progress);
+        const marketplacePath = getMarketplacePath(marketplace);
+        const appIds = await loadAppIds(path.join(marketplacePath, 'apps'));
         for (const appId of appIds) {
             try {
-                const marketplacePath = getMarketplacePath(marketplace);
                 const appYamlPath = path.join(marketplacePath, 'apps', appId, 'app.yml');
-                const app = await loadAppFromFiles(appYamlPath);
-                apps.push({
-                    marketplaceUrl: marketplace.gitRemoteUrl,
-                    ...app
-                });
+                const appYaml = await parseAppYaml(appYamlPath);
+                const app = await convertAppYaml(appYaml, marketplace.gitRemoteUrl);
+                apps.push(app);
             } catch (e) {
                 logger.warn(e);
             }
@@ -198,12 +221,63 @@ export async function updateMarketplaceApps(
 }
 
 /**
+ * Converts an `app.yml` to a MarketplaceApp. This involves resolving files and setting the marketplaceUrl.
+ */
+async function convertAppYaml(appYaml: AppYaml, marketplaceUrl: string): Promise<MarketplaceApp> {
+    const icon = await resolveFile(
+        appYaml.icon,
+        path.join(getMarketplacePath({ gitRemoteUrl: marketplaceUrl }), 'apps', appYaml.id)
+    );
+    if (!icon) {
+        logger.warn(`No icon found for "${appYaml.id}" in "${marketplaceUrl}"!`);
+    }
+
+    const banner = await resolveFile(
+        appYaml.banner,
+        path.join(getMarketplacePath({ gitRemoteUrl: marketplaceUrl }), 'apps', appYaml.id)
+    );
+
+    return {
+        ...appYaml,
+        marketplaceUrl,
+        icon: icon ?? '',
+        banner
+    };
+}
+
+/**
+ * Resolves a file to a local path or a URL
+ * @param file The file to be resolved, either a URL or a relative path to a local file
+ * @param cwd The current working directory for relative paths
+ * @returns The resolved file as a absolute path (does exist!), a URL or undefined if the file cannot be resolved
+ */
+export async function resolveFile(
+    file: string | undefined,
+    cwd: string
+): Promise<string | undefined> {
+    // Check if there even is a file (sometimes the field is optional)
+    if (!file) return undefined;
+    // Return URLs directly
+    if (isValidUrl(file)) {
+        return file;
+    }
+    // Assume the file is a relative path to a local file
+    const filePath = path.join(cwd, file);
+    if (await exists(filePath)) {
+        return path.relative(await getAppDataPath(), filePath).replace(/\\/g, '/');
+    }
+    // Either a wrong URL or a non-existing file
+    logger.warn(`"${file}" is not a valid URL or cannot be found in "${cwd}"`);
+    return undefined;
+}
+
+/**
  * Pulls the apps from the marketplace repository and returns the appIds
  */
 async function pullMarketplaceRepository(
     marketplace: Marketplace,
     progress: (progress: number | undefined) => void
-): Promise<string[]> {
+) {
     const marketplacePath = getMarketplacePath(marketplace);
 
     const onAuth: AuthCallback = () => ({
@@ -235,13 +309,19 @@ async function pullMarketplaceRepository(
             onProgress
         });
     }
+}
 
-    // Load the apps from the files
+/**
+ * Loads the app Ids from a marketplace apps directory.
+ *
+ * @param appsPath The path to the apps directory inside a marketplace.
+ * @returns An array of app Ids (the folder names).
+ */
+async function loadAppIds(appsPath: string): Promise<string[]> {
     try {
-        const appsPath = path.join(marketplacePath, 'apps');
         return await fs.readdir(appsPath);
     } catch {
-        logger.warn(`No "apps" directory found in "${marketplacePath}"! Skipping...`);
+        logger.warn(`No "apps" directory found in "${appsPath}"! Skipping...`);
         return [];
     }
 }
@@ -251,13 +331,13 @@ async function pullMarketplaceRepository(
  * @param appYamlPath path to the app.yml file
  * @returns A promise that resolves to the app object
  */
-async function loadAppFromFiles(appYamlPath: string): Promise<RemoteMarketplaceApp> {
+async function parseAppYaml(appYamlPath: string): Promise<AppYaml> {
     if (!(await exists(appYamlPath))) {
         throw new Error(`No app.yml found in "${appYamlPath}! Skipping..."`);
     }
 
     const appYaml = await fs.readFile(appYamlPath, 'utf8');
-    return yaml.load(appYaml) as RemoteMarketplaceApp;
+    return yaml.load(appYaml) as AppYaml;
 }
 
 /**

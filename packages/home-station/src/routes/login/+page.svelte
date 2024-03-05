@@ -1,7 +1,7 @@
 <script lang="ts">
     import { enhance } from '$app/forms';
     import type { ActionData } from './$types';
-    import i18n from '$lib/i18n';
+    import { i18n } from '$lib/i18n';
 
     export let form: ActionData;
 </script>

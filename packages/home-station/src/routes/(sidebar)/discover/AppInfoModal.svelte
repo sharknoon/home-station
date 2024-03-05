@@ -1,7 +1,7 @@
 <script lang="ts">
     import X from 'lucide-svelte/icons/x';
     import type { SvelteComponent } from 'svelte';
-    import i18n from '$lib/i18n';
+    import { i18n } from '$lib/i18n';
     import type { MarketplaceApp } from '$lib/server/marketplaces';
 
     export let marketplaceApp: MarketplaceApp;

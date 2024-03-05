@@ -24,6 +24,7 @@ CREATE TABLE `marketplace_apps` (
 	`published_at` text NOT NULL,
 	`developer` text NOT NULL,
 	`category` text NOT NULL,
+	`license` text NOT NULL,
 	`config` text,
 	`http` text NOT NULL,
 	`messages` text,

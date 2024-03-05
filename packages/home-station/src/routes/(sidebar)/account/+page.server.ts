@@ -4,7 +4,7 @@ import { eq } from 'drizzle-orm';
 import type { Actions } from './$types';
 import { fail } from '@sveltejs/kit';
 import { get } from 'svelte/store';
-import i18n from '$lib/i18n';
+import { i18n } from '$lib/i18n';
 import bcrypt from 'bcrypt';
 import { themes, type Theme } from '$lib/theme';
 

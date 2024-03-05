@@ -1,10 +1,10 @@
 import type { Actions, PageServerLoad } from './$types';
 import db from '$lib/server/db';
 import { fail } from '@sveltejs/kit';
-import { deleteMarketplace, getMarketplaceAppPath } from '$lib/server/marketplaces';
+import { deleteMarketplace } from '$lib/server/marketplaces';
 import { marketplaceApps, containerEngines } from '$lib/server/schema';
 import { and, eq } from 'drizzle-orm';
-import { up } from '$lib/server/compose';
+import { installApp } from '$lib/server/apps';
 import { sendEvent } from '$lib/server/events';
 
 export const load = (async () => {
@@ -66,15 +66,12 @@ export const actions: Actions = {
             return fail(400, { containerEngineId, notFound: true });
         }
 
-        console.debug(id, marketplaceUrl, containerEngineId);
         // TODO check if the repository and container engine exist
 
         // TODO create app
 
-        await up(
-            getMarketplaceAppPath(marketplaceApp),
-            undefined,
-            (progress) => sendEvent('installAppProgress', JSON.stringify({ id, progress }))
+        await installApp(marketplaceApp, (progress) =>
+            sendEvent('installAppProgress', JSON.stringify({ id, progress }))
         );
     }
 };

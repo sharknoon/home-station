@@ -28,7 +28,7 @@
     import { onMount, type ComponentType } from 'svelte';
     import { goto } from '$app/navigation';
     import { slide } from 'svelte/transition';
-    import i18n from '$lib/i18n';
+    import { i18n } from '$lib/i18n';
 
     export let data: LayoutData;
 

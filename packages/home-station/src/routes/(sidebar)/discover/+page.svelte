@@ -11,7 +11,7 @@
     import Trash2 from 'lucide-svelte/icons/trash-2';
     import Plus from 'lucide-svelte/icons/plus';
     import Pencil from 'lucide-svelte/icons/pencil';
-    import i18n, { ts } from '$lib/i18n';
+    import { i18n, ts } from '$lib/i18n';
     import AppInfoModal from './AppInfoModal.svelte';
     import ContainerEnginesModal from './ContainerEnginesModal.svelte';
     import { onMount } from 'svelte';

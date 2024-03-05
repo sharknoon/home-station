@@ -75,7 +75,9 @@ function getDefaultStats(schedule: string): Writable<TaskStats> {
 export async function scheduleTasks(): Promise<void> {
     for (const task of tasks) {
         // Update the stats in the UI
-        task.stats.subscribe((stats) => sendEvent('updateStats', JSON.stringify({ id: task.id, stats })));
+        task.stats.subscribe((stats) =>
+            sendEvent('updateStats', JSON.stringify({ id: task.id, stats }))
+        );
         logger.info(`Scheduling task "${task.id}" to run on schedule "${task.schedule}"`);
         const job = new CronJob(task.schedule, async () => await executeTask(task));
         job.start();

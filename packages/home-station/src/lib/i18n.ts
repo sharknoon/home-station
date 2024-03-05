@@ -59,8 +59,6 @@ export function init(languageFromDb?: string) {
     i18n.set(def);
 }
 
-export default i18n;
-
 /**
  * This function is similar to the t() function, but for LocalizedStrings.
  * A LocalizedString is a json object with the locale as key and the translation as the value.

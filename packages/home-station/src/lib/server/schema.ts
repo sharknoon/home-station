@@ -50,7 +50,7 @@ export const containerEngines = sqliteTable('container_engines', {
 export const marketplaces = sqliteTable('marketplaces', {
     gitRemoteUrl: text('git_remote_url').primaryKey(),
     gitUsername: text('git_username'),
-    gitPassword: text('git_password'),
+    gitPassword: text('git_password')
 });
 
 // Apps for the marketplace
@@ -69,7 +69,8 @@ export const marketplaceApps = sqliteTable(
         links: text('links', { mode: 'json' }).notNull().$type<Links>(),
         publishedAt: text('published_at').notNull(),
         developer: text('developer').notNull(),
-        category: text('category', { enum: ['File Transfer - Web-based File Managers'] }).notNull(), //TODO: Add more categories from awesome-selfhosted
+        category: text('category', { enum: ['productivity'] }).notNull(), //TODO: Add more categories from https://developer.apple.com/app-store/categories/
+        license: text('license').notNull(),
         config: text('config', { mode: 'json' }).$type<Config[]>(),
         http: text('http', { mode: 'json' }).notNull().$type<Http[]>(),
         messages: text('messages', { mode: 'json' }).$type<Messages>()

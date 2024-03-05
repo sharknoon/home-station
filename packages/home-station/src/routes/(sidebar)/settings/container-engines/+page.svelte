@@ -6,7 +6,7 @@
     import List from 'lucide-svelte/icons/list';
     import MemoryStick from 'lucide-svelte/icons/memory-stick';
     import type { PageData } from './$types';
-    import i18n from '$lib/i18n';
+    import { i18n } from '$lib/i18n';
 
     export let data: PageData;
 </script>

@@ -1,5 +1,5 @@
 import { PUBLIC_CONTAINERIZED } from '$env/static/public';
-import { env } from "$env/dynamic/private";
+import { env } from '$env/dynamic/private';
 import { building } from '$app/environment';
 import path from 'node:path';
 import fs from 'node:fs/promises';

@@ -8,7 +8,7 @@
     import RefreshCw from 'lucide-svelte/icons/refresh-cw';
     import Unplug from 'lucide-svelte/icons/unplug';
     import AlertTriangle from 'lucide-svelte/icons/alert-triangle';
-    import i18n from '$lib/i18n';
+    import { i18n } from '$lib/i18n';
     import { enhance } from '$app/forms';
     import { page } from '$app/stores';
 

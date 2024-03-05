@@ -2,7 +2,7 @@ import { join } from 'path';
 import { getEngine, type ContainerEngine } from '$lib/server/containerengines';
 import db from '$lib/server/db';
 import { exec } from '$lib/server/terminal';
-import { stripAnsi, throttle } from '$lib/server/utils';
+import { throttle } from '$lib/server/utils';
 
 export async function listStacks(engine?: ContainerEngine): Promise<string[]> {
     const engines = engine ? [engine] : await db.query.containerEngines.findMany();
@@ -21,14 +21,25 @@ export async function listStacks(engine?: ContainerEngine): Promise<string[]> {
 export async function up(
     cwd: string,
     composeFile?: string,
+    projectName?: string,
     progress?: (progress: number) => void
 ): Promise<void> {
     const customComposeFile = composeFile ? ['-f', composeFile] : [];
+    const customProjectName = projectName ? ['-p', projectName] : [];
     const id = join(cwd, composeFile ?? 'compose.yml');
     const throttledProgress = throttle((p: number) => progress?.(p), 250);
     await exec(
         'docker',
-        ['compose', '--progress', 'plain', ...customComposeFile, 'up', '-d'],
+        [
+            'compose',
+            '--progress',
+            'plain',
+            ...customComposeFile,
+            ...customProjectName,
+            'up',
+            '-d',
+            '--remove-orphans'
+        ],
         cwd,
         (data) => {
             if (!progress) return;

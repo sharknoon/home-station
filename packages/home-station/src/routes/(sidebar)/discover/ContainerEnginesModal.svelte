@@ -3,7 +3,7 @@
     import { enhance } from '$app/forms';
     import X from 'lucide-svelte/icons/x';
     import type { ContainerEngine } from '$lib/server/containerengines';
-    import i18n from '$lib/i18n';
+    import { i18n } from '$lib/i18n';
 
     type AvailableContainerEngine = Pick<ContainerEngine, 'id' | 'name' | 'type'>;
 
