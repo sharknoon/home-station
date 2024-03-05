@@ -9,6 +9,8 @@
 
 <div>{data.username}</div>
 
-<form method="post" use:enhance>
+<a href="/apps/new">Create a new app</a><br />
+
+<form method="post" action="?/logout" use:enhance>
 	<button>Sign out</button>
 </form>

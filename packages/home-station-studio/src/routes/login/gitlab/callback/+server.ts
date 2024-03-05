@@ -38,11 +38,14 @@ export async function GET(event: RequestEvent): Promise<Response> {
 			where: eq(users.email, gitlabUser.email)
 		});
 		if (existingUser) {
-			await db.insert(oauthAccounts).values({
-				providerId: 'gitlab',
-				providerUserId: String(gitlabUser.id),
-				userId: existingUser.id
-			});
+			await db
+				.insert(oauthAccounts)
+				.values({
+					providerId: 'gitlab',
+					providerUserId: String(gitlabUser.id),
+					userId: existingUser.id
+				})
+				.onConflictDoNothing();
 
 			const session = await lucia.createSession(existingUser.id, {});
 			const sessionCookie = lucia.createSessionCookie(session.id);

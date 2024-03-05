@@ -1,7 +1,8 @@
 import { lucia } from '$lib/server/auth';
-import type { Handle } from '@sveltejs/kit';
+import { redirect, type Handle } from '@sveltejs/kit';
+import { sequence } from '@sveltejs/kit/hooks';
 
-export const handle: Handle = async ({ event, resolve }) => {
+const authentication = (async ({ event, resolve }) => {
 	const sessionId = event.cookies.get(lucia.sessionCookieName);
 	if (!sessionId) {
 		event.locals.user = null;
@@ -29,4 +30,15 @@ export const handle: Handle = async ({ event, resolve }) => {
 	event.locals.user = user;
 	event.locals.session = session;
 	return resolve(event);
-};
+}) satisfies Handle;
+
+const authorization = (async ({ event, resolve }) => {
+	// Only allow unauthenticated access to /login
+	if (!event.url.pathname.startsWith('/login')) {
+		if (!event.locals.user) return redirect(303, '/login');
+	}
+
+	return await resolve(event);
+}) satisfies Handle;
+
+export const handle = sequence(authentication, authorization);
