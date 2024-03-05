@@ -35,7 +35,6 @@ export async function GET(event: RequestEvent): Promise<Response> {
 		});
 		const emails: GitHubEmails = await emailsResponse.json();
 
-		console.log(JSON.stringify(emails, null, 2));
 		const primaryEmail = emails.find((email) => email.primary) ?? null;
 		if (!primaryEmail) {
 			return new Response('No primary email address', {

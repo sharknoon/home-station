@@ -1,20 +1,20 @@
 {
-  "version": "5",
-  "dialect": "sqlite",
-  "entries": [
-    {
-      "idx": 0,
-      "version": "5",
-      "when": 1709555958257,
-      "tag": "0000_fair_raza",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1709589482130,
-      "tag": "0001_left_genesis",
-      "breakpoints": true
-    }
-  ]
+	"version": "5",
+	"dialect": "sqlite",
+	"entries": [
+		{
+			"idx": 0,
+			"version": "5",
+			"when": 1709555958257,
+			"tag": "0000_fair_raza",
+			"breakpoints": true
+		},
+		{
+			"idx": 1,
+			"version": "5",
+			"when": 1709589482130,
+			"tag": "0001_left_genesis",
+			"breakpoints": true
+		}
+	]
 }

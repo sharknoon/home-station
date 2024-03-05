@@ -4,3 +4,5 @@
 <a href="/login/gitlab">Sign in with GitLab</a>
 <br />
 <a href="/login/bitbucket">Sign in with Bitbucket</a>
+<br />
+Sign in with Passkey (coming soon)
