@@ -29,6 +29,42 @@ export async function installApp(
 }
 
 /**
+ * Uninstalls an app from the server.
+ * @param app - The app to uninstall.
+ * @returns A Promise that resolves when the app is successfully uninstalled.
+ */
+export async function uninstallApp(app: MarketplaceApp): Promise<void> {
+    const engines = await db.query.containerEngines.findMany();
+    for (const engine of engines) {
+        const dockerode = await getEngine(engine);
+        const containers = await dockerode.listContainers({ all: true });
+        for (const container of containers) {
+            // TODO move to separate function
+            const appId = container.Labels['home-station.app'];
+            const parts = appId?.split('|') ?? [];
+            let marketplaceUrl = 'https://github.com/home-station-org/apps.git';
+            let id;
+            if (parts.length == 2) {
+                id = parts[0];
+            } else if (parts.length == 3) {
+                marketplaceUrl = parts[0];
+                if (!marketplaceUrl.endsWith('.git')) marketplaceUrl += '.git';
+                id = parts[1];
+            } else {
+                logger.warn(
+                    `Invalid or missing app id label: "${appId}" An app id should be in the format "id|version" or "marketplace|id|version"`
+                );
+                continue;
+            }
+
+            if (marketplaceUrl === app.marketplaceUrl && id === app.id) {
+                await dockerode.getContainer(container.Id).remove({ force: true });
+            }
+        }
+    }
+}
+
+/**
  * Retrieves the list of installed apps from docker.
  * It looks for the `home-station.enable: true` label of containers.
  * @returns A promise that resolves to an array of MarketplaceApp objects representing the installed apps.
@@ -44,23 +80,23 @@ export async function getInstalledApps(): Promise<MarketplaceApp[]> {
     const appIds = containers
         .filter((c) => c.Labels['home-station.enable'] === 'true')
         .map((a) => a.Labels['home-station.app'])
-        .map((a) => {
-            const parts = a?.split('|') ?? [];
-            let marketplace = 'https://github.com/home-station-org/apps.git';
+        .map((appId) => {
+            const parts = appId?.split('|') ?? [];
+            let marketplaceUrl = 'https://github.com/home-station-org/apps.git';
             let id;
             if (parts.length == 2) {
                 id = parts[0];
             } else if (parts.length == 3) {
-                marketplace = parts[0];
-                if (!marketplace.endsWith('.git')) marketplace += '.git';
+                marketplaceUrl = parts[0];
+                if (!marketplaceUrl.endsWith('.git')) marketplaceUrl += '.git';
                 id = parts[1];
             } else {
                 logger.warn(
-                    `Invalid or missing app label: "${a}" An app label should be in the format "id|version" or "marketplace|id|version"`
+                    `Invalid or missing app id label: "${appId}" An app id should be in the format "id|version" or "marketplace|id|version"`
                 );
                 return undefined;
             }
-            return { marketplace, id };
+            return { marketplace: marketplaceUrl, id };
         })
         .filter((a) => a !== undefined) as { marketplace: string; id: string }[];
     if (appIds.length > 0) {

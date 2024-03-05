@@ -4,7 +4,12 @@ import { lucia } from '$lib/server/auth';
 import { getInstalledApps } from '$lib/server/apps';
 
 export const load: PageServerLoad = async () => {
-    const apps = await getInstalledApps();
+    const apps = (await getInstalledApps()).map((app) => ({
+        id: app.id,
+        name: app.name,
+        marketplaceUrl: app.marketplaceUrl,
+        icon: app.icon
+    }));
     return { apps };
 };
 

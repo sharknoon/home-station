@@ -4,7 +4,7 @@ import { fail } from '@sveltejs/kit';
 import { deleteMarketplace } from '$lib/server/marketplaces';
 import { marketplaceApps, containerEngines } from '$lib/server/schema';
 import { and, eq } from 'drizzle-orm';
-import { installApp } from '$lib/server/apps';
+import { getInstalledApps, installApp } from '$lib/server/apps';
 import { sendEvent } from '$lib/server/events';
 
 export const load = (async () => {
@@ -17,7 +17,11 @@ export const load = (async () => {
     const containerEngines = await db.query.containerEngines.findMany({
         columns: { id: true, name: true, type: true }
     });
-    return { marketplaceApps, marketplaces, containerEngines };
+    const apps = (await getInstalledApps()).map((app) => ({
+        id: app.id,
+        marketplaceUrl: app.marketplaceUrl
+    }));
+    return { marketplaceApps, marketplaces, containerEngines, apps };
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
