@@ -37,13 +37,13 @@ describe('getMarketplacePath', () => {
             .toLowerCase();
         const expectedPath = path.join(appdataPath, 'marketplaces', marketplaceId);
 
-        const result = getMarketplacePath(marketplace);
+        const result = getMarketplacePath(marketplace.gitRemoteUrl);
 
         expect(result).toBe(expectedPath);
     });
 });
 
-describe('getAppPath', () => {
+describe('getMarketplaceAppPath', () => {
     it('should return the correct path', async () => {
         const app = { id: 'my-app', marketplaceUrl: 'https://github.com/my-org/my-repo' };
         const appdataPath = await getAppDataPath();
@@ -55,8 +55,7 @@ describe('getAppPath', () => {
             .toLowerCase();
         const expectedPath = path.join(appdataPath, 'marketplaces', marketplaceId, 'apps', app.id);
 
-        // @ts-expect-error We don't need to provide all properties
-        const result = getMarketplaceAppPath(app);
+        const result = getMarketplaceAppPath(app.marketplaceUrl, app.id);
 
         expect(result).toBe(expectedPath);
     });
@@ -176,7 +175,7 @@ describe('updateMarketplaceApps', () => {
         await updateMarketplaceApps(() => {});
 
         // Assert the expected behavior or outcome
-        const path = getMarketplacePath({ gitRemoteUrl });
+        const path = getMarketplacePath(gitRemoteUrl);
         expect(await fs.stat(path)).toBeTruthy();
         expect(await fs.stat(path + '/apps')).toBeTruthy();
         expect((await fs.readdir(path + '/apps')).length).toBeGreaterThan(0);

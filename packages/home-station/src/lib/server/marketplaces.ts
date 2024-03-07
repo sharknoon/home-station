@@ -86,28 +86,29 @@ export type Messages = {
 export type MarketplaceApp = typeof marketplaceApps.$inferInsert;
 export type Marketplace = typeof marketplaces.$inferInsert;
 
-const appDataPath = await getAppDataPath();
-const marketplacesPath = path.join(appDataPath, 'marketplaces');
-await fs.mkdir(marketplacesPath, { recursive: true });
+const APPDATA_PATH = await getAppDataPath();
+const MARKETPLACES_PATH = path.join(APPDATA_PATH, 'marketplaces');
+await fs.mkdir(MARKETPLACES_PATH, { recursive: true });
 
 /**
  * Returns the path to the local cloned marketplace repository
- * @param marketplace The marketplace object from the database
+ * @param marketplaceUrl The url to the marketplace repository
  * @returns The path to the local cloned marketplace repository
  */
-export function getMarketplacePath(marketplace: Marketplace): string {
-    const dirName = getDirectoryNameFromUrl(marketplace.gitRemoteUrl);
-    return path.join(marketplacesPath, dirName);
+export function getMarketplacePath(marketplaceUrl: string): string {
+    const dirName = getDirectoryNameFromUrl(marketplaceUrl);
+    return path.join(MARKETPLACES_PATH, dirName);
 }
 
 /**
  * Returns the path to a specific app in the local cloned marketplace repository
- * @param app The app object from the database
+ * @param marketplaceUrl The url to the marketplace repository
+ * @param appId The id of the app
  * @returns The path to the app in the local cloned marketplace repository
  */
-export function getMarketplaceAppPath(app: MarketplaceApp): string {
-    const dirName = getDirectoryNameFromUrl(app.marketplaceUrl);
-    return path.join(marketplacesPath, dirName, 'apps', app.id);
+export function getMarketplaceAppPath(marketplaceUrl: string, appId: string): string {
+    const dirName = getDirectoryNameFromUrl(marketplaceUrl);
+    return path.join(MARKETPLACES_PATH, dirName, 'apps', appId);
 }
 
 function getDirectoryNameFromUrl(url: string): string {
@@ -125,17 +126,21 @@ function getDirectoryNameFromUrl(url: string): string {
  * @param app - The marketplace app to retrieve the latest version for.
  * @returns A promise that resolves to the latest version of the app, or undefined if no versions are found.
  */
-export async function getLatestVersion(app: MarketplaceApp): Promise<string | undefined> {
-    const versionsPath = path.join(getMarketplaceAppPath(app), 'versions');
+export async function getLatestVersion(
+    marketplaceUrl: string,
+    appId: string
+): Promise<string | undefined> {
+    const versionsPath = path.join(getMarketplaceAppPath(marketplaceUrl, appId), 'versions');
     let versions: string[] = [];
     try {
         versions = await fs.readdir(versionsPath);
     } catch {
-        logger.warn(`No "versions" directory found in "${getMarketplaceAppPath(app)}"!`);
+        logger.warn(
+            `No "versions" directory found in "${getMarketplaceAppPath(marketplaceUrl, appId)}"!`
+        );
         return undefined;
     }
     if (versions.length === 0) {
-        logger.warn(`No versions found in "${versionsPath}"!`);
         return undefined;
     }
     return versions.sort(rcompare)[0];
@@ -187,7 +192,7 @@ export async function deleteMarketplace(url: string): Promise<void> {
         .returning();
     // For loop unnecessary, but it's easier and more safe to implement than deletedMarketplace[0]
     for (const marketplace of deletedMarketplace) {
-        const marketplacePath = getMarketplacePath(marketplace);
+        const marketplacePath = getMarketplacePath(marketplace.gitRemoteUrl);
         await fs.rm(marketplacePath, { recursive: true, force: true });
     }
 }
@@ -203,7 +208,7 @@ export async function updateMarketplaceApps(
     const apps: MarketplaceApp[] = [];
     for (const marketplace of marketplaces) {
         await pullMarketplaceRepository(marketplace, progress);
-        const marketplacePath = getMarketplacePath(marketplace);
+        const marketplacePath = getMarketplacePath(marketplace.gitRemoteUrl);
         const appIds = await loadAppIds(path.join(marketplacePath, 'apps'));
         for (const appId of appIds) {
             try {
@@ -224,9 +229,14 @@ export async function updateMarketplaceApps(
  * Converts an `app.yml` to a MarketplaceApp. This involves resolving files and setting the marketplaceUrl.
  */
 async function convertAppYaml(appYaml: AppYaml, marketplaceUrl: string): Promise<MarketplaceApp> {
+    const version = await getLatestVersion(marketplaceUrl, appYaml.id);
+    if (!version) {
+        logger.warn(`No version found for "${appYaml.id}" in "${marketplaceUrl}"!`);
+    }
+
     const icon = await resolveFile(
         appYaml.icon,
-        path.join(getMarketplacePath({ gitRemoteUrl: marketplaceUrl }), 'apps', appYaml.id)
+        path.join(getMarketplacePath(marketplaceUrl), 'apps', appYaml.id)
     );
     if (!icon) {
         logger.warn(`No icon found for "${appYaml.id}" in "${marketplaceUrl}"!`);
@@ -234,12 +244,13 @@ async function convertAppYaml(appYaml: AppYaml, marketplaceUrl: string): Promise
 
     const banner = await resolveFile(
         appYaml.banner,
-        path.join(getMarketplacePath({ gitRemoteUrl: marketplaceUrl }), 'apps', appYaml.id)
+        path.join(getMarketplacePath(marketplaceUrl), 'apps', appYaml.id)
     );
 
     return {
         ...appYaml,
         marketplaceUrl,
+        version: version ?? '0.0.0',
         icon: icon ?? '',
         banner
     };
@@ -278,7 +289,7 @@ async function pullMarketplaceRepository(
     marketplace: Marketplace,
     progress: (progress: number | undefined) => void
 ) {
-    const marketplacePath = getMarketplacePath(marketplace);
+    const marketplacePath = getMarketplacePath(marketplace.gitRemoteUrl);
 
     const onAuth: AuthCallback = () => ({
         username: marketplace.gitUsername ?? undefined,
@@ -294,11 +305,18 @@ async function pullMarketplaceRepository(
     const author = { name: 'Home Station' };
 
     // If the marketplace repo was already cloned, pull the latest changes
-    const repoExists = await exists(path.join(marketplacePath, '.git'));
+    let repoExists = await exists(path.join(marketplacePath, '.git'));
     if (repoExists) {
-        logger.info(`Pulling "${marketplace.gitRemoteUrl}" to "${marketplacePath}"`);
-        await pull({ fs, http, dir: marketplacePath, onAuth, onProgress, author });
-    } else {
+        try {
+            logger.info(`Pulling "${marketplace.gitRemoteUrl}" to "${marketplacePath}"`);
+            await pull({ fs, http, dir: marketplacePath, onAuth, onProgress, author });
+        } catch (e) {
+            // In case the repository contents were altered and the pull fails, we need to remove the directory before cloning again
+            await fs.rm(marketplacePath, { recursive: true, force: true });
+            repoExists = false;
+        }
+    }
+    if (!repoExists) {
         logger.info(`Cloning "${marketplace.gitRemoteUrl}" to "${marketplacePath}"`);
         await clone({
             fs,

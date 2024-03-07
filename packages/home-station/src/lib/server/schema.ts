@@ -62,6 +62,7 @@ export const marketplaceApps = sqliteTable(
         marketplaceUrl: text('marketplace_url')
             .notNull()
             .references(() => marketplaces.gitRemoteUrl, { onDelete: 'cascade' }),
+        version: text('version').notNull(),
         name: text('name', { mode: 'json' }).notNull().$type<LocalizedString>(),
         description: text('description', { mode: 'json' }).notNull().$type<LocalizedString>(),
         icon: text('icon').notNull(),

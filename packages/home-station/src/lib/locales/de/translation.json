@@ -25,6 +25,11 @@
     "brand": {
         "title": "Home Station"
     },
+    "my-apps": {
+        "no-apps-installed": "Keine Apps installiert",
+        "add-your-first-app": "Erkunde den Marktplatz und installiere deine erste App",
+        "discover-apps": "Apps entdecken"
+    },
     "account": {
         "general": {
             "general": "Allgemein",
@@ -61,7 +66,8 @@
             "additional-information": "Zusätzliche Informationen",
             "id": "ID",
             "published-at": "Veröffentlicht am",
-            "marketplace": "Marktplatz"
+            "marketplace": "Marktplatz",
+            "license": "Lizenz"
         },
         "container-engines-modal": {
             "select-engine": "Container-Engine auswählen",

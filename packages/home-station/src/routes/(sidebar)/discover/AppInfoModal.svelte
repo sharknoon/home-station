@@ -5,7 +5,6 @@
     import type { MarketplaceApp } from '$lib/server/marketplaces';
 
     export let marketplaceApp: MarketplaceApp;
-    export let marketplaceUrl: string;
     export let parent: SvelteComponent;
 
     const dateTimeFormatter = new Intl.DateTimeFormat($i18n.language, {
@@ -19,7 +18,10 @@
 <div class="card variant-filled shadow-2xl p-4 relative">
     <h3 class="h3">{$i18n.t('discover.app-info-modal.additional-information')}</h3>
     <button class="absolute top-2 right-2 btn btn-icon" on:click={parent.onClose}><X /></button>
-    <div>{$i18n.t('discover.app-info-modal.id')}: <code>{marketplaceApp.id}</code></div>
+    <div>
+        {$i18n.t('discover.app-info-modal.id')}:
+        <code>{marketplaceApp.marketplaceUrl}|{marketplaceApp.id}|{marketplaceApp.version}</code>
+    </div>
     <div>
         {$i18n.t('discover.app-info-modal.published-at')}: {dateTimeFormatter.format(
             new Date(marketplaceApp.publishedAt)
@@ -27,6 +29,9 @@
     </div>
     <div>
         {$i18n.t('discover.app-info-modal.marketplace')}:
-        <a href={marketplaceUrl} target="_blank" class="anchor">{marketplaceUrl}</a>
+        <a href={marketplaceApp.marketplaceUrl} target="_blank" class="anchor"
+            >{marketplaceApp.marketplaceUrl}</a
+        >
     </div>
+    <div>{$i18n.t('discover.app-info-modal.license')}: {marketplaceApp.license}</div>
 </div>

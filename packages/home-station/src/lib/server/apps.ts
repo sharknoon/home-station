@@ -22,9 +22,13 @@ export async function installApp(
     app: MarketplaceApp,
     progress?: (progress: number) => void
 ): Promise<void> {
-    const latestVersion = await getLatestVersion(app);
+    const latestVersion = await getLatestVersion(app.marketplaceUrl, app.id);
     if (!latestVersion) return;
-    const composePath = path.join(getMarketplaceAppPath(app), 'versions', latestVersion);
+    const composePath = path.join(
+        getMarketplaceAppPath(app.marketplaceUrl, app.id),
+        'versions',
+        latestVersion
+    );
     await up(composePath, undefined, app.id, progress);
 }
 

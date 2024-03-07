@@ -5,7 +5,7 @@
     import Globe from 'lucide-svelte/icons/globe';
     import HardDriveDownload from 'lucide-svelte/icons/hard-drive-download';
     import Info from 'lucide-svelte/icons/info';
-    import LibraryBig from 'lucide-svelte/icons/library-big';
+    import Store from 'lucide-svelte/icons/store';
     import Code from 'lucide-svelte/icons/code';
     import ExternalLink from 'lucide-svelte/icons/external-link';
     import Trash2 from 'lucide-svelte/icons/trash-2';
@@ -40,7 +40,7 @@
         class="btn-icon variant-soft"
         use:popup={{ event: 'click', target: 'popupMarketplaces', placement: 'bottom-end' }}
     >
-        <LibraryBig />
+        <Store />
     </button>
     <div class="card p-4 max-w-[36rem] shadow-xl" data-popup="popupMarketplaces">
         <div class="space-y-2">
@@ -132,7 +132,7 @@
                     {/each}
                 </div>
                 <div class="!-mt-2">{ts(app.description)}</div>
-                <span class="badge variant-filled">{app.category}</span>
+                <span class="badge variant-filled">{$i18n.t(app.category)}</span>
             </div>
             <hr />
             <div class="p-4">
@@ -162,8 +162,7 @@
                                 component: {
                                     ref: AppInfoModal,
                                     props: {
-                                        marketplaceApp: app,
-                                        marketplaceUrl: app.marketplace.gitRemoteUrl
+                                        marketplaceApp: app
                                     }
                                 }
                             });

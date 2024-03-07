@@ -1,0 +1,1 @@
+ALTER TABLE marketplace_apps ADD `version` text NOT NULL;
