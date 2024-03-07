@@ -6,7 +6,7 @@ import {
 import path from 'node:path';
 import { and, inArray } from 'drizzle-orm';
 import type Dockerode from 'dockerode';
-import { up } from '$lib/server/compose';
+import { down, up } from '$lib/server/compose';
 import db from '$lib/server/db';
 import { getEngine } from '$lib/server/containerengines';
 import logger from '$lib/server/logger';
@@ -37,39 +37,22 @@ export async function installApp(
  * @param app - The app to uninstall.
  * @returns A Promise that resolves when the app is successfully uninstalled.
  */
-export async function uninstallApp(app: MarketplaceApp): Promise<void> {
-    const engines = await db.query.containerEngines.findMany();
-    for (const engine of engines) {
-        const dockerode = await getEngine(engine);
-        const containers = await dockerode.listContainers({ all: true });
-        for (const container of containers) {
-            // TODO move to separate function
-            const appId = container.Labels['home-station.app'];
-            const parts = appId?.split('|') ?? [];
-            let marketplaceUrl = 'https://github.com/home-station-org/apps.git';
-            let id;
-            if (parts.length == 2) {
-                id = parts[0];
-            } else if (parts.length == 3) {
-                marketplaceUrl = parts[0];
-                if (!marketplaceUrl.endsWith('.git')) marketplaceUrl += '.git';
-                id = parts[1];
-            } else {
-                logger.warn(
-                    `Invalid or missing app id label: "${appId}" An app id should be in the format "id|version" or "marketplace|id|version"`
-                );
-                continue;
-            }
-
-            if (marketplaceUrl === app.marketplaceUrl && id === app.id) {
-                await dockerode.getContainer(container.Id).remove({ force: true });
-            }
-        }
-    }
+export async function uninstallApp(
+    marketplaceUrl: string,
+    appId: string,
+    version: string
+): Promise<void> {
+    const composePath = path.join(
+        getMarketplaceAppPath(marketplaceUrl, appId),
+        'versions',
+        version
+    );
+    await down(composePath, undefined, appId, false);
 }
 
 type InstalledApp = MarketplaceApp & {
     status: 'running' | 'stopped' | 'error';
+    installedVersion: string;
 };
 
 /**
@@ -90,7 +73,7 @@ export async function getInstalledApps(): Promise<InstalledApp[]> {
         .filter((c) => c.Labels['home-station.enable'] === 'true')
         .map((a) => [a.Labels['home-station.app'], a.State])
         .map(([id, s]) => {
-            const { marketplaceUrl, appId } = parseAppIdentifier(id);
+            const { marketplaceUrl, appId, version } = parseAppIdentifier(id);
             let state;
             switch (s) {
                 case 'running':
@@ -107,11 +90,12 @@ export async function getInstalledApps(): Promise<InstalledApp[]> {
                     state = 'error';
                     break;
             }
-            return { marketplaceUrl, appId, state };
+            return { marketplaceUrl, appId, version, state };
         })
         .filter((a) => a !== undefined) as {
         marketplaceUrl: string;
         appId: string;
+        version: string;
         state: InstalledApp['status'];
     }[];
 
@@ -138,7 +122,8 @@ export async function getInstalledApps(): Promise<InstalledApp[]> {
         );
         return {
             ...app,
-            status: container?.state ?? 'error'
+            status: container?.state ?? 'error',
+            installedVersion: container?.version ?? '0.0.0'
         };
     });
 }

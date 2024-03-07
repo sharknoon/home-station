@@ -26,6 +26,9 @@
         "title": "Home Station"
     },
     "my-apps": {
+        "open-in-marketplace": "Im Marktplatz öffnen",
+        "settings": "App-Einstellungen",
+        "remove-app": "App entfernen",
         "stopped-apps": "Gestoppte Apps",
         "no-apps-installed": "Keine Apps installiert",
         "add-your-first-app": "Erkunde den Marktplatz und installiere deine erste App",

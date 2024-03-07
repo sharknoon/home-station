@@ -1,14 +1,15 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { lucia } from '$lib/server/auth';
-import { getInstalledApps } from '$lib/server/apps';
+import { getInstalledApps, uninstallApp } from '$lib/server/apps';
 
 export const load: PageServerLoad = async () => {
     const apps = (await getInstalledApps()).map((app) => ({
-        id: app.id,
-        name: app.name,
         marketplaceUrl: app.marketplaceUrl,
+        id: app.id,
+        version: app.installedVersion,
         icon: app.icon,
+        name: app.name,
         status: app.status
     }));
     return { apps };
@@ -26,5 +27,15 @@ export const actions = {
             ...sessionCookie.attributes
         });
         redirect(302, '/login');
+    },
+    uninstallApp: async ({ request }) => {
+        const data = await request.formData();
+        const marketplaceUrl = data.get('marketplaceUrl')?.toString();
+        const appId = data.get('appId')?.toString();
+        const version = data.get('version')?.toString();
+        if (!marketplaceUrl || !appId || !version) {
+            return fail(400);
+        }
+        await uninstallApp(marketplaceUrl, appId, version);
     }
 } satisfies Actions;

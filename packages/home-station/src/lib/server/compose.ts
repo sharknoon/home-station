@@ -42,6 +42,32 @@ export async function up(
     );
 }
 
+export async function down(
+    cwd: string,
+    composeFile?: string,
+    projectName?: string,
+    removeVolumes?: boolean
+): Promise<void> {
+    const customComposeFile = composeFile ? ['-f', composeFile] : [];
+    const customProjectName = projectName ? ['-p', projectName] : [];
+    const removeVolumesFlag = removeVolumes ? ['-v'] : [];
+    await exec(
+        'docker',
+        [
+            'compose',
+            ...customComposeFile,
+            ...customProjectName,
+            'down',
+            '--rmi',
+            'all',
+            '--remove-orphans',
+            ...removeVolumesFlag
+        ],
+        cwd,
+        (data) => process.stdout.write(data)
+    );
+}
+
 /**
  * This function converts the textual data from the terminal to an overall progress
  * An example of the data is:

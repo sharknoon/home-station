@@ -1,9 +1,13 @@
 <script lang="ts">
     import type { PageData } from './$types';
-    import { i18n, ts } from '$lib/i18n';
+    import { enhance } from '$app/forms';
     import MoreHorizontal from 'lucide-svelte/icons/more-horizontal';
     import Plus from 'lucide-svelte/icons/plus';
+    import Store from 'lucide-svelte/icons/store';
+    import Trash_2 from 'lucide-svelte/icons/trash-2';
+    import Settings from 'lucide-svelte/icons/settings';
     import { Accordion, AccordionItem, popup } from '@skeletonlabs/skeleton';
+    import { i18n, ts } from '$lib/i18n';
     import rocket from './rocket.png';
 
     export let data: PageData;
@@ -19,7 +23,7 @@
                     <img
                         src={app.icon}
                         alt={ts(app.name)}
-                        class="object-cover h-20 w-20 rounded-2xl p-2 bg-white"
+                        class="object-cover h-20 w-20 rounded-2xl p-2 bg-white transition-all hover:shadow-xl hover:scale-[103%]"
                     />
                     <button
                         class="group-hover:opacity-100 opacity-0 transition absolute right-0 top-0 btn-icon btn-icon-sm variant-filled-tertiary translate-x-[40%] -translate-y-[40%]"
@@ -28,23 +32,45 @@
                     >
                         <MoreHorizontal class="h-6 w-6" />
                     </button>
-                    <div class="card p-4 w-72 shadow-xl" data-popup="popupApp-{i}">
-                        <ul class="list">
-                            <li>
-                                <span>(icon)</span>
-                                <span class="flex-auto">Open in marketplace</span>
-                            </li>
-                            <li>
-                                <span>(icon)</span>
-                                <span class="flex-auto">Settings</span>
-                            </li>
-                            <li>
-                                <span>(icon)</span>
-                                <span class="flex-auto">Remove app</span>
-                            </li>
-                        </ul>
+                    <form
+                        method="post"
+                        class="card p-4 w-max shadow-xl"
+                        data-popup="popupApp-{i}"
+                        use:enhance
+                    >
+                        <input type="hidden" name="marketplaceUrl" value={app.marketplaceUrl} />
+                        <input type="hidden" name="appId" value={app.id} />
+                        <input type="hidden" name="version" value={app.version} />
+                        <nav class="list-nav">
+                            <ul>
+                                <li>
+                                    <a href="https://google.de">
+                                        <Store class="h-6" />
+                                        <span class="flex-auto">
+                                            {$i18n.t('my-apps.open-in-marketplace')}
+                                        </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://google.de">
+                                        <Settings class="h-6" />
+                                        <span class="flex-auto">
+                                            {$i18n.t('my-apps.settings')}
+                                        </span>
+                                    </a>
+                                </li>
+                                <li class="text-error-500-400-token">
+                                    <button type="submit" formaction="?/uninstallApp">
+                                        <Trash_2 class="h-6" />
+                                        <span class="flex-auto">
+                                            {$i18n.t('my-apps.remove-app')}
+                                        </span>
+                                    </button>
+                                </li>
+                            </ul>
+                        </nav>
                         <div class="arrow bg-surface-100-800-token" />
-                    </div>
+                    </form>
                 </div>
                 <div class="mt-2">
                     {ts(app.name)}
@@ -74,23 +100,45 @@
                                     >
                                         <MoreHorizontal class="h-6 w-6" />
                                     </button>
-                                    <div class="card p-4 w-72 shadow-xl" data-popup="popupApp-{i}">
-                                        <ul class="list">
-                                            <li>
-                                                <span>(icon)</span>
-                                                <span class="flex-auto">Open in marketplace</span>
-                                            </li>
-                                            <li>
-                                                <span>(icon)</span>
-                                                <span class="flex-auto">Settings</span>
-                                            </li>
-                                            <li>
-                                                <span>(icon)</span>
-                                                <span class="flex-auto">Remove app</span>
-                                            </li>
-                                        </ul>
+                                    <form
+                                        method="post"
+                                        class="card p-4 w-max shadow-xl"
+                                        data-popup="popupApp-{i}"
+                                        use:enhance
+                                    >
+                                        <nav class="list-nav">
+                                            <ul>
+                                                <li>
+                                                    <a href="https://google.de">
+                                                        <Store class="h-6" />
+                                                        <span class="flex-auto">
+                                                            {$i18n.t('my-apps.open-in-marketplace')}
+                                                        </span>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="https://google.de">
+                                                        <Settings class="h-6" />
+                                                        <span class="flex-auto">
+                                                            {$i18n.t('my-apps.settings')}
+                                                        </span>
+                                                    </a>
+                                                </li>
+                                                <li class="text-error-500-400-token">
+                                                    <button
+                                                        type="submit"
+                                                        formaction="?/uninstallApp"
+                                                    >
+                                                        <Trash_2 class="h-6" />
+                                                        <span class="flex-auto">
+                                                            {$i18n.t('my-apps.remove-app')}
+                                                        </span>
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </nav>
                                         <div class="arrow bg-surface-100-800-token" />
-                                    </div>
+                                    </form>
                                 </div>
                                 <div class="mt-2">
                                     {ts(app.name)}

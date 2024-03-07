@@ -160,7 +160,7 @@
 
 <AppShell>
     <svelte:fragment slot="header">
-        <AppBar class="shadow-2xl">
+        <AppBar class="shadow-2xl" slotDefault="flex justify-center">
             <svelte:fragment slot="lead">
                 <h1 class="h1 leading-8 -translate-y-1">
                     <span
@@ -170,7 +170,7 @@
                     </span>
                 </h1>
             </svelte:fragment>
-            <div class="relative">
+            <div class="relative w-96">
                 <Search class="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 z-10" />
                 <input
                     type="search"
