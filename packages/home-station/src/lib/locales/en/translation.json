@@ -26,6 +26,7 @@
         "title": "Home Station"
     },
     "my-apps": {
+        "stopped-apps": "Stopped apps",
         "no-apps-installed": "No apps installed",
         "add-your-first-app": "Explore the marketplace and add your first app",
         "discover-apps": "Discover apps"

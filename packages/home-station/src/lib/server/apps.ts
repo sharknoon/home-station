@@ -68,12 +68,17 @@ export async function uninstallApp(app: MarketplaceApp): Promise<void> {
     }
 }
 
+type InstalledApp = MarketplaceApp & {
+    status: 'running' | 'stopped' | 'error';
+};
+
 /**
  * Retrieves the list of installed apps from docker.
  * It looks for the `home-station.enable: true` label of containers.
  * @returns A promise that resolves to an array of MarketplaceApp objects representing the installed apps.
+ * @type InstalledApp The same as MarketplaceApp, but with an additional `status` property.
  */
-export async function getInstalledApps(): Promise<MarketplaceApp[]> {
+export async function getInstalledApps(): Promise<InstalledApp[]> {
     const engines = await db.query.containerEngines.findMany();
     const containers: Dockerode.ContainerInfo[] = [];
     for (const engine of engines) {
@@ -81,45 +86,90 @@ export async function getInstalledApps(): Promise<MarketplaceApp[]> {
         const containersOfThisEngine = await dockerode.listContainers({ all: true });
         containers.push(...containersOfThisEngine);
     }
-    const appIds = containers
+    const appContainers = containers
         .filter((c) => c.Labels['home-station.enable'] === 'true')
-        .map((a) => a.Labels['home-station.app'])
-        .map((appId) => {
-            const parts = appId?.split('|') ?? [];
-            let marketplaceUrl = 'https://github.com/home-station-org/apps.git';
-            let id;
-            if (parts.length == 2) {
-                id = parts[0];
-            } else if (parts.length == 3) {
-                marketplaceUrl = parts[0];
-                if (!marketplaceUrl.endsWith('.git')) marketplaceUrl += '.git';
-                id = parts[1];
-            } else {
-                logger.warn(
-                    `Invalid or missing app id label: "${appId}" An app id should be in the format "id|version" or "marketplace|id|version"`
-                );
-                return undefined;
+        .map((a) => [a.Labels['home-station.app'], a.State])
+        .map(([id, s]) => {
+            const { marketplaceUrl, appId } = parseAppIdentifier(id);
+            let state;
+            switch (s) {
+                case 'running':
+                    state = 'running';
+                    break;
+                case 'created':
+                case 'paused':
+                case 'restarting':
+                case 'exited':
+                    state = 'stopped';
+                    break;
+                case 'dead':
+                default:
+                    state = 'error';
+                    break;
             }
-            return { marketplace: marketplaceUrl, id };
+            return { marketplaceUrl, appId, state };
         })
-        .filter((a) => a !== undefined) as { marketplace: string; id: string }[];
-    if (appIds.length > 0) {
-        const apps = await db
-            .select()
-            .from(marketplaceApps)
-            .where(
-                and(
-                    inArray(
-                        marketplaceApps.marketplaceUrl,
-                        appIds.map((a) => a.marketplace)
-                    ),
-                    inArray(
-                        marketplaceApps.id,
-                        appIds.map((a) => a.id)
-                    )
+        .filter((a) => a !== undefined) as {
+        marketplaceUrl: string;
+        appId: string;
+        state: InstalledApp['status'];
+    }[];
+
+    if (appContainers.length === 0) return [];
+
+    const appRecords = await db
+        .select()
+        .from(marketplaceApps)
+        .where(
+            and(
+                inArray(
+                    marketplaceApps.marketplaceUrl,
+                    appContainers.map((a) => a.marketplaceUrl)
+                ),
+                inArray(
+                    marketplaceApps.id,
+                    appContainers.map((a) => a.appId)
                 )
-            );
-        return apps;
+            )
+        );
+    return appRecords.map((app) => {
+        const container = appContainers.find(
+            (c) => c.marketplaceUrl === app.marketplaceUrl && c.appId === app.id
+        );
+        return {
+            ...app,
+            status: container?.state ?? 'error'
+        };
+    });
+}
+
+/**
+ * Parses the app identifier and returns an object with the marketplace URL, app ID, and version.
+ * @param identifier - The app identifier in the format "id|version" or "marketplace|id|version".
+ * @returns An object with the marketplace URL, app ID, and version.
+ */
+export function parseAppIdentifier(identifier: string): {
+    marketplaceUrl?: string;
+    appId?: string;
+    version?: string;
+} {
+    const parts = identifier?.split('|') ?? [];
+    let marketplaceUrl;
+    let appId;
+    let version;
+    if (parts.length == 2) {
+        marketplaceUrl = 'https://github.com/home-station-org/apps.git';
+        appId = parts[0];
+        version = parts[1];
+    } else if (parts.length == 3) {
+        marketplaceUrl = parts[0];
+        if (!marketplaceUrl.endsWith('.git')) marketplaceUrl += '.git';
+        appId = parts[1];
+        version = parts[2];
+    } else {
+        logger.warn(
+            `Invalid or missing app id label: "${identifier}" An app id should be in the format "id|version" or "marketplace|id|version"`
+        );
     }
-    return [];
+    return { marketplaceUrl, appId, version };
 }

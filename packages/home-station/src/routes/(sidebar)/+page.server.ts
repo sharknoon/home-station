@@ -8,7 +8,8 @@ export const load: PageServerLoad = async () => {
         id: app.id,
         name: app.name,
         marketplaceUrl: app.marketplaceUrl,
-        icon: app.icon
+        icon: app.icon,
+        status: app.status
     }));
     return { apps };
 };
