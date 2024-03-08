@@ -1,4 +1,7 @@
-# syntax=docker/dockerfile:1
+# syntax=docker/dockerfile:1.7-labs
+# Use custom version of the dockerfile spec to be able to use the --exclude flag.
+# https://docs.docker.com/reference/dockerfile/#copy---exclude
+# TODO revert to 1.7 when it is released.
 
 # If you need help, visit the Dockerfile reference guide at
 # https://docs.docker.com/engine/reference/builder/
@@ -30,23 +33,26 @@ RUN apk add "npm>${NPM_VERSION}"
 # Leverage a cache mount to /root/.npm to speed up subsequent builds.
 # Leverage bind mounts to package.json and package-lock.json to avoid having to copy them
 # into this layer.
-RUN --mount=type=bind,source=packages/home-station/package.json,target=packages/home-station/package.json \
-    --mount=type=bind,source=packages/home-station/package-lock.json,target=packages/home-station/package-lock.json \
+RUN --mount=type=bind,source=package.json,target=package.json \
+    --mount=type=bind,source=packages/home-station/package.json,target=packages/home-station/package.json \
+    --mount=type=bind,source=package-lock.json,target=package-lock.json \
     --mount=type=cache,target=/root/.npm \
-    npm ci --omit=dev
+    npm -w home-station ci --omit=dev
 
 ################################################################################
 # Create a stage for building the application.
 FROM deps as build
 
 # Download additional development dependencies before building.
-RUN --mount=type=bind,source=packages/home-station/package.json,target=packages/home-station/package.json \
-    --mount=type=bind,source=packages/home-station/package-lock.json,target=packages/home-station/package-lock.json \
+RUN --mount=type=bind,source=package.json,target=package.json \
+    --mount=type=bind,source=packages/home-station/package.json,target=packages/home-station/package.json \
+    --mount=type=bind,source=package-lock.json,target=package-lock.json \
     --mount=type=cache,target=/root/.npm \
-    npm ci
+    npm -w home-station ci
 
 # Copy the rest of the source files into the image.
-COPY packages/home-station .
+COPY packages/home-station packages/home-station
+COPY package*.json .
 
 # Create the SvelteKit Types (https://github.com/sveltejs/kit/issues/5390) and run the build script.
 RUN npx -w home-station svelte-kit sync && PUBLIC_CONTAINERIZED=true npm -w home-station run build
@@ -69,8 +75,8 @@ ENV ORIGIN=http://localhost:3000
 # Copy the production dependencies from the deps stage and also
 # the built application from the build stage into the image.
 COPY --from=deps /app/node_modules node_modules
-COPY --from=build /app/drizzle drizzle
-COPY --from=build /app/build build
+COPY --from=build /app/packages/home-station/drizzle drizzle
+COPY --from=build /app/packages/home-station/build build
 #COPY docker/supervisord.conf /etc/supervisord.conf
 #COPY docker/Caddyfile /etc/caddy/Caddyfile
 
