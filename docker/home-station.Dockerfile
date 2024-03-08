@@ -43,6 +43,10 @@ RUN --mount=type=bind,source=package.json,target=package.json \
 # Create a stage for building the application.
 FROM deps as build
 
+# Set the commit hash to be displayed in the "About" page.
+ARG COMMIT_HASH
+ENV COMMIT_HASH=${COMMIT_HASH}
+
 # Download additional development dependencies before building.
 RUN --mount=type=bind,source=package.json,target=package.json \
     --mount=type=bind,source=packages/home-station/package.json,target=packages/home-station/package.json \

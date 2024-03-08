@@ -15,7 +15,8 @@
             "domains-and-hostnames": "Domains und Hostnamen",
             "system": "System",
             "tasks": "Aufgaben",
-            "logs": "Logs"
+            "logs": "Logs",
+            "about": "Über Home Station"
         },
         "toast-missing-mount": "Der Pfad \"{{- path}}\" wurde nicht richtig gemounted. Wenn der Container gestoppt oder neu gestartet wird, gehen alle Daten verloren.",
         "search": "Suche nach Apps und Einstellungen",
@@ -79,6 +80,12 @@
         }
     },
     "settings": {
+        "about": {
+            "version": "Version",
+            "commit": "Commit",
+            "unkown": "Unbekannt",
+            "build-date": "Build-Datum"
+        },
         "container-engines": {
             "container-engines": "Container-Engines",
             "local": "lokal",

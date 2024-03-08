@@ -15,7 +15,8 @@
             "domains-and-hostnames": "Domains and hostnames",
             "system": "System",
             "tasks": "Tasks",
-            "logs": "Logs"
+            "logs": "Logs",
+            "about": "About Home Station"
         },
         "toast-missing-mount": "The path \"{{- path}}\" was not mounted properly. All data will be lost when the container is stopped or restarted.",
         "search": "Search for apps and settings",
@@ -79,6 +80,12 @@
         }
     },
     "settings": {
+        "about": {
+            "version": "Version",
+            "commit": "Commit",
+            "unkown": "Unknown",
+            "build-date": "Build date"
+        },
         "container-engines": {
             "container-engines": "Container engines",
             "local": "local",

@@ -81,7 +81,8 @@
                     title: $i18n.t('sidebar.settings.system'),
                     list: [
                         { label: $i18n.t('sidebar.settings.tasks'), href: '/settings/tasks' },
-                        { label: $i18n.t('sidebar.settings.logs'), href: '/settings/logs' }
+                        { label: $i18n.t('sidebar.settings.logs'), href: '/settings/logs' },
+                        { label: $i18n.t('sidebar.settings.about'), href: '/settings/about' }
                     ]
                 }
             ]
@@ -111,6 +112,8 @@
 
     $: submenuItemActive = (href: string) =>
         $page.url.pathname?.includes(href) ? 'bg-primary-active-token' : '';
+
+    const REPOSITORY_URL = __REPOSITORY_URL__;
 
     // Toast
 
@@ -248,11 +251,7 @@
                     </AppRailTile>
                 {/each}
                 <svelte:fragment slot="trail">
-                    <AppRailAnchor
-                        href="https://github.com/home-station-org/home-station"
-                        target="_blank"
-                        title="GitHub"
-                    >
+                    <AppRailAnchor href={REPOSITORY_URL} target="_blank" title="GitHub">
                         <svelte:fragment slot="lead">
                             <SimpleIcons icon={siGithub} />
                         </svelte:fragment>

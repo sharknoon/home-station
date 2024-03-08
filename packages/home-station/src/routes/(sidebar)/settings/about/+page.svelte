@@ -1,0 +1,39 @@
+<script lang="ts">
+    import { intlFormatDistance } from 'date-fns';
+    import { i18n } from '$lib/i18n';
+
+    // Redeclare the variables here to prevent "'__COMMIT_HASH__' is not definedsvelte(missing-declaration)" error
+    let REPOSITORY_URL = __REPOSITORY_URL__;
+    let NPM_PACKAGE_VERSION = __NPM_PACKAGE_VERSION__;
+    let COMMIT_HASH = __COMMIT_HASH__;
+    let BUILD_DATE = __BUILD_DATE__;
+</script>
+
+<div class="flex flex-col justify-center items-center h-full">
+    <h1 class="h1 leading-8 mb-8">
+        <span
+            class="bg-gradient-to-br from-primary-500 to-secondary-500 bg-clip-text text-transparent box-decoration-clone font-bold"
+        >
+            {$i18n.t('brand.title')}
+        </span>
+    </h1>
+    <div>{$i18n.t('settings.about.version')}: <code>{NPM_PACKAGE_VERSION}</code></div>
+    <div>
+        {$i18n.t('settings.about.commit')}: {#if COMMIT_HASH !== 'unknown'}
+            <a href="{REPOSITORY_URL}/commit/{COMMIT_HASH}">
+                <code>{COMMIT_HASH.substring(0, 7)}</code>
+            </a>
+        {:else}
+            {$i18n.t('settings.about.unkown')}
+        {/if}
+    </div>
+    <div>
+        {$i18n.t('settings.about.build-date')}: {BUILD_DATE} ({intlFormatDistance(
+            BUILD_DATE,
+            new Date(),
+            {
+                locale: $i18n.language
+            }
+        )})
+    </div>
+</div>

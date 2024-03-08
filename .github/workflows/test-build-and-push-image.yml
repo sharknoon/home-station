@@ -65,6 +65,7 @@ jobs:
               uses: docker/build-push-action@v5
               with:
                   file: docker/home-station.Dockerfile
+                  build-args: COMMIT_HASH=${{ github.sha }}
                   push: true
                   tags: ${{ steps.meta.outputs.tags }}
                   labels: ${{ steps.meta.outputs.labels }}
