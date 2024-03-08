@@ -11,6 +11,11 @@ declare global {
         // interface PageState {}
         // interface Platform {}
     }
+
+    const __REPOSITORY_URL__: string;
+    const __NPM_PACKAGE_VERSION__: string;
+    const __COMMIT_HASH__: string;
+    const __BUILD_DATE__: string;
 }
 
 export {};

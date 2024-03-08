@@ -47,16 +47,13 @@ FROM deps as build
 ARG COMMIT_HASH
 ENV COMMIT_HASH=${COMMIT_HASH}
 
-# Download additional development dependencies before building.
-RUN --mount=type=bind,source=package.json,target=package.json \
-    --mount=type=bind,source=packages/home-station/package.json,target=packages/home-station/package.json \
-    --mount=type=bind,source=package-lock.json,target=package-lock.json \
-    --mount=type=cache,target=/root/.npm \
-    npm -w home-station ci
-
 # Copy the rest of the source files into the image.
 COPY packages/home-station packages/home-station
 COPY package*.json .
+
+# Download additional development dependencies before building.
+RUN --mount=type=cache,target=/root/.npm \
+    npm -w home-station ci
 
 # Create the SvelteKit Types (https://github.com/sveltejs/kit/issues/5390) and run the build script.
 RUN npx -w home-station svelte-kit sync && PUBLIC_CONTAINERIZED=true npm -w home-station run build

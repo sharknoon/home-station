@@ -7,7 +7,7 @@
     import Plus from 'lucide-svelte/icons/plus';
     import RefreshCw from 'lucide-svelte/icons/refresh-cw';
     import Unplug from 'lucide-svelte/icons/unplug';
-    import AlertTriangle from 'lucide-svelte/icons/alert-triangle';
+    import TriangleAlert from 'lucide-svelte/icons/triangle-alert';
     import { i18n } from '$lib/i18n';
     import { enhance } from '$app/forms';
     import { page } from '$app/stores';
@@ -60,7 +60,7 @@
 
     {#if !data.appDataPersistency.isPersistent}
         <aside class="alert variant-filled-warning max-w-[35rem]">
-            <div><AlertTriangle /></div>
+            <div><TriangleAlert /></div>
             <div class="alert-message">
                 <p>
                     {$i18n.t('setup.missing-mount', {

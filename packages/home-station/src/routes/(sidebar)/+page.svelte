@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { PageData } from './$types';
     import { enhance } from '$app/forms';
-    import MoreHorizontal from 'lucide-svelte/icons/more-horizontal';
+    import Ellipsis from 'lucide-svelte/icons/ellipsis';
     import Plus from 'lucide-svelte/icons/plus';
     import Store from 'lucide-svelte/icons/store';
     import Trash_2 from 'lucide-svelte/icons/trash-2';
@@ -30,7 +30,7 @@
                         on:click|preventDefault={() => {}}
                         use:popup={{ event: 'click', target: `popupApp-${i}` }}
                     >
-                        <MoreHorizontal class="h-6 w-6" />
+                        <Ellipsis class="h-6 w-6" />
                     </button>
                     <form
                         method="post"
@@ -98,7 +98,7 @@
                                         on:click|preventDefault={() => {}}
                                         use:popup={{ event: 'click', target: `popupApp-${i}` }}
                                     >
-                                        <MoreHorizontal class="h-6 w-6" />
+                                        <Ellipsis class="h-6 w-6" />
                                     </button>
                                     <form
                                         method="post"
