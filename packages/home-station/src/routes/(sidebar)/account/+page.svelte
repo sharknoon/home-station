@@ -5,7 +5,7 @@
     import Save from 'lucide-svelte/icons/save';
     import { enhance } from '$app/forms';
     import type { ActionData, PageData } from './$types';
-    import { themes, type Theme } from '$lib/theme';
+    import { themes, applyTheme } from '$lib/theme';
     import { dev } from '$app/environment';
 
     export let data: PageData;
@@ -24,9 +24,6 @@
 
     // Theme tab
     $: if (form?.theme && form?.success) applyTheme(form.theme);
-    function applyTheme(theme?: Theme) {
-        if (theme) document.body.setAttribute('data-theme', theme);
-    }
 </script>
 
 <TabGroup>

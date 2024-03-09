@@ -35,7 +35,3 @@ interface DatabaseUserAttributes {
     language: (typeof users.$inferSelect)['language'];
     theme: (typeof users.$inferSelect)['theme'];
 }
-
-export async function deleteExpiredSessions() {
-    lucia.deleteExpiredSessions();
-}
