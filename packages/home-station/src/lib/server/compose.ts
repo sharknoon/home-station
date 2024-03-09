@@ -2,7 +2,8 @@ import { join } from 'path';
 import { getEngine, type ContainerEngine } from '$lib/server/containerengines';
 import db from '$lib/server/db';
 import { exec } from '$lib/server/terminal';
-import { stripAnsi, throttle } from '$lib/server/utils';
+import { throttle } from '$lib/server/utils';
+import { stripAnsi } from '$lib/utils';
 
 export async function listStacks(engine?: ContainerEngine): Promise<string[]> {
     const engines = engine ? [engine] : await db.query.containerEngines.findMany();

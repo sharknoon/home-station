@@ -16,5 +16,6 @@ export const load = (async ({ params }) => {
         columns: { id: true, name: true, type: true }
     });
     const installedApps = (await getInstalledApps()).map((app) => app.uuid);
+
     return { app, containerEngines, installedApps };
 }) satisfies PageServerLoad;

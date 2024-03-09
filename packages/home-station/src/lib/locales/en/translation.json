@@ -63,17 +63,18 @@
         "marketplaces": "Marketplace",
         "add-marketplace": "Add marketplace",
         "add-default-marketplace": "Add default marketplace",
-        "links": {
-            "website": "Website",
-            "repository": "Repository"
-        },
         "install": "Install",
         "popup-no-container-engines": {
             "no-container-engine-available": "No container engine available"
         },
         "installing": "Installing...",
+        "links": {
+            "website": "Website",
+            "repository": "Repository"
+        },
         "apps": {
             "category": "Category",
+            "developer": "Developer",
             "license": "License",
             "published-at": "Published at",
             "marketplace": "Marketplace",

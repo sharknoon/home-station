@@ -52,4 +52,12 @@ const authorization = (async ({ event, resolve }) => {
     return await resolve(event);
 }) satisfies Handle;
 
-export const handle = sequence(authentication, authorization);
+const theme = (async ({ event, resolve }) => {
+    return await resolve(event, {
+        transformPageChunk: ({ html }) => {
+            return html.replace('%theme%', event.locals.user?.theme || 'skeleton');
+        }
+    });
+}) satisfies Handle;
+
+export const handle = sequence(authentication, authorization, theme);

@@ -37,7 +37,7 @@
     let appRailItems: {
         title: string;
         icon: ComponentType<Icon>;
-        href?: string;
+        href: string;
         submenu?: {
             title: string;
             list: {
@@ -62,6 +62,7 @@
         {
             title: $i18n.t('sidebar.settings.settings'),
             icon: Settings,
+            href: '/settings',
             submenu: [
                 {
                     title: $i18n.t('sidebar.settings.general'),
@@ -89,26 +90,15 @@
         }
     ];
 
-    function findCurrentItem(path: string) {
-        return appRailItems.findIndex((item) => {
-            let hrefs = [item.href];
-            if (!item.href) {
-                hrefs =
-                    item.submenu?.flatMap((segment) => segment.list.map((item) => item.href)) ?? [];
-            }
-            return hrefs.some((href) => href?.includes(path));
-        });
-    }
 
     // TODO not an ideal situation: it flashes on hydration. Solution: wait for Svelte 5s effect runes
     onMount(() => {
-        currentItem = findCurrentItem(new URL(data.url).pathname);
-        page.subscribe((value) => {
-            if (value) {
-                currentItem = findCurrentItem(value.url.pathname);
-            }
+        currentItem = appRailItems.findIndex((item) => {
+            return item.href === '/'
+                ? $page.url.pathname === '/'
+                : $page.url.pathname.substring(1).startsWith(item.href.substring(1));
         });
-    });
+    })
 
     $: submenuItemActive = (href: string) =>
         $page.url.pathname?.includes(href) ? 'bg-primary-active-token' : '';
@@ -236,14 +226,14 @@
         >
             <!-- App Rail -->
             <AppRail background="bg-transparent" border="border-r border-surface-500/30">
-                {#each appRailItems as { title, icon, href }, i}
+                {#each appRailItems as { title, icon, href, submenu }, i}
                     <AppRailTile
                         bind:group={currentItem}
                         name={'item-' + i}
                         value={i}
                         {title}
                         class="[&>button]:transition"
-                        on:click={() => (href ? goto(href) : {})}
+                        on:click={() => (href && !submenu ? goto(href) : {})}
                     >
                         <svelte:fragment slot="lead">
                             <svelte:component this={icon} class="inline-block" />

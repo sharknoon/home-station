@@ -11,12 +11,13 @@ import path from 'node:path';
 import yaml from 'js-yaml';
 import db from '$lib/server/db';
 import { marketplaces, marketplaceApps } from '$lib/server/schema';
-import { exists, isValidUrl } from '$lib/server/utils';
+import { exists } from '$lib/server/utils';
 import { getAppDataPath } from '$lib/server/appdata';
 import { type LocalizedString } from '$lib/i18n';
 import { eq } from 'drizzle-orm';
 import logger from '$lib/server/logger';
 import { rcompare } from 'semver';
+import { isValidUrl } from '$lib/utils';
 
 export type AppYaml = {
     uuid: string;

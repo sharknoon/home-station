@@ -63,17 +63,18 @@
         "marketplaces": "Marktplätze",
         "add-marketplace": "Marktplatz hinzufügen",
         "add-default-marketplace": "Standard-Marktplatz hinzufügen",
-        "links": {
-            "website": "Webseite",
-            "repository": "Repository"
-        },
         "install": "Installieren",
         "popup-no-container-engines": {
             "no-container-engine-available": "Keine Container-Engine verfügbar"
         },
         "installing": "Installieren...",
+        "links": {
+            "website": "Webseite",
+            "repository": "Repository"
+        },
         "apps": {
             "category": "Kategorie",
+            "developer": "Entwickler",
             "license": "Lizenz",
             "published-at": "Veröffentlichungsdatum",
             "marketplace": "Marktplatz",
