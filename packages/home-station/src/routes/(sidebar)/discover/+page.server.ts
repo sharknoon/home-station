@@ -3,9 +3,9 @@ import db from '$lib/server/db';
 import { fail } from '@sveltejs/kit';
 import { deleteMarketplace } from '$lib/server/marketplaces';
 import { marketplaceApps, containerEngines } from '$lib/server/schema';
-import { and, eq } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { getInstalledApps, installApp } from '$lib/server/apps';
-import { sendEvent } from '$lib/server/events';
+import { dispatchEvent } from '$lib/server/events';
 
 export const load = (async () => {
     const marketplaceApps = await db.query.marketplaceApps.findMany({
@@ -18,7 +18,7 @@ export const load = (async () => {
         columns: { id: true, name: true, type: true }
     });
     const apps = (await getInstalledApps()).map((app) => ({
-        id: app.id,
+        appUuid: app.uuid,
         marketplaceUrl: app.marketplaceUrl
     }));
     return { marketplaceApps, marketplaces, containerEngines, apps };
@@ -40,28 +40,21 @@ export const actions: Actions = {
     installApp: async ({ request }) => {
         // Get necessary data
         const data = await request.formData();
-        const id = data.get('id')?.toString() ?? '';
-        const marketplaceUrl = data.get('marketplaceUrl')?.toString() ?? '';
+        const appUuid = data.get('appUuid')?.toString() ?? '';
         const containerEngineId = parseInt(data.get('containerEngineId')?.toString() ?? '');
 
         // Validation
-        if (!id) {
-            return fail(400, { id, invalid: true });
-        }
-        if (!marketplaceUrl) {
-            return fail(400, { marketplaceUrl, invalid: true });
+        if (!appUuid) {
+            return fail(400, { appUuid, invalid: true });
         }
         if (!containerEngineId) {
             return fail(400, { containerEngineId, invalid: true });
         }
         const marketplaceApp = await db.query.marketplaceApps.findFirst({
-            where: and(
-                eq(marketplaceApps.id, id),
-                eq(marketplaceApps.marketplaceUrl, marketplaceUrl)
-            )
+            where: eq(marketplaceApps.uuid, appUuid)
         });
         if (!marketplaceApp) {
-            return fail(400, { id, notFound: true });
+            return fail(400, { appUuid, notFound: true });
         }
         const containerEngine = await db.query.containerEngines.findFirst({
             where: eq(containerEngines.id, containerEngineId)
@@ -74,8 +67,12 @@ export const actions: Actions = {
 
         // TODO create app
 
+        dispatchEvent('appStatus', { appUuid, status: 'installing', progress: 0 });
+
         await installApp(marketplaceApp, (progress) =>
-            sendEvent('installAppProgress', JSON.stringify({ id, progress }))
+            dispatchEvent('appStatus', { appUuid, status: 'installing', progress })
         );
+
+        dispatchEvent('appStatus', { appUuid, status: 'installed', progress: 1 });
     }
 };

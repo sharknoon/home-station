@@ -14,12 +14,14 @@ CREATE TABLE `hostnames` (
 );
 --> statement-breakpoint
 CREATE TABLE `marketplace_apps` (
-	`id` text NOT NULL,
+	`uuid` text PRIMARY KEY NOT NULL,
 	`marketplace_url` text NOT NULL,
+	`version` text NOT NULL,
 	`name` text NOT NULL,
 	`description` text NOT NULL,
 	`icon` text NOT NULL,
 	`banner` text,
+	`screenshots` text NOT NULL,
 	`links` text NOT NULL,
 	`published_at` text NOT NULL,
 	`developer` text NOT NULL,
@@ -28,7 +30,6 @@ CREATE TABLE `marketplace_apps` (
 	`config` text,
 	`http` text NOT NULL,
 	`messages` text,
-	PRIMARY KEY(`id`, `marketplace_url`),
 	FOREIGN KEY (`marketplace_url`) REFERENCES `marketplaces`(`git_remote_url`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint

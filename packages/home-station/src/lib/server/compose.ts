@@ -26,7 +26,7 @@ export async function up(
 ): Promise<void> {
     const customComposeFile = composeFile ? ['-f', composeFile] : [];
     const customProjectName = projectName ? ['-p', projectName] : [];
-    const id = join(cwd, composeFile ?? 'compose.yml');
+    const composeFilePath = join(cwd, composeFile ?? 'compose.yml');
     const throttledProgress = throttle((p: number) => progress?.(p), 250);
     await exec(
         'docker',
@@ -34,7 +34,7 @@ export async function up(
         cwd,
         (data) => {
             if (!progress) return;
-            const currentProgress = getPullProgress(id, data);
+            const currentProgress = getPullProgress(composeFilePath, data);
             if (currentProgress !== undefined) {
                 throttledProgress(currentProgress);
             }

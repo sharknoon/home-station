@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, primaryKey } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
 import type { LocalizedString } from '$lib/i18n';
 import type { Config, Http, Links, Messages } from './marketplaces';
 import { relations } from 'drizzle-orm';
@@ -54,34 +54,27 @@ export const marketplaces = sqliteTable('marketplaces', {
 });
 
 // Apps for the marketplace
-export const marketplaceApps = sqliteTable(
-    'marketplace_apps',
-    {
-        // IDs for apps are only unique within a marketplace
-        id: text('id').notNull(),
-        marketplaceUrl: text('marketplace_url')
-            .notNull()
-            .references(() => marketplaces.gitRemoteUrl, { onDelete: 'cascade' }),
-        version: text('version').notNull(),
-        name: text('name', { mode: 'json' }).notNull().$type<LocalizedString>(),
-        description: text('description', { mode: 'json' }).notNull().$type<LocalizedString>(),
-        icon: text('icon').notNull(),
-        banner: text('banner'),
-        links: text('links', { mode: 'json' }).notNull().$type<Links>(),
-        publishedAt: text('published_at').notNull(),
-        developer: text('developer').notNull(),
-        category: text('category', { enum: ['productivity'] }).notNull(), //TODO: Add more categories from https://developer.apple.com/app-store/categories/
-        license: text('license').notNull(),
-        config: text('config', { mode: 'json' }).$type<Config[]>(),
-        http: text('http', { mode: 'json' }).notNull().$type<Http[]>(),
-        messages: text('messages', { mode: 'json' }).$type<Messages>()
-    },
-    (table) => {
-        return {
-            pk: primaryKey({ columns: [table.id, table.marketplaceUrl] })
-        };
-    }
-);
+export const marketplaceApps = sqliteTable('marketplace_apps', {
+    // IDs for apps are only unique within a marketplace
+    uuid: text('uuid').primaryKey(),
+    marketplaceUrl: text('marketplace_url')
+        .notNull()
+        .references(() => marketplaces.gitRemoteUrl, { onDelete: 'cascade' }),
+    version: text('version').notNull(),
+    name: text('name', { mode: 'json' }).notNull().$type<LocalizedString>(),
+    description: text('description', { mode: 'json' }).notNull().$type<LocalizedString>(),
+    icon: text('icon').notNull(),
+    banner: text('banner'),
+    screenshots: text('screenshots', { mode: 'json' }).notNull().$type<string[]>(),
+    links: text('links', { mode: 'json' }).notNull().$type<Links>(),
+    publishedAt: text('published_at').notNull(),
+    developer: text('developer').notNull(),
+    category: text('category', { enum: ['productivity'] }).notNull(), //TODO: Add more categories from https://developer.apple.com/app-store/categories/
+    license: text('license').notNull(),
+    config: text('config', { mode: 'json' }).$type<Config[]>(),
+    http: text('http', { mode: 'json' }).notNull().$type<Http[]>(),
+    messages: text('messages', { mode: 'json' }).$type<Messages>()
+});
 export const marketplaceAppsRelations = relations(marketplaceApps, ({ one }) => ({
     marketplace: one(marketplaces, {
         fields: [marketplaceApps.marketplaceUrl],

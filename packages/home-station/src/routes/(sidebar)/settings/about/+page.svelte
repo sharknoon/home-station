@@ -3,9 +3,13 @@
     import { i18n } from '$lib/i18n';
 
     // Redeclare the variables here to prevent "'__COMMIT_HASH__' is not definedsvelte(missing-declaration)" error
+    // eslint-disable-next-line no-undef
     let REPOSITORY_URL = __REPOSITORY_URL__;
+    // eslint-disable-next-line no-undef
     let NPM_PACKAGE_VERSION = __NPM_PACKAGE_VERSION__;
+    // eslint-disable-next-line no-undef
     let COMMIT_HASH = __COMMIT_HASH__;
+    // eslint-disable-next-line no-undef
     let BUILD_DATE = __BUILD_DATE__;
 </script>
 

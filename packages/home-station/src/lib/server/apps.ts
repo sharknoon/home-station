@@ -4,12 +4,11 @@ import {
     type MarketplaceApp
 } from '$lib/server/marketplaces';
 import path from 'node:path';
-import { and, inArray } from 'drizzle-orm';
+import { inArray } from 'drizzle-orm';
 import type Dockerode from 'dockerode';
 import { down, up } from '$lib/server/compose';
 import db from '$lib/server/db';
 import { getEngine } from '$lib/server/containerengines';
-import logger from '$lib/server/logger';
 import { marketplaceApps } from '$lib/server/schema';
 
 /**
@@ -22,14 +21,14 @@ export async function installApp(
     app: MarketplaceApp,
     progress?: (progress: number) => void
 ): Promise<void> {
-    const latestVersion = await getLatestVersion(app.marketplaceUrl, app.id);
+    const latestVersion = await getLatestVersion(app.marketplaceUrl, app.uuid);
     if (!latestVersion) return;
     const composePath = path.join(
-        getMarketplaceAppPath(app.marketplaceUrl, app.id),
+        getMarketplaceAppPath(app.marketplaceUrl, app.uuid),
         'versions',
         latestVersion
     );
-    await up(composePath, undefined, app.id, progress);
+    await up(composePath, undefined, app.uuid, progress);
 }
 
 /**
@@ -39,18 +38,18 @@ export async function installApp(
  */
 export async function uninstallApp(
     marketplaceUrl: string,
-    appId: string,
+    appUuid: string,
     version: string
 ): Promise<void> {
     const composePath = path.join(
-        getMarketplaceAppPath(marketplaceUrl, appId),
+        getMarketplaceAppPath(marketplaceUrl, appUuid),
         'versions',
         version
     );
-    await down(composePath, undefined, appId, false);
+    await down(composePath, undefined, appUuid, false);
 }
 
-type InstalledApp = MarketplaceApp & {
+export type InstalledApp = MarketplaceApp & {
     status: 'running' | 'stopped' | 'error';
     installedVersion: string;
 };
@@ -71,9 +70,8 @@ export async function getInstalledApps(): Promise<InstalledApp[]> {
     }
     const appContainers = containers
         .filter((c) => c.Labels['home-station.enable'] === 'true')
-        .map((a) => [a.Labels['home-station.app'], a.State])
-        .map(([id, s]) => {
-            const { marketplaceUrl, appId, version } = parseAppIdentifier(id);
+        .map((a) => [a.Labels['home-station.app'], a.Labels['home-station.app-version'], a.State])
+        .map(([uuid, version, s]) => {
             let state;
             switch (s) {
                 case 'running':
@@ -90,11 +88,10 @@ export async function getInstalledApps(): Promise<InstalledApp[]> {
                     state = 'error';
                     break;
             }
-            return { marketplaceUrl, appId, version, state };
+            return { uuid, version, state };
         })
         .filter((a) => a !== undefined) as {
-        marketplaceUrl: string;
-        appId: string;
+        uuid: string;
         version: string;
         state: InstalledApp['status'];
     }[];
@@ -105,56 +102,17 @@ export async function getInstalledApps(): Promise<InstalledApp[]> {
         .select()
         .from(marketplaceApps)
         .where(
-            and(
-                inArray(
-                    marketplaceApps.marketplaceUrl,
-                    appContainers.map((a) => a.marketplaceUrl)
-                ),
-                inArray(
-                    marketplaceApps.id,
-                    appContainers.map((a) => a.appId)
-                )
+            inArray(
+                marketplaceApps.uuid,
+                appContainers.map((a) => a.uuid)
             )
         );
     return appRecords.map((app) => {
-        const container = appContainers.find(
-            (c) => c.marketplaceUrl === app.marketplaceUrl && c.appId === app.id
-        );
+        const container = appContainers.find((c) => c.uuid === app.uuid);
         return {
             ...app,
             status: container?.state ?? 'error',
             installedVersion: container?.version ?? '0.0.0'
         };
     });
-}
-
-/**
- * Parses the app identifier and returns an object with the marketplace URL, app ID, and version.
- * @param identifier - The app identifier in the format "id|version" or "marketplace|id|version".
- * @returns An object with the marketplace URL, app ID, and version.
- */
-export function parseAppIdentifier(identifier: string): {
-    marketplaceUrl?: string;
-    appId?: string;
-    version?: string;
-} {
-    const parts = identifier?.split('|') ?? [];
-    let marketplaceUrl;
-    let appId;
-    let version;
-    if (parts.length == 2) {
-        marketplaceUrl = 'https://github.com/home-station-org/apps.git';
-        appId = parts[0];
-        version = parts[1];
-    } else if (parts.length == 3) {
-        marketplaceUrl = parts[0];
-        if (!marketplaceUrl.endsWith('.git')) marketplaceUrl += '.git';
-        appId = parts[1];
-        version = parts[2];
-    } else {
-        logger.warn(
-            `Invalid or missing app id label: "${identifier}" An app id should be in the format "id|version" or "marketplace|id|version"`
-        );
-    }
-    return { marketplaceUrl, appId, version };
 }

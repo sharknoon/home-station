@@ -5,7 +5,7 @@ import { throttle } from '$lib/server/utils';
 import { deleteExpiredSessions } from '$lib/server/auth';
 import logger from '$lib/server/logger';
 import { writable, type Writable } from 'svelte/store';
-import { sendEvent } from '$lib/server/events';
+import { dispatchEvent } from '$lib/server/events';
 
 export type Task = {
     /** NEVER change this ID, it is used to identify the task in the database */
@@ -75,9 +75,7 @@ function getDefaultStats(schedule: string): Writable<TaskStats> {
 export async function scheduleTasks(): Promise<void> {
     for (const task of tasks) {
         // Update the stats in the UI
-        task.stats.subscribe((stats) =>
-            sendEvent('updateStats', JSON.stringify({ id: task.id, stats }))
-        );
+        task.stats.subscribe((stats) => dispatchEvent('updateStats', { id: task.id, stats }));
         logger.info(`Scheduling task "${task.id}" to run on schedule "${task.schedule}"`);
         const job = new CronJob(task.schedule, async () => await executeTask(task));
         job.start();

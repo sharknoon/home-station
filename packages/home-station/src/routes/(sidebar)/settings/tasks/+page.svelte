@@ -5,26 +5,17 @@
     import Play from 'lucide-svelte/icons/play';
     import cronstrue from 'cronstrue';
     import { enhance } from '$app/forms';
-    import { onMount } from 'svelte';
     import { ProgressRadial } from '@skeletonlabs/skeleton';
-    import type { TaskStats } from '$lib/server/tasks';
+    import { addEventListener } from '$lib/events';
 
     export let data: PageData;
 
-    onMount(() => {
-        const evtSource = new EventSource('/events');
-        evtSource.onerror = (e) => console.error(e);
-        evtSource.addEventListener('updateStats', (stats: MessageEvent<string>) => {
-            const updatedStats = JSON.parse(stats.data) as {
-                id: string;
-                stats: TaskStats;
-            };
-            data.tasks = data.tasks.map((task) => {
-                if (task.id === updatedStats.id) {
-                    task.stats = updatedStats.stats;
-                }
-                return task;
-            });
+    addEventListener('updateStats', (stats) => {
+        data.tasks = data.tasks.map((task) => {
+            if (task.id === stats.id) {
+                task.stats = stats.stats;
+            }
+            return task;
         });
     });
 

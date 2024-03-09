@@ -1,4 +1,9 @@
 {
+    "marketplace-app": {
+        "category": {
+            "productivity": "Productivity"
+        }
+    },
     "tasks": {
         "update-marketplace-apps": "Fetch apps from marketplaces",
         "delete-expired-sessions": "Delete expired login-sessions",
@@ -67,12 +72,12 @@
             "no-container-engine-available": "No container engine available"
         },
         "installing": "Installing...",
-        "app-info-modal": {
-            "additional-information": "Additional information",
-            "id": "ID",
+        "apps": {
+            "category": "Category",
+            "license": "License",
             "published-at": "Published at",
             "marketplace": "Marketplace",
-            "license": "License"
+            "version": "Version"
         },
         "container-engines-modal": {
             "select-engine": "Select container engine",

@@ -30,7 +30,7 @@
     // Loading state for the "Connect" button to test the connection to the container engines
     let loading = false;
 
-    let name = '';
+    let name = 'Docker';
     let host = '';
 
     // Step 3 Add domains and hostnames

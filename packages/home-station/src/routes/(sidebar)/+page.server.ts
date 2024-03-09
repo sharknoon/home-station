@@ -6,7 +6,7 @@ import { getInstalledApps, uninstallApp } from '$lib/server/apps';
 export const load: PageServerLoad = async () => {
     const apps = (await getInstalledApps()).map((app) => ({
         marketplaceUrl: app.marketplaceUrl,
-        id: app.id,
+        uuid: app.uuid,
         version: app.installedVersion,
         icon: app.icon,
         name: app.name,
@@ -31,11 +31,11 @@ export const actions = {
     uninstallApp: async ({ request }) => {
         const data = await request.formData();
         const marketplaceUrl = data.get('marketplaceUrl')?.toString();
-        const appId = data.get('appId')?.toString();
+        const appUuid = data.get('appUuid')?.toString();
         const version = data.get('version')?.toString();
-        if (!marketplaceUrl || !appId || !version) {
+        if (!marketplaceUrl || !appUuid || !version) {
             return fail(400);
         }
-        await uninstallApp(marketplaceUrl, appId, version);
+        await uninstallApp(marketplaceUrl, appUuid, version);
     }
 } satisfies Actions;

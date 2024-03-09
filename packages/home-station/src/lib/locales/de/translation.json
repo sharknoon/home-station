@@ -1,4 +1,9 @@
 {
+    "marketplace-app": {
+        "category": {
+            "productivity": "Produktivität"
+        }
+    },
     "tasks": {
         "update-marketplace-apps": "Abrufen von Apps aus Marktplätzen",
         "delete-expired-sessions": "Löschen von abgelaufenen Login-Sitzungen",
@@ -67,12 +72,12 @@
             "no-container-engine-available": "Keine Container-Engine verfügbar"
         },
         "installing": "Installieren...",
-        "app-info-modal": {
-            "additional-information": "Zusätzliche Informationen",
-            "id": "ID",
-            "published-at": "Veröffentlicht am",
+        "apps": {
+            "category": "Kategorie",
+            "license": "Lizenz",
+            "published-at": "Veröffentlichungsdatum",
             "marketplace": "Marktplatz",
-            "license": "Lizenz"
+            "version": "Version"
         },
         "container-engines-modal": {
             "select-engine": "Container-Engine auswählen",

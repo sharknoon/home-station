@@ -113,6 +113,7 @@
     $: submenuItemActive = (href: string) =>
         $page.url.pathname?.includes(href) ? 'bg-primary-active-token' : '';
 
+    // eslint-disable-next-line no-undef
     const REPOSITORY_URL = __REPOSITORY_URL__;
 
     // Toast

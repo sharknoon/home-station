@@ -19,14 +19,16 @@ import logger from '$lib/server/logger';
 import { rcompare } from 'semver';
 
 export type AppYaml = {
-    id: string;
+    uuid: string;
     name: LocalizedString;
     description: LocalizedString;
     icon: string;
     banner?: string;
+    screenshots?: string[];
     links: Links;
     publishedAt: string;
     developer: string;
+    // t('marketplace-app.category.productivity') This is for i18next to automatically create a locale file entry
     category: 'productivity';
     license: string;
     config?: Config[];
@@ -103,12 +105,12 @@ export function getMarketplacePath(marketplaceUrl: string): string {
 /**
  * Returns the path to a specific app in the local cloned marketplace repository
  * @param marketplaceUrl The url to the marketplace repository
- * @param appId The id of the app
+ * @param appUuid The uuid of the app
  * @returns The path to the app in the local cloned marketplace repository
  */
-export function getMarketplaceAppPath(marketplaceUrl: string, appId: string): string {
+export function getMarketplaceAppPath(marketplaceUrl: string, appUuid: string): string {
     const dirName = getDirectoryNameFromUrl(marketplaceUrl);
-    return path.join(MARKETPLACES_PATH, dirName, 'apps', appId);
+    return path.join(MARKETPLACES_PATH, dirName, 'apps', appUuid);
 }
 
 function getDirectoryNameFromUrl(url: string): string {
@@ -128,15 +130,15 @@ function getDirectoryNameFromUrl(url: string): string {
  */
 export async function getLatestVersion(
     marketplaceUrl: string,
-    appId: string
+    appUuid: string
 ): Promise<string | undefined> {
-    const versionsPath = path.join(getMarketplaceAppPath(marketplaceUrl, appId), 'versions');
+    const versionsPath = path.join(getMarketplaceAppPath(marketplaceUrl, appUuid), 'versions');
     let versions: string[] = [];
     try {
         versions = await fs.readdir(versionsPath);
     } catch {
         logger.warn(
-            `No "versions" directory found in "${getMarketplaceAppPath(marketplaceUrl, appId)}"!`
+            `No "versions" directory found in "${getMarketplaceAppPath(marketplaceUrl, appUuid)}"!`
         );
         return undefined;
     }
@@ -209,10 +211,10 @@ export async function updateMarketplaceApps(
     for (const marketplace of marketplaces) {
         await pullMarketplaceRepository(marketplace, progress);
         const marketplacePath = getMarketplacePath(marketplace.gitRemoteUrl);
-        const appIds = await loadAppIds(path.join(marketplacePath, 'apps'));
-        for (const appId of appIds) {
+        const appUuids = await loadAppUuids(path.join(marketplacePath, 'apps'));
+        for (const appUuid of appUuids) {
             try {
-                const appYamlPath = path.join(marketplacePath, 'apps', appId, 'app.yml');
+                const appYamlPath = path.join(marketplacePath, 'apps', appUuid, 'app.yml');
                 const appYaml = await parseAppYaml(appYamlPath);
                 const app = await convertAppYaml(appYaml, marketplace.gitRemoteUrl);
                 apps.push(app);
@@ -229,30 +231,48 @@ export async function updateMarketplaceApps(
  * Converts an `app.yml` to a MarketplaceApp. This involves resolving files and setting the marketplaceUrl.
  */
 async function convertAppYaml(appYaml: AppYaml, marketplaceUrl: string): Promise<MarketplaceApp> {
-    const version = await getLatestVersion(marketplaceUrl, appYaml.id);
+    let version = await getLatestVersion(marketplaceUrl, appYaml.uuid);
     if (!version) {
-        logger.warn(`No version found for "${appYaml.id}" in "${marketplaceUrl}"!`);
+        logger.warn(
+            `No version found for "${appYaml.uuid}" (${appYaml.name.en}) in "${marketplaceUrl}"!`
+        );
+        version = '0.0.0';
     }
 
-    const icon = await resolveFile(
+    let icon = await resolveFile(
         appYaml.icon,
-        path.join(getMarketplacePath(marketplaceUrl), 'apps', appYaml.id)
+        path.join(getMarketplacePath(marketplaceUrl), 'apps', appYaml.uuid)
     );
     if (!icon) {
-        logger.warn(`No icon found for "${appYaml.id}" in "${marketplaceUrl}"!`);
+        logger.warn(
+            `No icon found for "${appYaml.uuid}" (${appYaml.name.en}) in "${marketplaceUrl}"!`
+        );
+        icon = '';
     }
 
     const banner = await resolveFile(
         appYaml.banner,
-        path.join(getMarketplacePath(marketplaceUrl), 'apps', appYaml.id)
+        path.join(getMarketplacePath(marketplaceUrl), 'apps', appYaml.uuid)
     );
+
+    const screenshots = (
+        await Promise.all(
+            (appYaml.screenshots ?? []).map((screenshot) =>
+                resolveFile(
+                    screenshot,
+                    path.join(getMarketplacePath(marketplaceUrl), 'apps', appYaml.uuid)
+                )
+            )
+        )
+    ).filter((screenshot) => screenshot) as string[];
 
     return {
         ...appYaml,
         marketplaceUrl,
-        version: version ?? '0.0.0',
-        icon: icon ?? '',
-        banner
+        version,
+        icon,
+        banner,
+        screenshots
     };
 }
 
@@ -275,7 +295,7 @@ export async function resolveFile(
     // Assume the file is a relative path to a local file
     const filePath = path.join(cwd, file);
     if (await exists(filePath)) {
-        return path.relative(await getAppDataPath(), filePath).replace(/\\/g, '/');
+        return '/' + path.relative(await getAppDataPath(), filePath).replace(/\\/g, '/');
     }
     // Either a wrong URL or a non-existing file
     logger.warn(`"${file}" is not a valid URL or cannot be found in "${cwd}"`);
@@ -283,7 +303,7 @@ export async function resolveFile(
 }
 
 /**
- * Pulls the apps from the marketplace repository and returns the appIds
+ * Pulls the apps from the marketplace repository
  */
 async function pullMarketplaceRepository(
     marketplace: Marketplace,
@@ -330,12 +350,12 @@ async function pullMarketplaceRepository(
 }
 
 /**
- * Loads the app Ids from a marketplace apps directory.
+ * Loads the app Uuids from a marketplace apps directory.
  *
  * @param appsPath The path to the apps directory inside a marketplace.
- * @returns An array of app Ids (the folder names).
+ * @returns An array of app Uuids (the folder names).
  */
-async function loadAppIds(appsPath: string): Promise<string[]> {
+async function loadAppUuids(appsPath: string): Promise<string[]> {
     try {
         return await fs.readdir(appsPath);
     } catch {

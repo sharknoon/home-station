@@ -39,7 +39,7 @@
                         use:enhance
                     >
                         <input type="hidden" name="marketplaceUrl" value={app.marketplaceUrl} />
-                        <input type="hidden" name="appId" value={app.id} />
+                        <input type="hidden" name="appUuid" value={app.uuid} />
                         <input type="hidden" name="version" value={app.version} />
                         <nav class="list-nav">
                             <ul>
