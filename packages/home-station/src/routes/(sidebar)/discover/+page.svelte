@@ -91,7 +91,12 @@
                         <div class="text-sm text-surface-700-200-token mb-2">
                             {$i18n.t('marketplace-app.category.' + app.category)}
                         </div>
-                        <AppButton {app} containerEngines={data.containerEngines} />
+                        <AppButton
+                            {app}
+                            containerEngines={data.containerEngines}
+                            installedApps={data.installedApps}
+                            size="small"
+                        />
                     </div>
                 </div>
                 <div>{ts(app.description)}</div>

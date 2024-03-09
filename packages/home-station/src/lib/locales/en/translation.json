@@ -68,6 +68,7 @@
             "no-container-engine-available": "No container engine available"
         },
         "installing": "Installing...",
+        "open": "Open",
         "links": {
             "website": "Website",
             "repository": "Repository"

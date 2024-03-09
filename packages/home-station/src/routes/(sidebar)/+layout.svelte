@@ -90,15 +90,18 @@
         }
     ];
 
-
     // TODO not an ideal situation: it flashes on hydration. Solution: wait for Svelte 5s effect runes
     onMount(() => {
-        currentItem = appRailItems.findIndex((item) => {
-            return item.href === '/'
-                ? $page.url.pathname === '/'
-                : $page.url.pathname.substring(1).startsWith(item.href.substring(1));
-        });
-    })
+        function findCurrentItem() {
+            return appRailItems.findIndex((item) => {
+                return item.href === '/'
+                    ? $page.url.pathname === '/'
+                    : $page.url.pathname.substring(1).startsWith(item.href.substring(1));
+            });
+        }
+        currentItem = findCurrentItem();
+        page.subscribe(() => (currentItem = findCurrentItem()));
+    });
 
     $: submenuItemActive = (href: string) =>
         $page.url.pathname?.includes(href) ? 'bg-primary-active-token' : '';

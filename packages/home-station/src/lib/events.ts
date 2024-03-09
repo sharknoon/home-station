@@ -25,5 +25,5 @@ export type Event = 'updateStats' | 'appStatus';
 // prettier-ignore
 export type EventData<T extends Event> = 
     T extends 'updateStats' ? { id: string; stats: TaskStats } :
-    T extends 'appStatus' ? { appUuid: string; status: string; progress: number } :
+    T extends 'appStatus' ? { appUuid: string; status: "not installed" | "installing" | "installed"; progress: number } :
     never;

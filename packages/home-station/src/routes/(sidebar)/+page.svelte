@@ -44,7 +44,7 @@
                         <nav class="list-nav">
                             <ul>
                                 <li>
-                                    <a href="https://google.de">
+                                    <a href="/discover/apps/{app.uuid}">
                                         <Store class="h-6" />
                                         <span class="flex-auto">
                                             {$i18n.t('my-apps.open-in-marketplace')}
@@ -60,7 +60,11 @@
                                     </a>
                                 </li>
                                 <li class="text-error-500-400-token">
-                                    <button type="submit" formaction="?/uninstallApp">
+                                    <button
+                                        type="submit"
+                                        formaction="?/uninstallApp"
+                                        class="w-full text-left"
+                                    >
                                         <Trash_2 class="h-6" />
                                         <span class="flex-auto">
                                             {$i18n.t('my-apps.remove-app')}
@@ -77,6 +81,14 @@
                 </div>
             </a>
         {/each}
+        <a href="/discover">
+            <div
+                class="h-20 w-20 rounded-2xl border border-secondary-600-300-token border-dashed flex items-center justify-center transition-all hover:scale-[103%]"
+            >
+                <Plus class="h-12 w-12 text-secondary-600-300-token" />
+            </div>
+            <div class="h-8" />
+        </a>
     </div>
     <!-- Accordion for stopped or errorneous apps -->
     {#if data.apps.filter((a) => a.status !== 'running').length > 0}
@@ -109,7 +121,7 @@
                                         <nav class="list-nav">
                                             <ul>
                                                 <li>
-                                                    <a href="https://google.de">
+                                                    <a href="/discover/apps/{app.uuid}">
                                                         <Store class="h-6" />
                                                         <span class="flex-auto">
                                                             {$i18n.t('my-apps.open-in-marketplace')}
@@ -128,6 +140,7 @@
                                                     <button
                                                         type="submit"
                                                         formaction="?/uninstallApp"
+                                                        class="w-full text-left"
                                                     >
                                                         <Trash_2 class="h-6" />
                                                         <span class="flex-auto">
