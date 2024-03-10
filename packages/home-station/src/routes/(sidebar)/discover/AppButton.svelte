@@ -8,23 +8,27 @@
     import type { MarketplaceApp } from '$lib/server/marketplaces';
     import ContainerEnginesModal from './ContainerEnginesModal.svelte';
     import type { ContainerEngine } from '$lib/server/containerengines';
+    import type { InstalledApp } from '$lib/server/apps';
 
     type AvailableContainerEngine = Pick<ContainerEngine, 'id' | 'name' | 'type'>;
 
     export let app: MarketplaceApp;
     export let containerEngines: AvailableContainerEngine[];
-    export let installedApps: string[];
+    export let installedApps: InstalledApp[];
     export let size: 'small' | 'large' = 'large';
+    export let type: 'primary' | 'soft' = 'primary';
 
     const modalStore = getModalStore();
-    let appProgress = 0;
-    let appStatus = installedApps.some((uuid) => uuid === app.uuid) ? 'installed' : 'not installed';
-    let buttonClasses = size === 'small' ? 'btn-sm' : '';
+    let appInstallProgress = 0;
+    let appInstallStatus = installedApps.some((app) => app.uuid === app.uuid)
+        ? 'installed'
+        : 'not installed';
+    let buttonClasses = `${size === 'small' ? 'btn-sm' : ''} ${type === 'primary' ? 'variant-filled-primary' : 'variant-soft'}`;
 
     addEventListener('appStatus', (status) => {
         if (status.appUuid !== app.uuid) return;
-        appProgress = status.progress;
-        appStatus = status.status;
+        appInstallProgress = status.progress;
+        appInstallStatus = status.status;
     });
 </script>
 
@@ -39,7 +43,7 @@
             }}
             type="button"
             disabled
-            class="btn variant-filled-primary font-semibold {buttonClasses}"
+            class="btn font-semibold {buttonClasses}"
         >
             <HardDriveDownload class="mr-2" />
             {$i18n.t('discover.install')}
@@ -55,30 +59,36 @@
         <button
             type="submit"
             formaction="/discover?/installApp"
-            class="btn variant-filled-primary font-semibold {buttonClasses}"
+            class="btn font-semibold {buttonClasses}"
             on:click|stopPropagation
         >
             <!-- TODO in svelte 5 convert to snippet -->
-            {#if appStatus === 'installing'}
+            {#if appInstallStatus === 'installing'}
                 <ProgressRadial
                     class="h-6 w-6 mr-2 -ml-2"
                     stroke={100}
                     meter="stroke-surface-50 dark:stroke-surface-900"
-                    value={appProgress}
+                    value={appInstallProgress}
                 />
                 {$i18n.t('discover.installing')}
-            {:else if appStatus === 'not installed'}
+            {:else if appInstallStatus === 'not installed'}
                 <HardDriveDownload class="mr-2" />
                 {$i18n.t('discover.install')}
-            {:else if appStatus === 'installed'}
-                <Play class="mr-2" />
-                {$i18n.t('discover.open')}
+            {:else if appInstallStatus === 'installed'}
+                {@const installedApp = installedApps.find((a) => a.uuid === app.uuid)}
+                {#if installedApp?.status === 'running'}
+                    <Play class="mr-2" />
+                    {$i18n.t('discover.open')}
+                {:else if installedApp?.status === 'stopped'}
+                    <Play class="mr-2" />
+                    {$i18n.t('discover.start')}
+                {:else}Whaaat: {installedApp?.status}{/if}
             {/if}
         </button>
     {:else}
         <button
             type="button"
-            class="btn variant-filled-primary font-semibold {buttonClasses}"
+            class="btn font-semibold {buttonClasses}"
             on:click|stopPropagation={() =>
                 modalStore.trigger({
                     type: 'component',
@@ -91,18 +101,18 @@
                     }
                 })}
         >
-            {#if appStatus === 'installing'}
+            {#if appInstallStatus === 'installing'}
                 <ProgressRadial
                     class="h-6 w-6 mr-2 -ml-2"
                     stroke={100}
                     meter="stroke-surface-50 dark:stroke-surface-900"
-                    value={appProgress}
+                    value={appInstallProgress}
                 />
                 {$i18n.t('discover.installing')}
-            {:else if appStatus === 'not installed'}
+            {:else if appInstallStatus === 'not installed'}
                 <HardDriveDownload class="mr-2" />
                 {$i18n.t('discover.install')}
-            {:else if appStatus === 'installed'}
+            {:else if appInstallStatus === 'installed'}
                 <Play class="mr-2" />
                 {$i18n.t('discover.open')}
             {/if}

@@ -31,6 +31,10 @@
     "brand": {
         "title": "Home Station"
     },
+    "notification": {
+        "app-uninstallation-error": "Fehler beim Deinstallieren der App: {{error}}",
+        "app-installation-error": "Fehler beim Installieren der App: {{error}}"
+    },
     "my-apps": {
         "open-in-marketplace": "Im Marktplatz öffnen",
         "settings": "App-Einstellungen",
@@ -69,17 +73,19 @@
         },
         "installing": "Installieren...",
         "open": "Öffnen",
-        "links": {
-            "website": "Webseite",
-            "repository": "Repository"
-        },
+        "start": "Starten",
         "apps": {
+            "uninstall": "Deinstallieren",
             "category": "Kategorie",
             "developer": "Entwickler",
             "license": "Lizenz",
             "published-at": "Veröffentlichungsdatum",
             "marketplace": "Marktplatz",
             "version": "Version"
+        },
+        "links": {
+            "website": "Webseite",
+            "repository": "Repository"
         },
         "container-engines-modal": {
             "select-engine": "Container-Engine auswählen",

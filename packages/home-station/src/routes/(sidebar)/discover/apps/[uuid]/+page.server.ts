@@ -15,7 +15,7 @@ export const load = (async ({ params }) => {
     const containerEngines = await db.query.containerEngines.findMany({
         columns: { id: true, name: true, type: true }
     });
-    const installedApps = (await getInstalledApps()).map((app) => app.uuid);
+    const installedApps = await getInstalledApps();
 
     return { app, containerEngines, installedApps };
 }) satisfies PageServerLoad;

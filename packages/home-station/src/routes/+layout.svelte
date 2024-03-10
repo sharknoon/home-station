@@ -9,12 +9,15 @@
     import { init as initI18n } from '$lib/i18n';
     // Initializes a page load spinner that starts popping up after 500ms of navigating
     import { init as initPageLoadSpinner } from '$lib/pageloadspinner';
+    // Initializes the notification system
+    import { init as initNotifications } from '$lib/notifications';
 
     export let data: LayoutData;
 
     initUiFramework();
     initI18n(data.user?.language);
     initPageLoadSpinner();
+    initNotifications();
 </script>
 
 <Toast />

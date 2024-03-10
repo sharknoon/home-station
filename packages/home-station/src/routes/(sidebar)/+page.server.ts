@@ -2,6 +2,7 @@ import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { lucia } from '$lib/server/auth';
 import { getInstalledApps, uninstallApp } from '$lib/server/apps';
+import { dispatchEvent } from '$lib/server/events';
 
 export const load: PageServerLoad = async () => {
     const apps = (await getInstalledApps()).map((app) => ({
@@ -36,6 +37,15 @@ export const actions = {
         if (!marketplaceUrl || !appUuid || !version) {
             return fail(400);
         }
-        await uninstallApp(marketplaceUrl, appUuid, version);
+        try {
+            await uninstallApp(marketplaceUrl, appUuid, version);
+        } catch (e) {
+            dispatchEvent('notification', {
+                level: 'error',
+                // i18n.t('notification.app-uninstallation-error', { error: String(e) })
+                i18nKey: 'notification.app-uninstallation-error',
+                data: { error: String(e) }
+            });
+        }
     }
 } satisfies Actions;

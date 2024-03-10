@@ -126,25 +126,22 @@ function getDirectoryNameFromUrl(url: string): string {
 /**
  * Retrieves the latest version of a marketplace app. It uses semver comparisons to get the latest version.
  * @see https://github.com/npm/node-semver?tab=readme-ov-file#comparison
- * @param app - The marketplace app to retrieve the latest version for.
+ * @param marketplaceUrl The url to the marketplace repository
+ * @param appUuid The uuid of the app
  * @returns A promise that resolves to the latest version of the app, or undefined if no versions are found.
  */
-export async function getLatestVersion(
-    marketplaceUrl: string,
-    appUuid: string
-): Promise<string | undefined> {
+export async function getLatestVersion(marketplaceUrl: string, appUuid: string): Promise<string> {
     const versionsPath = path.join(getMarketplaceAppPath(marketplaceUrl, appUuid), 'versions');
     let versions: string[] = [];
     try {
         versions = await fs.readdir(versionsPath);
     } catch {
-        logger.warn(
+        throw new Error(
             `No "versions" directory found in "${getMarketplaceAppPath(marketplaceUrl, appUuid)}"!`
         );
-        return undefined;
     }
     if (versions.length === 0) {
-        return undefined;
+        throw new Error(`No versions found for "${appUuid}" in "${marketplaceUrl}"!`);
     }
     return versions.sort(rcompare)[0];
 }
@@ -232,12 +229,11 @@ export async function updateMarketplaceApps(
  * Converts an `app.yml` to a MarketplaceApp. This involves resolving files and setting the marketplaceUrl.
  */
 async function convertAppYaml(appYaml: AppYaml, marketplaceUrl: string): Promise<MarketplaceApp> {
-    let version = await getLatestVersion(marketplaceUrl, appYaml.uuid);
-    if (!version) {
-        logger.warn(
-            `No version found for "${appYaml.uuid}" (${appYaml.name.en}) in "${marketplaceUrl}"!`
-        );
-        version = '0.0.0';
+    let version = '0.0.0';
+    try {
+        version = await getLatestVersion(marketplaceUrl, appYaml.uuid);
+    } catch (error) {
+        logger.warn(error);
     }
 
     let icon = await resolveFile(

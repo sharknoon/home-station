@@ -1,5 +1,6 @@
 import { browser } from '$app/environment';
 import type { TaskStats } from './server/tasks';
+import type { Level } from './server/logger';
 
 let evtSource: EventSource | undefined;
 if (browser) {
@@ -21,9 +22,10 @@ export function addEventListener<E extends Event>(
     });
 }
 
-export type Event = 'updateStats' | 'appStatus';
+export type Event = 'updateStats' | 'appStatus' | 'notification';
 // prettier-ignore
 export type EventData<T extends Event> = 
     T extends 'updateStats' ? { id: string; stats: TaskStats } :
     T extends 'appStatus' ? { appUuid: string; status: "not installed" | "installing" | "installed"; progress: number } :
+    T extends 'notification' ? { level: Level, i18nKey: string, data: {[key: string]: string} } :
     never;

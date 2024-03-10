@@ -17,6 +17,8 @@ const levels = {
     }
 };
 
+export type Level = keyof typeof levels.levels;
+
 const format = printf(({ level, message, timestamp }) => {
     return `${timestamp} [${level}] ${message}`;
 });

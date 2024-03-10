@@ -17,7 +17,7 @@ export const load = (async () => {
     const containerEngines = await db.query.containerEngines.findMany({
         columns: { id: true, name: true, type: true }
     });
-    const installedApps = (await getInstalledApps()).map((app) => app.uuid);
+    const installedApps = await getInstalledApps();
     return { marketplaceApps, marketplaces, containerEngines, installedApps };
 }) satisfies PageServerLoad;
 
@@ -60,15 +60,20 @@ export const actions: Actions = {
             return fail(400, { containerEngineId, notFound: true });
         }
 
-        // TODO check if the repository and container engine exist
-
-        // TODO create app
-
         dispatchEvent('appStatus', { appUuid, status: 'installing', progress: 0 });
 
-        await installApp(marketplaceApp, (progress) =>
-            dispatchEvent('appStatus', { appUuid, status: 'installing', progress })
-        );
+        try {
+            await installApp(marketplaceApp, (progress) =>
+                dispatchEvent('appStatus', { appUuid, status: 'installing', progress })
+            );
+        } catch (e) {
+            dispatchEvent('notification', {
+                level: 'error',
+                // i18n.t('notification.app-installation-error', { app: marketplaceApp.name, error: e})
+                i18nKey: 'notification.app-installation-error',
+                data: { "error": String(e)}
+            });
+        }
 
         dispatchEvent('appStatus', { appUuid, status: 'installed', progress: 1 });
     }

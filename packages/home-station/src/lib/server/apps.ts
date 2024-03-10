@@ -15,6 +15,7 @@ import { marketplaceApps } from '$lib/server/schema';
  * Installs an app from the marketplace.
  * @param app - The app to install.
  * @param progress - Optional callback to track the installation progress.
+ * @throws If the app cannot be installed.
  * @returns A promise that resolves when the app is installed successfully.
  */
 export async function installApp(
@@ -22,7 +23,6 @@ export async function installApp(
     progress?: (progress: number) => void
 ): Promise<void> {
     const latestVersion = await getLatestVersion(app.marketplaceUrl, app.uuid);
-    if (!latestVersion) return;
     const composePath = path.join(
         getMarketplaceAppPath(app.marketplaceUrl, app.uuid),
         'versions',

@@ -31,6 +31,10 @@
     "brand": {
         "title": "Home Station"
     },
+    "notification": {
+        "app-uninstallation-error": "An error occurred while uninstalling the app: {{error}}",
+        "app-installation-error": "An error occurred while installing the app: {{error}}"
+    },
     "my-apps": {
         "open-in-marketplace": "Open in marketplace",
         "settings": "App settings",
@@ -69,17 +73,19 @@
         },
         "installing": "Installing...",
         "open": "Open",
-        "links": {
-            "website": "Website",
-            "repository": "Repository"
-        },
+        "start": "Start",
         "apps": {
+            "uninstall": "Uninstall",
             "category": "Category",
             "developer": "Developer",
             "license": "License",
             "published-at": "Published at",
             "marketplace": "Marketplace",
             "version": "Version"
+        },
+        "links": {
+            "website": "Website",
+            "repository": "Repository"
         },
         "container-engines-modal": {
             "select-engine": "Select container engine",
