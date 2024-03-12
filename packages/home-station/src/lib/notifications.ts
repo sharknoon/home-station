@@ -1,8 +1,5 @@
-import { addEventListener } from './events';
-
-import { getToastStore, type ToastSettings } from '@skeletonlabs/skeleton';
-import { i18n } from '$lib/i18n';
-import { get } from 'svelte/store';
+import { getToastStore } from '@skeletonlabs/skeleton';
+import { addEventListener } from '$lib/events';
 
 export function init() {
     const toastStore = getToastStore();
@@ -24,11 +21,12 @@ export function init() {
                 background = 'variant-filled-surface';
                 break;
         }
-        const t: ToastSettings = {
-            message: get(i18n).t(data.i18nKey, data.data),
+        toastStore.trigger({
+            message: data.message,
             background,
-            autohide
-        };
-        toastStore.trigger(t);
+            autohide,
+            // People should not feel stressed about reading the notification
+            timeout: 15000
+        });
     });
 }

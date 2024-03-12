@@ -6,6 +6,8 @@ import { marketplaceApps, containerEngines } from '$lib/server/schema';
 import { eq } from 'drizzle-orm';
 import { getInstalledApps, installApp } from '$lib/server/apps';
 import { dispatchEvent } from '$lib/server/events';
+import { i18n, ts } from '$lib/i18n';
+import { get } from 'svelte/store';
 
 export const load = (async () => {
     const marketplaceApps = await db.query.marketplaceApps.findMany({
@@ -69,12 +71,17 @@ export const actions: Actions = {
         } catch (e) {
             dispatchEvent('notification', {
                 level: 'error',
-                // i18n.t('notification.app-installation-error', { app: marketplaceApp.name, error: e})
-                i18nKey: 'notification.app-installation-error',
-                data: { "error": String(e)}
+                message: get(i18n).t('notification.app-installation-error', { error: String(e) })
             });
         }
 
         dispatchEvent('appStatus', { appUuid, status: 'installed', progress: 1 });
+        const postInstallMessage = marketplaceApp.messages?.postInstall;
+        if (postInstallMessage) {
+            dispatchEvent('notification', {
+                level: 'info',
+                message: ts(postInstallMessage)
+            });
+        }
     }
 };

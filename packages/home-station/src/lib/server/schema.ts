@@ -1,6 +1,6 @@
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
 import type { LocalizedString } from '$lib/i18n';
-import type { Config, Http, Links, Messages } from './marketplaces';
+import type { AppConfiguration } from '$lib/schemas/app.schema';
 import { relations } from 'drizzle-orm';
 
 export const users = sqliteTable('users', {
@@ -66,14 +66,47 @@ export const marketplaceApps = sqliteTable('marketplace_apps', {
     icon: text('icon').notNull(),
     banner: text('banner'),
     screenshots: text('screenshots', { mode: 'json' }).notNull().$type<string[]>(),
-    links: text('links', { mode: 'json' }).notNull().$type<Links>(),
+    links: text('links', { mode: 'json' }).notNull().$type<AppConfiguration['links']>(),
     publishedAt: text('published_at').notNull(),
     developer: text('developer').notNull(),
-    category: text('category', { enum: ['productivity'] }).notNull(), //TODO: Add more categories from https://developer.apple.com/app-store/categories/
-    license: text('license').notNull(),
-    config: text('config', { mode: 'json' }).$type<Config[]>(),
-    http: text('http', { mode: 'json' }).notNull().$type<Http[]>(),
-    messages: text('messages', { mode: 'json' }).$type<Messages>()
+    category: text('category', {
+        enum: [
+            'books',
+            'medical',
+            'business',
+            'music',
+            'developer-tools',
+            'navigation',
+            'education',
+            'news',
+            'entertainment',
+            'photo-and-video',
+            'finance',
+            'productivity',
+            'food-and-drink',
+            'reference',
+            'games',
+            'graphics-and-design',
+            'shopping',
+            'health-and-fitness',
+            'social-networking',
+            'lifestyle',
+            'sports',
+            'kids',
+            'travel',
+            'magazines-and-newspapers',
+            'utilities',
+            'weather'
+        ]
+    }).notNull(),
+    license: text('license'),
+    config: text('config', { mode: 'json' }).$type<AppConfiguration['config']>(),
+    // TODO add check contraint to ensure only one of these 3 networking configuration options are set
+    // See https://orm.drizzle.team/docs/indexes-constraints#check
+    http: text('http', { mode: 'json' }).$type<AppConfiguration['http']>(),
+    tcp: text('http', { mode: 'json' }).$type<AppConfiguration['tcp']>(),
+    udp: text('http', { mode: 'json' }).$type<AppConfiguration['udp']>(),
+    messages: text('messages', { mode: 'json' }).$type<AppConfiguration['messages']>()
 });
 export const marketplaceAppsRelations = relations(marketplaceApps, ({ one }) => ({
     marketplace: one(marketplaces, {

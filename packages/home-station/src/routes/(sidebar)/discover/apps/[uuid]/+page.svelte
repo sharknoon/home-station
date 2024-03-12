@@ -70,7 +70,11 @@
 </header>
 <div class="p-4 space-y-6">
     <div class="flex gap-4 items-center">
-        <img src={data.app.icon} alt="icon" class="object-cover h-28 w-28 rounded-2xl p-2 bg-white" />
+        <img
+            src={data.app.icon}
+            alt="icon"
+            class="object-cover h-28 w-28 rounded-2xl p-2 bg-white"
+        />
         <div>
             <h3 class="h3 mb-1">{ts(data.app.name)}</h3>
             {#if shieldsUrl}
@@ -84,7 +88,11 @@
                 />
                 {#if data.installedApps.some((a) => a.uuid === data.app.uuid)}
                     <form method="post" action="/?/uninstallApp" use:enhance>
-                        <input type="hidden" name="marketplaceUrl" value={data.app.marketplaceUrl} />
+                        <input
+                            type="hidden"
+                            name="marketplaceUrl"
+                            value={data.app.marketplaceUrl}
+                        />
                         <input type="hidden" name="appUuid" value={data.app.uuid} />
                         <input type="hidden" name="version" value={data.app.version} />
                         <button type="submit" class="btn variant-ringed-error">

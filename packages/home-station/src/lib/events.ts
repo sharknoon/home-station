@@ -1,6 +1,6 @@
 import { browser } from '$app/environment';
-import type { TaskStats } from './server/tasks';
-import type { Level } from './server/logger';
+import type { TaskStats } from '$lib/server/tasks';
+import type { Level } from '$lib/server/logger';
 
 let evtSource: EventSource | undefined;
 if (browser) {
@@ -27,5 +27,5 @@ export type Event = 'updateStats' | 'appStatus' | 'notification';
 export type EventData<T extends Event> = 
     T extends 'updateStats' ? { id: string; stats: TaskStats } :
     T extends 'appStatus' ? { appUuid: string; status: "not installed" | "installing" | "installed"; progress: number } :
-    T extends 'notification' ? { level: Level, i18nKey: string, data: {[key: string]: string} } :
+    T extends 'notification' ? { level: Level, message: string } :
     never;

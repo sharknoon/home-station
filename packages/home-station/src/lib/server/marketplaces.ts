@@ -13,78 +13,13 @@ import db from '$lib/server/db';
 import { marketplaces, marketplaceApps } from '$lib/server/schema';
 import { exists } from '$lib/server/utils';
 import { getAppDataPath } from '$lib/server/appdata';
-import { type LocalizedString } from '$lib/i18n';
 import { eq } from 'drizzle-orm';
 import logger from '$lib/server/logger';
 import { rcompare } from 'semver';
+import Ajv from 'ajv/dist/jtd';
 import { isValidUrl } from '$lib/utils';
-
-export type AppYaml = {
-    uuid: string;
-    name: LocalizedString;
-    description: LocalizedString;
-    icon: string;
-    banner?: string;
-    screenshots?: string[];
-    links: Links;
-    publishedAt: string;
-    developer: string;
-    // t('marketplace-app.category.productivity') This is for i18next to automatically create a locale file entry
-    category: 'productivity';
-    license: string;
-    config?: Config[];
-    http: Http[];
-    messages?: Messages;
-};
-
-export type Links = {
-    repository: string;
-    website?: string;
-    custom?: CustomLinks[];
-};
-
-export type CustomLinks = {
-    id: string;
-    name: LocalizedString;
-    url: string;
-};
-
-export type Config = {
-    id: string;
-    name: LocalizedString;
-    description: LocalizedString;
-    type:
-        | 'string'
-        | 'boolean'
-        | 'number'
-        | 'select'
-        | 'range'
-        | 'color'
-        | 'date'
-        | 'datetime'
-        | 'email'
-        | 'month'
-        | 'password'
-        | 'telephone'
-        | 'time'
-        | 'url'
-        | 'week';
-    required: boolean;
-    default?: string;
-    environment?: string;
-    'form-validation'?: string;
-    'value-validation'?: string;
-};
-
-export type Http = {
-    port: number;
-    description: LocalizedString;
-    subdomain: string;
-};
-
-export type Messages = {
-    'post-install'?: LocalizedString;
-};
+import type { AppConfiguration } from '$lib/schemas/app.schema';
+import schema from '$lib/schemas/app.schema.json';
 
 export type MarketplaceApp = typeof marketplaceApps.$inferInsert;
 export type Marketplace = typeof marketplaces.$inferInsert;
@@ -228,7 +163,10 @@ export async function updateMarketplaceApps(
 /**
  * Converts an `app.yml` to a MarketplaceApp. This involves resolving files and setting the marketplaceUrl.
  */
-async function convertAppYaml(appYaml: AppYaml, marketplaceUrl: string): Promise<MarketplaceApp> {
+async function convertAppYaml(
+    appYaml: AppConfiguration,
+    marketplaceUrl: string
+): Promise<MarketplaceApp> {
     let version = '0.0.0';
     try {
         version = await getLatestVersion(marketplaceUrl, appYaml.uuid);
@@ -366,13 +304,20 @@ async function loadAppUuids(appsPath: string): Promise<string[]> {
  * @param appYamlPath path to the app.yml file
  * @returns A promise that resolves to the app object
  */
-async function parseAppYaml(appYamlPath: string): Promise<AppYaml> {
+async function parseAppYaml(appYamlPath: string): Promise<AppConfiguration> {
     if (!(await exists(appYamlPath))) {
         throw new Error(`No app.yml found in "${appYamlPath}! Skipping..."`);
     }
-
     const appYaml = await fs.readFile(appYamlPath, 'utf8');
-    return yaml.load(appYaml) as AppYaml;
+    const yamlContent = yaml.load(appYaml);
+
+    const ajv = new Ajv();
+    const validate = ajv.compile<AppConfiguration>(schema);
+    const validAppYaml = validate(yamlContent);
+    if (!validAppYaml) {
+        throw new Error(`Invalid app.yml in "${appYamlPath}": ${validate.errors}`);
+    }
+    return yamlContent;
 }
 
 /**
