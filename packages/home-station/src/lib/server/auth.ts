@@ -4,7 +4,6 @@ import { dev } from '$app/environment';
 import { DrizzleSQLiteAdapter } from '@lucia-auth/adapter-drizzle';
 import { sessions, users } from './schema';
 
-// @ts-expect-error Drizzle and SQLite are out of sync TODO remove once fixed
 const adapter = new DrizzleSQLiteAdapter(db, sessions, users);
 
 export const lucia = new Lucia(adapter, {

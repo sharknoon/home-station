@@ -21,8 +21,10 @@ const appSchema = appRawSchema as {
             title: 'Name';
             description: 'The name of the app.';
             examples: ['My App'];
+            type: 'object';
             $ref: '#/$defs/localizedString';
             additionalProperties: {
+                type: 'string';
                 minLength: 2;
                 maxLength: 30;
             };
@@ -33,8 +35,10 @@ const appSchema = appRawSchema as {
             examples: [
                 'My App is a great app that does great things. It is useful because it does great things. It is great.'
             ];
+            type: 'object';
             $ref: '#/$defs/localizedString';
             additionalProperties: {
+                type: 'string';
                 minLength: 100;
                 maxLength: 5000;
             };
@@ -93,8 +97,10 @@ const appSchema = appRawSchema as {
                                 title: 'Link name';
                                 description: 'The name of the custom link.';
                                 examples: ['Documentation'];
+                                type: 'object';
                                 $ref: '#/$defs/localizedString';
                                 additionalProperties: {
+                                    type: 'string';
                                     minLength: 2;
                                     maxLength: 30;
                                 };
@@ -191,8 +197,10 @@ const appSchema = appRawSchema as {
                         title: 'Name';
                         description: 'The name of the configuration option.';
                         examples: ['Log level'];
+                        type: 'object';
                         $ref: '#/$defs/localizedString';
                         additionalProperties: {
+                            type: 'string';
                             minLength: 2;
                             maxLength: 30;
                         };
@@ -203,8 +211,10 @@ const appSchema = appRawSchema as {
                         examples: [
                             'The log level of the app. Can be set to `info`, `warn` or `error`.'
                         ];
+                        type: 'object';
                         $ref: '#/$defs/localizedString';
                         additionalProperties: {
+                            type: 'string';
                             minLength: 2;
                             maxLength: 1000;
                         };
@@ -337,6 +347,7 @@ const appSchema = appRawSchema as {
             description: 'The http ports and their corresponding subdomains of the app.';
             type: 'array';
             items: {
+                type: 'object';
                 $ref: '#/$defs/network';
                 properties: {
                     subdomain: {
@@ -357,6 +368,7 @@ const appSchema = appRawSchema as {
             description: 'The udp ports of the app.';
             type: 'array';
             items: {
+                type: 'object';
                 $ref: '#/$defs/network';
                 unevaluatedProperties: false;
             };
@@ -366,6 +378,7 @@ const appSchema = appRawSchema as {
             description: 'The tcp ports of the app.';
             type: 'array';
             items: {
+                type: 'object';
                 $ref: '#/$defs/network';
                 unevaluatedProperties: false;
             };
@@ -379,8 +392,10 @@ const appSchema = appRawSchema as {
                     title: 'Post install';
                     description: 'The notification that is being send after the app has been installed.';
                     examples: ["Use the username 'demo' and the password 'demo' to login."];
+                    type: 'object';
                     $ref: '#/$defs/localizedString';
                     additionalProperties: {
+                        type: 'string';
                         minLength: 2;
                         maxLength: 1000;
                     };
@@ -424,9 +439,6 @@ const appSchema = appRawSchema as {
             propertyNames: {
                 enum: ['en', 'de'];
             };
-            additionalProperties: {
-                type: 'string';
-            };
             required: ['en'];
         };
         network: {
@@ -444,8 +456,10 @@ const appSchema = appRawSchema as {
                     title: 'Description';
                     description: 'A description of the network.';
                     examples: ['The port for clients to connect to.'];
+                    type: 'object';
                     $ref: '#/$defs/localizedString';
                     additionalProperties: {
+                        type: 'string';
                         minLength: 2;
                         maxLength: 1000;
                     };

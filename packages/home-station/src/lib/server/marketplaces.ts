@@ -17,7 +17,7 @@ import { eq } from 'drizzle-orm';
 import logger from '$lib/server/logger';
 import { rcompare } from 'semver';
 import Ajv from 'ajv/dist/2020';
-import addFormats from "ajv-formats";
+import addFormats from 'ajv-formats';
 import { isValidUrl } from '$lib/utils';
 import type { AppConfiguration } from '$lib/schemas/app.schema';
 import schema from '$lib/schemas/app.schema.json';
@@ -153,7 +153,9 @@ export async function updateMarketplaceApps(
                 const app = await convertAppYaml(appYaml, marketplace.gitRemoteUrl);
                 apps.push(app);
             } catch (e) {
-                logger.warn(`App "${appUuid}" in "${marketplace.gitRemoteUrl}" could not be parsed: ${e}`);
+                logger.warn(
+                    `App "${appUuid}" in "${marketplace.gitRemoteUrl}" could not be parsed: ${e}`
+                );
             }
         }
     }
