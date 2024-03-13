@@ -6,8 +6,8 @@
         "packages/*"
     ],
     "scripts": {
-        "hs": "npm run -w home-station dev",
-        "hss": "npm run -w home-station-studio dev"
+        "dev": "npm run -w home-station dev",
+        "dev:hss": "npm run -w home-station-studio dev"
     },
     "type": "module"
 }
