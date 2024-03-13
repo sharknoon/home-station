@@ -16,7 +16,8 @@ import { getAppDataPath } from '$lib/server/appdata';
 import { eq } from 'drizzle-orm';
 import logger from '$lib/server/logger';
 import { rcompare } from 'semver';
-import Ajv from 'ajv/dist/jtd';
+import Ajv from 'ajv/dist/2020';
+import addFormats from "ajv-formats";
 import { isValidUrl } from '$lib/utils';
 import type { AppConfiguration } from '$lib/schemas/app.schema';
 import schema from '$lib/schemas/app.schema.json';
@@ -152,12 +153,14 @@ export async function updateMarketplaceApps(
                 const app = await convertAppYaml(appYaml, marketplace.gitRemoteUrl);
                 apps.push(app);
             } catch (e) {
-                logger.warn(e);
+                logger.warn(`App "${appUuid}" in "${marketplace.gitRemoteUrl}" could not be parsed: ${e}`);
             }
         }
     }
     await db.delete(marketplaceApps);
-    await db.insert(marketplaceApps).values(apps);
+    if (apps.length > 0) {
+        await db.insert(marketplaceApps).values(apps);
+    }
 }
 
 /**
@@ -312,6 +315,7 @@ async function parseAppYaml(appYamlPath: string): Promise<AppConfiguration> {
     const yamlContent = yaml.load(appYaml);
 
     const ajv = new Ajv();
+    addFormats(ajv);
     const validate = ajv.compile<AppConfiguration>(schema);
     const validAppYaml = validate(yamlContent);
     if (!validAppYaml) {
