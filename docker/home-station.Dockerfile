@@ -44,7 +44,7 @@ RUN --mount=type=bind,source=package.json,target=package.json \
 FROM deps as build
 
 # Set the commit hash to be displayed in the "About" page.
-ARG COMMIT_HASH
+ARG COMMIT_HASH=unknown
 ENV COMMIT_HASH=${COMMIT_HASH}
 
 # Copy the rest of the source files into the image.
