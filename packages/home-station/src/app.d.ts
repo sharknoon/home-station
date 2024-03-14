@@ -12,6 +12,7 @@ declare global {
         // interface Platform {}
     }
 
+    // Also update vite.config.ts when changing these
     const __REPOSITORY_URL__: string;
     const __NPM_PACKAGE_VERSION__: string;
     const __COMMIT_HASH__: string;
