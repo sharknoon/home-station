@@ -1,3 +1,11 @@
+# Home Station
+
+A fancy, easy to use, docker compose based app manager for your self-hosted home server. 
+
+![GitHub Repo stars](https://img.shields.io/github/stars/home-station-org/home-station)
+
+![GitHub last commit](https://img.shields.io/github/last-commit/home-station-org/home-station)
+
 # create-svelte
 
 Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
