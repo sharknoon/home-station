@@ -7,7 +7,7 @@ export default defineConfig({
         include: ['src/**/*.{test,spec}.{js,ts}']
     },
     define: {
-        // Also update src/env.d.ts when changing these
+        // Also update src/app.d.ts when changing these
         __REPOSITORY_URL__: JSON.stringify('https://github.com/home-station-org/home-station'),
         __NPM_PACKAGE_VERSION__: JSON.stringify(process.env.npm_package_version),
         __COMMIT_HASH__: JSON.stringify(process.env.COMMIT_HASH || 'unknown'),
