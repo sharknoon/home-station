@@ -1,39 +1,52 @@
 import {
     getLatestVersion,
     getMarketplaceAppPath,
+    isValidVersion,
     type MarketplaceApp
 } from '$lib/server/marketplaces';
 import path from 'node:path';
 import { inArray } from 'drizzle-orm';
 import type Dockerode from 'dockerode';
 import { down, up } from '$lib/server/compose';
-import db from '$lib/server/db';
+import { db } from '$lib/server/db';
 import { getEngine } from '$lib/server/containerengines';
 import { marketplaceApps } from '$lib/server/schema';
 
 /**
  * Installs an app from the marketplace.
- * @param app - The app to install.
+ * @param marketplaceUrl - The URL of the marketplace where the app is located.
+ * @param appUuid - The UUID of the app to install.
+ * @param version - The version of the app to install. If not provided, the latest version will be installed.
  * @param progress - Optional callback to track the installation progress.
  * @throws If the app cannot be installed.
  * @returns A promise that resolves when the app is installed successfully.
  */
 export async function installApp(
-    app: MarketplaceApp,
+    marketplaceUrl: string,
+    appUuid: string,
+    version?: string,
     progress?: (progress: number) => void
 ): Promise<void> {
-    const latestVersion = await getLatestVersion(app.marketplaceUrl, app.uuid);
+    let versionToInstall;
+    if (version) {
+        await isValidVersion(marketplaceUrl, appUuid, version);
+        versionToInstall = version;
+    } else {
+        versionToInstall = await getLatestVersion(marketplaceUrl, appUuid);
+    }
     const composePath = path.join(
-        getMarketplaceAppPath(app.marketplaceUrl, app.uuid),
+        getMarketplaceAppPath(marketplaceUrl, appUuid),
         'versions',
-        latestVersion
+        versionToInstall
     );
-    await up(composePath, undefined, app.uuid, progress);
+    await up(composePath, undefined, appUuid, progress);
 }
 
 /**
  * Uninstalls an app from the server.
- * @param app - The app to uninstall.
+ * @param marketplaceUrl - The URL of the marketplace where the app was installed from.
+ * @param appUuid - The UUID of the app to uninstall.
+ * @param version - The version of the app to uninstall.
  * @returns A Promise that resolves when the app is successfully uninstalled.
  */
 export async function uninstallApp(

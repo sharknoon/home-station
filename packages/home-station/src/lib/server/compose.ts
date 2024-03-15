@@ -1,6 +1,6 @@
 import { join } from 'path';
 import { getEngine, type ContainerEngine } from '$lib/server/containerengines';
-import db from '$lib/server/db';
+import { db } from '$lib/server/db';
 import { exec } from '$lib/server/terminal';
 import { throttle } from '$lib/server/utils';
 import { stripAnsi } from '$lib/utils';

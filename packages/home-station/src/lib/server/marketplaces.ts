@@ -9,12 +9,12 @@ import {
 import http from 'isomorphic-git/http/node';
 import path from 'node:path';
 import yaml from 'js-yaml';
-import db from '$lib/server/db';
+import { db } from '$lib/server/db';
 import { marketplaces, marketplaceApps } from '$lib/server/schema';
 import { exists } from '$lib/server/utils';
 import { getAppDataPath } from '$lib/server/appdata';
 import { eq } from 'drizzle-orm';
-import logger from '$lib/server/logger';
+import { logger } from '$lib/server/logger';
 import { rcompare } from 'semver';
 import Ajv from 'ajv/dist/2020';
 import addFormats from 'ajv-formats';
@@ -67,6 +67,27 @@ function getDirectoryNameFromUrl(url: string): string {
  * @returns A promise that resolves to the latest version of the app, or undefined if no versions are found.
  */
 export async function getLatestVersion(marketplaceUrl: string, appUuid: string): Promise<string> {
+    const versions = await getVersionsOfApp(marketplaceUrl, appUuid);
+    return versions.sort(rcompare)[0];
+}
+
+/**
+ * Checks if a given version is valid for an app in a marketplace.
+ * @param marketplaceUrl - The URL of the marketplace.
+ * @param appUuid - The UUID of the app.
+ * @param version - The version to check.
+ * @returns A promise that resolves to a boolean indicating if the version is valid.
+ */
+export async function isValidVersion(marketplaceUrl: string, appUuid: string, version: string): Promise<true> {
+    const versions = await getVersionsOfApp(marketplaceUrl, appUuid);
+    if (versions.includes(version)) {
+        return true;
+    } else {
+        throw new Error(`Version "${version}" not found for "${appUuid}" in "${marketplaceUrl}. Available versions: ${versions.join(', ')}"`);
+    }
+}
+
+async function getVersionsOfApp(marketplaceUrl: string, appUuid: string): Promise<string[]> {
     const versionsPath = path.join(getMarketplaceAppPath(marketplaceUrl, appUuid), 'versions');
     let versions: string[] = [];
     try {
@@ -79,7 +100,7 @@ export async function getLatestVersion(marketplaceUrl: string, appUuid: string):
     if (versions.length === 0) {
         throw new Error(`No versions found for "${appUuid}" in "${marketplaceUrl}"!`);
     }
-    return versions.sort(rcompare)[0];
+    return versions;
 }
 
 /**

@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types';
-import db from '$lib/server/db';
+import { db } from '$lib/server/db';
 import { testLocalConnection, testRemoteConnection } from '$lib/server/containerengines';
 import type { containerEngines } from '$lib/server/schema';
 

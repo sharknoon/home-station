@@ -6,7 +6,7 @@ import * as schema from '$lib/server/schema';
 import { getAppDataPersistency } from '$lib/server/appdata';
 import { marketplaces } from '$lib/server/schema';
 import { building } from '$app/environment';
-import logger from '$lib/server/logger';
+import { logger } from '$lib/server/logger';
 
 export let sqlite: Database;
 export let db: BetterSQLite3Database<typeof schema>;
@@ -61,5 +61,3 @@ try {
     logger.error('Failed to seed the database: ' + error);
     // Depending on future additions to seeding the database, this might be a critical error and wen need to stop starting the server
 }
-
-export default db;

@@ -2,8 +2,8 @@ import cron, { CronJob } from 'cron';
 import { updateMarketplaceApps } from '$lib/server/marketplaces';
 import { dev } from '$app/environment';
 import { throttle } from '$lib/server/utils';
-import { lucia } from '$lib/server/auth';
-import logger from '$lib/server/logger';
+import { deleteExpiredSessions } from '$lib/server/auth';
+import { logger } from '$lib/server/logger';
 import { writable, type Writable } from 'svelte/store';
 import { dispatchEvent } from '$lib/server/events';
 
@@ -40,7 +40,7 @@ export const tasks: Task[] = [
         id: 'delete-expired-sessions',
         schedule: '0 0 1 * *',
         runImmediately: false,
-        handler: lucia.deleteExpiredSessions,
+        handler: deleteExpiredSessions,
         stats: getDefaultStats('0 0 1 * *')
     }
 ];
@@ -72,7 +72,7 @@ function getDefaultStats(schedule: string): Writable<TaskStats> {
     });
 }
 
-export async function scheduleTasks(): Promise<void> {
+export async function init(): Promise<void> {
     for (const task of tasks) {
         // Update the stats in the UI
         task.stats.subscribe((stats) => dispatchEvent('updateStats', { id: task.id, stats }));

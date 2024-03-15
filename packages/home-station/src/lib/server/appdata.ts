@@ -5,7 +5,7 @@ import path from 'node:path';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import { exists } from '$lib/server/utils';
-import logger from '$lib/server/logger';
+import { logger } from '$lib/server/logger';
 
 const testing = env.NODE_ENV === 'test';
 

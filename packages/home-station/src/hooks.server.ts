@@ -1,11 +1,15 @@
-import { scheduleTasks } from '$lib/server/tasks';
-import db from '$lib/server/db';
+import { db } from '$lib/server/db';
 import { redirect, type Handle } from '@sveltejs/kit';
 import { lucia } from '$lib/server/auth';
 import { sequence } from '@sveltejs/kit/hooks';
+import { init as initWebserver } from '$lib/server/webserver';
+import { init as initTasks } from '$lib/server/tasks';
 
 // These functions run on Startup
-await scheduleTasks();
+// Start the webserver to serve the apps with https support on subdomains
+await initWebserver();
+// Schedule the tasks
+await initTasks();
 
 const authentication = (async ({ event, resolve }) => {
     const sessionId = event.cookies.get(lucia.sessionCookieName);

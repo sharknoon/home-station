@@ -1,5 +1,5 @@
 import type { Actions, PageServerLoad } from './$types';
-import db from '$lib/server/db';
+import { db } from '$lib/server/db';
 import { fail } from '@sveltejs/kit';
 import { deleteMarketplace } from '$lib/server/marketplaces';
 import { marketplaceApps, containerEngines } from '$lib/server/schema';
@@ -65,7 +65,7 @@ export const actions: Actions = {
         dispatchEvent('appStatus', { appUuid, status: 'installing', progress: 0 });
 
         try {
-            await installApp(marketplaceApp, (progress) =>
+            await installApp(marketplaceApp.marketplaceUrl, marketplaceApp.uuid, undefined, (progress) =>
                 dispatchEvent('appStatus', { appUuid, status: 'installing', progress })
             );
         } catch (e) {

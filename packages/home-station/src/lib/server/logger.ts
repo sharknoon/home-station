@@ -36,5 +36,3 @@ export const logger = winston.createLogger({
     levels: levels.levels,
     transports: [new winston.transports.Console()]
 });
-
-export default logger;

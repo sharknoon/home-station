@@ -8,7 +8,7 @@ import {
 } from './marketplaces';
 import { getAppDataPath } from './appdata';
 import path from 'node:path';
-import db from './db';
+import { db } from './db';
 import { eq } from 'drizzle-orm';
 import { marketplaces, marketplaceApps } from './schema';
 import fs from 'fs/promises';

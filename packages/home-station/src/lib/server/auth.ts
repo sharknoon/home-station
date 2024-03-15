@@ -1,5 +1,5 @@
 import { Lucia } from 'lucia';
-import db from '$lib/server/db';
+import { db } from '$lib/server/db';
 import { dev } from '$app/environment';
 import { DrizzleSQLiteAdapter } from '@lucia-auth/adapter-drizzle';
 import { sessions, users } from './schema';
@@ -33,4 +33,12 @@ interface DatabaseUserAttributes {
     username: (typeof users.$inferSelect)['username'];
     language: (typeof users.$inferSelect)['language'];
     theme: (typeof users.$inferSelect)['theme'];
+}
+
+/**
+ * Deletes expired sessions. This function seems unnecessary, but because 
+ * it is in this module, it forces lucia to be initialized before it is called.
+ */
+export async function deleteExpiredSessions(): Promise<void> {
+    await lucia.deleteExpiredSessions();
 }
