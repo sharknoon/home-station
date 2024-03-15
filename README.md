@@ -1,10 +1,21 @@
 # Home Station
 
-A fancy, easy to use, docker compose based app manager for your self-hosted home server. 
+A fancy, easy-to-use, docker compose based app manager for your self-hosted home server. 
 
 ![GitHub Repo stars](https://img.shields.io/github/stars/home-station-org/home-station)
-
+![GitHub Release](https://img.shields.io/github/v/release/home-station-org/home-station)
 ![GitHub last commit](https://img.shields.io/github/last-commit/home-station-org/home-station)
+
+TODO SCREENSHOT
+
+## ⭐️ Features:
+- 🖱️ Install your favorite open-source apps with one click
+- 🏬 App marketplace with over 1 free apps
+- 🔐 Integrated reverse proxy, so you don't have to worry about ports and certificates
+- ⬆️ Automatic updates for your apps (can be turned off)
+- 🖥️ Fancy, easy-to-use and multi-language UI (with themes 😍)
+
+[//]: <> (Automatic Backups to popular cloud providers like Google Drive, Onedrive etc... as well as your own hardware)
 
 # create-svelte
 
