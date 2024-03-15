@@ -13,7 +13,7 @@ TODO SCREENSHOT
 - 🏬 App marketplace with over 1 free apps
 - 🔐 Integrated reverse proxy, so you don't have to worry about ports and certificates
 - ⬆️ Automatic updates for your apps (can be turned off)
-- 🖥️ Fancy, easy-to-use and multi-language UI (with themes 😍)
+- 🖥️ Fancy, easy-to-use and multi-language UI (with themes 🎨)
 
 [//]: <> (Automatic Backups to popular cloud providers like Google Drive, Onedrive etc... as well as your own hardware)
 
