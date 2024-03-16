@@ -1,6 +1,9 @@
 <script lang="ts">
+    import type { PageData } from './$types';
     import { intlFormatDistance } from 'date-fns';
     import { i18n } from '$lib/i18n';
+
+    export let data: PageData;
 
     // Redeclare the variables here to prevent "'__COMMIT_HASH__' is not definedsvelte(missing-declaration)" error
     // eslint-disable-next-line no-undef
@@ -40,4 +43,5 @@
             }
         )})
     </div>
+    <div>{$i18n.t('settings.about.caddy')}: <code>{data.caddyVersion}</code></div>
 </div>

@@ -1,9 +1,4 @@
 {
-    "marketplace-app": {
-        "category": {
-            "productivity": "Productivity"
-        }
-    },
     "tasks": {
         "update-marketplace-apps": "Fetch apps from marketplaces",
         "delete-expired-sessions": "Delete expired login-sessions",
@@ -97,7 +92,8 @@
             "version": "Version",
             "commit": "Commit",
             "unkown": "Unknown",
-            "build-date": "Build date"
+            "build-date": "Build date",
+            "caddy": "Caddy"
         },
         "container-engines": {
             "container-engines": "Container engines",

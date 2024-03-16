@@ -1,5 +1,6 @@
 import { logger } from '$lib/server/logger';
 import { exec } from '$lib/server/terminal';
+import { stripAnsi } from '$lib/utils';
 
 export async function init() {
     try {
@@ -23,4 +24,22 @@ async function isCaddyRunning(): Promise<boolean> {
             .then((response) => resolve(response.ok))
             .catch(() => resolve(false));
     });
+}
+
+/**
+ * Retrieves the version of the web server.
+ * @returns A promise that resolves to a string representing the version.
+ */
+export async function getVersion(): Promise<string> {
+    let version = '';
+    await exec('caddy', 'version', undefined, (data) => {
+        version += data;
+    });
+    return stripAnsi(version).split('\n')[0] ?? "";
+}
+
+export async function addReverseProxyEntry(from: string, to: string) {
+
+    // TODO
+    console.log('addReverseProxyEntry', from, to);
 }
