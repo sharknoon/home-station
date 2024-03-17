@@ -8,6 +8,7 @@ import { getInstalledApps, installApp } from '$lib/server/apps';
 import { dispatchEvent } from '$lib/server/events';
 import { i18n, ts } from '$lib/i18n';
 import { get } from 'svelte/store';
+import { sendNotification } from '$lib/server/notifications';
 
 export const load = (async () => {
     const marketplaceApps = await db.query.marketplaceApps.findMany({
@@ -65,23 +66,24 @@ export const actions: Actions = {
         dispatchEvent('appStatus', { appUuid, status: 'installing', progress: 0 });
 
         try {
-            await installApp(marketplaceApp.marketplaceUrl, marketplaceApp.uuid, undefined, (progress) =>
-                dispatchEvent('appStatus', { appUuid, status: 'installing', progress })
+            await installApp(
+                marketplaceApp.marketplaceUrl,
+                marketplaceApp.uuid,
+                undefined,
+                (progress) =>
+                    dispatchEvent('appStatus', { appUuid, status: 'installing', progress })
             );
         } catch (e) {
-            dispatchEvent('notification', {
-                level: 'error',
-                message: get(i18n).t('notification.app-installation-error', { error: String(e) })
-            });
+            sendNotification(
+                'error',
+                get(i18n).t('notification.app-installation-error', { error: String(e) })
+            );
         }
 
         dispatchEvent('appStatus', { appUuid, status: 'installed', progress: 1 });
         const postInstallMessage = marketplaceApp.messages?.postInstall;
         if (postInstallMessage) {
-            dispatchEvent('notification', {
-                level: 'info',
-                message: ts(postInstallMessage)
-            });
+            sendNotification('info', ts(postInstallMessage));
         }
     }
 };

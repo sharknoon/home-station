@@ -41,7 +41,7 @@
         href: string;
         matcher: string;
         submenu?: {
-            title: string;
+            title: string | false;
             list: {
                 href: string;
                 matcher: string;
@@ -56,19 +56,47 @@
             title: $i18n.t('sidebar.my-apps'),
             icon: LayoutGrid,
             href: '/',
-            matcher: '{/,/apps/**}'
+            matcher: '{/,/apps,/apps/**}'
         },
         {
             title: $i18n.t('sidebar.discover'),
             icon: Sparkles,
             href: '/discover',
-            matcher: '/discover/**'
+            matcher: '{/discover,/discover/**}'
+        },
+        {
+            title: $i18n.t('sidebar.account.account'),
+            icon: CircleUserRound,
+            href: '/account',
+            matcher: '{/account,/account/**}',
+            submenu: [
+                {
+                    title: false,
+                    list: [
+                        {
+                            label: $i18n.t('sidebar.account.language'),
+                            href: '/account/language',
+                            matcher: '{/account/language,/account/language/**}'
+                        },
+                        {
+                            label: $i18n.t('sidebar.account.password'),
+                            href: '/account/password',
+                            matcher: '{/account/password,/account/password/**}'
+                        },
+                        {
+                            label: $i18n.t('sidebar.account.theme'),
+                            href: '/account/theme',
+                            matcher: '{/account/theme,/account/theme/**'
+                        }
+                    ]
+                }
+            ]
         },
         {
             title: $i18n.t('sidebar.settings.settings'),
             icon: Settings,
             href: '/settings',
-            matcher: '/settings/**',
+            matcher: '{/settings,/settings/**}',
             submenu: [
                 {
                     title: $i18n.t('sidebar.settings.general'),
@@ -76,17 +104,18 @@
                         {
                             label: $i18n.t('sidebar.settings.users'),
                             href: '/settings/users',
-                            matcher: '/settings/users/**'
+                            matcher: '{/settings/users,/settings/users/**}'
                         },
                         {
                             label: $i18n.t('sidebar.settings.container-engines'),
                             href: '/settings/container-engines',
-                            matcher: '/settings/container-engines/**'
+                            matcher: '{/settings/container-engines,/settings/container-engines/**}'
                         },
                         {
                             label: $i18n.t('sidebar.settings.domains-and-hostnames'),
                             href: '/settings/domains-and-hostnames',
-                            matcher: '/settings/domains-and-hostnames/**'
+                            matcher:
+                                '{/settings/domains-and-hostnames,/settings/domains-and-hostnames/**}'
                         }
                     ]
                 },
@@ -96,17 +125,17 @@
                         {
                             label: $i18n.t('sidebar.settings.tasks'),
                             href: '/settings/tasks',
-                            matcher: '/settings/tasks/**'
+                            matcher: '{/settings/tasks,/settings/tasks/**}'
                         },
                         {
                             label: $i18n.t('sidebar.settings.logs'),
                             href: '/settings/logs',
-                            matcher: '/settings/logs/**'
+                            matcher: '{/settings/logs,/settings/logs/**}'
                         },
                         {
                             label: $i18n.t('sidebar.settings.about'),
                             href: '/settings/about',
-                            matcher: '/settings/about/**'
+                            matcher: '{/settings/about,/settings/about/**}'
                         }
                     ]
                 }
@@ -118,15 +147,16 @@
     onMount(() => {
         function findCurrentItem() {
             return appRailItems.findIndex((item) =>
-                minimatch($page.url.pathname, item.matcher, { partial: true })
+                minimatch($page.url.pathname, item.matcher)
             );
         }
         currentItem = findCurrentItem();
         page.subscribe(() => (currentItem = findCurrentItem()));
     });
 
-    $: submenuItemActive = (matcher: string) =>
-        minimatch($page.url.pathname, matcher, { partial: true }) ? 'bg-primary-active-token' : '';
+    $: submenuItemActive = (matcher: string) => {
+        return minimatch($page.url.pathname, matcher) ? 'bg-primary-active-token' : '';
+    };
 
     // eslint-disable-next-line no-undef
     const REPOSITORY_URL = __REPOSITORY_URL__;
@@ -212,35 +242,11 @@
             </div>
             <svelte:fragment slot="trail">
                 <LightSwitch />
-                <button
-                    class="btn variant-soft-primary"
-                    use:popup={{ event: 'click', target: 'avatarClick', placement: 'bottom-end' }}
-                >
-                    <span class="-translate-y-[0.1rem]">{data.user?.username}</span>
-                    <ChevronDown />
-                </button>
-                <form
-                    method="post"
-                    class="card p-4 shadow-xl w-max"
-                    data-popup="avatarClick"
-                    use:enhance
-                >
-                    <nav class="list-nav">
-                        <ul>
-                            <li>
-                                <a href="/account">
-                                    <CircleUserRound class="h-6" />
-                                    <span>{$i18n.t('sidebar.account')}</span>
-                                </a>
-                            </li>
-                            <li>
-                                <button formaction="/?/logout">
-                                    <LogOut class="h-6" />
-                                    <span>{$i18n.t('sidebar.sign-out')}</span>
-                                </button>
-                            </li>
-                        </ul>
-                    </nav>
+                <form action="/?/logout" method="post" use:enhance>
+                    <button class="btn variant-soft">
+                        <LogOut />
+                        <span class="-translate-y-[0.1rem]">{$i18n.t('sidebar.sign-out')}</span>
+                    </button>
                 </form>
             </svelte:fragment>
         </AppBar>
@@ -282,7 +288,9 @@
                 >
                     {#each submenu as segment, i}
                         <!-- Title -->
-                        <p class="font-bold pl-4 text-2xl">{segment.title}</p>
+                        {#if segment.title}
+                            <p class="font-bold pl-4 text-2xl">{segment.title}</p>
+                        {/if}
                         <!-- Nav List -->
                         <nav class="list-nav">
                             <ul>

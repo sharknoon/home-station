@@ -13,7 +13,6 @@
     export let data: PageData;
 </script>
 
-<!-- TODO also implement the specific app settings here via modal -->
 {#if data.apps.length > 0}
     <div class="grid grid-cols-6 place-items-center">
         {#each data.apps.filter((a) => a.status === 'running') as app, i}

@@ -2,9 +2,9 @@ import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { lucia } from '$lib/server/auth';
 import { getInstalledApps, uninstallApp } from '$lib/server/apps';
-import { dispatchEvent } from '$lib/server/events';
 import { get } from 'svelte/store';
 import { i18n } from '$lib/i18n';
+import { sendNotification } from '$lib/server/notifications';
 
 export const load: PageServerLoad = async () => {
     const apps = (await getInstalledApps()).map((app) => ({
@@ -42,10 +42,10 @@ export const actions = {
         try {
             await uninstallApp(marketplaceUrl, appUuid, version);
         } catch (e) {
-            dispatchEvent('notification', {
-                level: 'error',
-                message: get(i18n).t('notification.app-uninstallation-error', { error: String(e) })
-            });
+            sendNotification(
+                'error',
+                get(i18n).t('notification.app-uninstallation-error', { error: String(e) })
+            );
         }
     }
 } satisfies Actions;

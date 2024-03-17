@@ -7,6 +7,12 @@
     "sidebar": {
         "my-apps": "Meine Apps",
         "discover": "Erkunden",
+        "account": {
+            "account": "Konto",
+            "language": "Sprache",
+            "password": "Passwort",
+            "theme": "Erscheinungsbild"
+        },
         "settings": {
             "settings": "Einstellungen",
             "general": "Allgemein",
@@ -20,7 +26,6 @@
         },
         "toast-missing-mount": "Der Pfad \"{{- path}}\" wurde nicht richtig gemounted. Wenn der Container gestoppt oder neu gestartet wird, gehen alle Daten verloren.",
         "search": "Suche nach Apps und Einstellungen",
-        "account": "Konto",
         "sign-out": "Abmelden"
     },
     "brand": {
@@ -40,19 +45,23 @@
         "discover-apps": "Apps entdecken"
     },
     "account": {
-        "general": {
-            "general": "Allgemein",
+        "language": {
+            "success": "Sprache erfolgreich geändert",
             "language": "Sprache",
             "save": "Speichern"
         },
         "password": {
+            "success": "Passwort erfolgreich geändert",
+            "wrong-old-password": "Das bisherige Passwort ist falsch",
             "password": "Passwort",
+            "old": "Bisheriges Passwort",
             "new": "Neues Passwort",
             "requirements": "Das Passwort muss mindestens 8 Zeichen lang sein",
             "confirm": "Passwort bestätigen",
             "save": "Speichern"
         },
         "theme": {
+            "success": "Erscheinungsbild erfolgreich geändert",
             "theme": "Erscheinungsbild",
             "active": "Aktiv",
             "apply": "Anwenden"
