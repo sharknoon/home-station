@@ -11,13 +11,13 @@
 
     $: if (form?.success) {
         applyTheme(form.theme);
-        sendNotification('success', $i18n.t('account.theme.success'));
+        sendNotification('success', $i18n.t('settings.theme.success'));
     } else if (form?.error) {
         sendNotification('error', form.error);
     }
 </script>
 
-<h2 class="h2 mb-4">{$i18n.t("account.theme.theme")}</h2>
+<h2 class="h2 mb-4">{$i18n.t("settings.theme.theme")}</h2>
 
 <div class="grid grid-cols-3 gap-4">
     {#each themes as theme}
@@ -40,12 +40,12 @@
                 </h2>
                 {#if data.user?.theme === theme.name}
                     <span class="badge variant-filled-secondary">
-                        {$i18n.t('account.theme.active')}
+                        {$i18n.t('settings.theme.active')}
                     </span>
                 {/if}
             </div>
             <button type="submit" class="btn variant-filled-primary mt-4" disabled={false}>
-                <PaintRoller class="mr-2" />{$i18n.t('account.theme.apply')}
+                <PaintRoller class="mr-2" />{$i18n.t('settings.theme.apply')}
             </button>
         </form>
     {/each}

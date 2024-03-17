@@ -7,14 +7,12 @@
     "sidebar": {
         "my-apps": "Meine Apps",
         "discover": "Erkunden",
-        "account": {
+        "settings": {
+            "settings": "Einstellungen",
             "account": "Konto",
             "language": "Sprache",
             "password": "Passwort",
-            "theme": "Erscheinungsbild"
-        },
-        "settings": {
-            "settings": "Einstellungen",
+            "theme": "Erscheinungsbild",
             "general": "Allgemein",
             "users": "Benutzer",
             "container-engines": "Container-Engines",
@@ -43,29 +41,6 @@
         "no-apps-installed": "Keine Apps installiert",
         "add-your-first-app": "Erkunde den Marktplatz und installiere deine erste App",
         "discover-apps": "Apps entdecken"
-    },
-    "account": {
-        "language": {
-            "success": "Sprache erfolgreich geändert",
-            "language": "Sprache",
-            "save": "Speichern"
-        },
-        "password": {
-            "success": "Passwort erfolgreich geändert",
-            "wrong-old-password": "Das bisherige Passwort ist falsch",
-            "password": "Passwort",
-            "old": "Bisheriges Passwort",
-            "new": "Neues Passwort",
-            "requirements": "Das Passwort muss mindestens 8 Zeichen lang sein",
-            "confirm": "Passwort bestätigen",
-            "save": "Speichern"
-        },
-        "theme": {
-            "success": "Erscheinungsbild erfolgreich geändert",
-            "theme": "Erscheinungsbild",
-            "active": "Aktiv",
-            "apply": "Anwenden"
-        }
     },
     "discover": {
         "marketplaces": "Marktplätze",
@@ -121,12 +96,27 @@
             "number-of-Cpus_other": "{{count}} CPUs",
             "total-memory": "{{value}} GB RAM"
         },
+        "language": {
+            "success": "Sprache erfolgreich geändert",
+            "language": "Sprache",
+            "save": "Speichern"
+        },
         "logs": {
             "logs": "Logs",
             "refresh": "Aktualisieren",
             "timestamp": "Datum und Uhrzeit",
             "level": "Level",
             "message": "Nachricht"
+        },
+        "password": {
+            "success": "Passwort erfolgreich geändert",
+            "wrong-old-password": "Das bisherige Passwort ist falsch",
+            "password": "Passwort",
+            "old": "Bisheriges Passwort",
+            "new": "Neues Passwort",
+            "requirements": "Das Passwort muss mindestens 8 Zeichen lang sein",
+            "confirm": "Passwort bestätigen",
+            "save": "Speichern"
         },
         "tasks": {
             "scheduled-tasks": "Geplante Aufgaben",
@@ -136,6 +126,12 @@
             "last-duration": "Letzte Dauer",
             "next-execution": "Nächste Ausführung",
             "milliseconds": "Millisekunden"
+        },
+        "theme": {
+            "success": "Erscheinungsbild erfolgreich geändert",
+            "theme": "Erscheinungsbild",
+            "active": "Aktiv",
+            "apply": "Anwenden"
         },
         "users": {
             "users": "Benutzer",

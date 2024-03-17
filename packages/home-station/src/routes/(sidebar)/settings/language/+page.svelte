@@ -10,17 +10,17 @@
 
     $: if (form?.success) {
         $i18n.changeLanguage(form.language);
-        sendNotification('success', $i18n.t('account.language.success'));
+        sendNotification('success', $i18n.t('settings.language.success'));
     } else if (form?.error) {
         sendNotification('error', form.error);
     }
 </script>
 
-<h2 class="h2 mb-4">{$i18n.t("account.language.language")}</h2>
+<h2 class="h2 mb-4">{$i18n.t("settings.language.language")}</h2>
 
 <form method="post" action="?/updateLanguage" use:enhance>
     <label class="label">
-        <span>{$i18n.t('account.language.language')}</span>
+        <span>{$i18n.t('settings.language.language')}</span>
         <select class="select" name="language">
             {#if dev}
                 <option value="cimode" selected={$i18n.language === 'cimode'}>
@@ -35,6 +35,6 @@
         </select>
     </label>
     <button type="submit" class="btn variant-filled-primary mt-4">
-        <Save class="mr-2" />{$i18n.t('account.language.save')}
+        <Save class="mr-2" />{$i18n.t('settings.language.save')}
     </button>
 </form>

@@ -65,39 +65,31 @@
             matcher: '{/discover,/discover/**}'
         },
         {
-            title: $i18n.t('sidebar.account.account'),
-            icon: CircleUserRound,
-            href: '/account',
-            matcher: '{/account,/account/**}',
-            submenu: [
-                {
-                    title: false,
-                    list: [
-                        {
-                            label: $i18n.t('sidebar.account.language'),
-                            href: '/account/language',
-                            matcher: '{/account/language,/account/language/**}'
-                        },
-                        {
-                            label: $i18n.t('sidebar.account.password'),
-                            href: '/account/password',
-                            matcher: '{/account/password,/account/password/**}'
-                        },
-                        {
-                            label: $i18n.t('sidebar.account.theme'),
-                            href: '/account/theme',
-                            matcher: '{/account/theme,/account/theme/**'
-                        }
-                    ]
-                }
-            ]
-        },
-        {
             title: $i18n.t('sidebar.settings.settings'),
             icon: Settings,
             href: '/settings',
             matcher: '{/settings,/settings/**}',
             submenu: [
+                {
+                    title: $i18n.t('sidebar.settings.account'),
+                    list: [
+                        {
+                            label: $i18n.t('sidebar.settings.language'),
+                            href: '/settings/language',
+                            matcher: '{/settings/language,/settings/language/**}'
+                        },
+                        {
+                            label: $i18n.t('sidebar.settings.password'),
+                            href: '/settings/password',
+                            matcher: '{/settings/password,/settings/password/**}'
+                        },
+                        {
+                            label: $i18n.t('sidebar.settings.theme'),
+                            href: '/settings/theme',
+                            matcher: '{/settings/theme,/settings/theme/**}'
+                        }
+                    ]
+                },
                 {
                     title: $i18n.t('sidebar.settings.general'),
                     list: [
@@ -146,9 +138,7 @@
     // TODO not an ideal situation: it flashes on hydration. Solution: wait for Svelte 5s effect runes
     onMount(() => {
         function findCurrentItem() {
-            return appRailItems.findIndex((item) =>
-                minimatch($page.url.pathname, item.matcher)
-            );
+            return appRailItems.findIndex((item) => minimatch($page.url.pathname, item.matcher));
         }
         currentItem = findCurrentItem();
         page.subscribe(() => (currentItem = findCurrentItem()));
@@ -158,8 +148,7 @@
         return minimatch($page.url.pathname, matcher) ? 'bg-primary-active-token' : '';
     };
 
-    // eslint-disable-next-line no-undef
-    const REPOSITORY_URL = __REPOSITORY_URL__;
+    let sidebarForm: HTMLFormElement;
 
     // Toast
 
@@ -175,7 +164,7 @@
         });
     }
 
-    // Seachbar
+    // Top Bar
 
     let searchPopupSettings: PopupSettings = {
         event: 'focus-click',
@@ -205,6 +194,9 @@
     function onSelection(event: CustomEvent<AutocompleteOption<string>>): void {
         searchInput = event.detail.label;
     }
+
+    // eslint-disable-next-line no-undef
+    const REPOSITORY_URL = __REPOSITORY_URL__;
 </script>
 
 <AppShell slotPageContent="container mx-auto p-4 h-full">
@@ -242,12 +234,13 @@
             </div>
             <svelte:fragment slot="trail">
                 <LightSwitch />
-                <form action="/?/logout" method="post" use:enhance>
-                    <button class="btn variant-soft">
-                        <LogOut />
-                        <span class="-translate-y-[0.1rem]">{$i18n.t('sidebar.sign-out')}</span>
-                    </button>
-                </form>
+                <a
+                    href={REPOSITORY_URL}
+                    target="_blank"
+                    class="btn-icon hover:variant-soft-primary"
+                >
+                    <SimpleIcons icon={siGithub} />
+                </a>
             </svelte:fragment>
         </AppBar>
     </svelte:fragment>
@@ -273,11 +266,16 @@
                     </AppRailTile>
                 {/each}
                 <svelte:fragment slot="trail">
-                    <AppRailAnchor href={REPOSITORY_URL} target="_blank" title="GitHub">
-                        <svelte:fragment slot="lead">
-                            <SimpleIcons icon={siGithub} />
-                        </svelte:fragment>
-                    </AppRailAnchor>
+                    <form method="post" action="/?/logout" use:enhance bind:this={sidebarForm}>
+                        <AppRailAnchor
+                            on:click={() => sidebarForm.requestSubmit()}
+                            hover="bg-error-hover-token transition-all"
+                        >
+                            <svelte:fragment slot="lead">
+                                <LogOut />
+                            </svelte:fragment>
+                        </AppRailAnchor>
+                    </form>
                 </svelte:fragment>
             </AppRail>
             {#if appRailItems[currentItem]?.submenu}

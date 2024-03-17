@@ -7,14 +7,12 @@
     "sidebar": {
         "my-apps": "My apps",
         "discover": "Discover",
-        "account": {
+        "settings": {
+            "settings": "Settings",
             "account": "Account",
             "language": "Language",
             "password": "Password",
-            "theme": "Theme"
-        },
-        "settings": {
-            "settings": "Settings",
+            "theme": "Theme",
             "general": "General",
             "users": "Users",
             "container-engines": "Container engines",
@@ -43,29 +41,6 @@
         "no-apps-installed": "No apps installed",
         "add-your-first-app": "Explore the marketplace and add your first app",
         "discover-apps": "Discover apps"
-    },
-    "account": {
-        "language": {
-            "success": "Language successfully changed",
-            "language": "Language",
-            "save": "Save"
-        },
-        "password": {
-            "success": "Password successfully changed",
-            "wrong-old-password": "The old password is incorrect",
-            "password": "Password",
-            "old": "Old password",
-            "new": "New password",
-            "requirements": "The password must be at least 8 characters long",
-            "confirm": "Confirm new password",
-            "save": "Save"
-        },
-        "theme": {
-            "success": "Theme successfully changed",
-            "theme": "Theme",
-            "active": "Active",
-            "apply": "Apply"
-        }
     },
     "discover": {
         "marketplaces": "Marketplace",
@@ -121,12 +96,27 @@
             "number-of-Cpus_other": "{{count}} CPUs",
             "total-memory": "{{value}} GM RAM"
         },
+        "language": {
+            "success": "Language successfully changed",
+            "language": "Language",
+            "save": "Save"
+        },
         "logs": {
             "logs": "Logs",
             "refresh": "Refresh",
             "timestamp": "Date and time",
             "level": "Level",
             "message": "Message"
+        },
+        "password": {
+            "success": "Password successfully changed",
+            "wrong-old-password": "The old password is incorrect",
+            "password": "Password",
+            "old": "Old password",
+            "new": "New password",
+            "requirements": "The password must be at least 8 characters long",
+            "confirm": "Confirm new password",
+            "save": "Save"
         },
         "tasks": {
             "scheduled-tasks": "Scheduled tasks",
@@ -136,6 +126,12 @@
             "last-duration": "Last duration",
             "next-execution": "Next execution",
             "milliseconds": "milliseconds"
+        },
+        "theme": {
+            "success": "Theme successfully changed",
+            "theme": "Theme",
+            "active": "Active",
+            "apply": "Apply"
         },
         "users": {
             "users": "Users",
