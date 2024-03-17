@@ -25,6 +25,7 @@
         AppRailTile,
         LightSwitch
     } from '@skeletonlabs/skeleton';
+    import { minimatch } from 'minimatch';
     import { onMount, type ComponentType } from 'svelte';
     import { goto } from '$app/navigation';
     import { slide } from 'svelte/transition';
@@ -38,10 +39,12 @@
         title: string;
         icon: ComponentType<Icon>;
         href: string;
+        matcher: string;
         submenu?: {
             title: string;
             list: {
                 href: string;
+                matcher: string;
                 label: string;
                 badge?: string;
             }[];
@@ -52,38 +55,59 @@
         {
             title: $i18n.t('sidebar.my-apps'),
             icon: LayoutGrid,
-            href: '/'
+            href: '/',
+            matcher: '{/,/apps/**}'
         },
         {
             title: $i18n.t('sidebar.discover'),
             icon: Sparkles,
-            href: '/discover'
+            href: '/discover',
+            matcher: '/discover/**'
         },
         {
             title: $i18n.t('sidebar.settings.settings'),
             icon: Settings,
             href: '/settings',
+            matcher: '/settings/**',
             submenu: [
                 {
                     title: $i18n.t('sidebar.settings.general'),
                     list: [
-                        { label: $i18n.t('sidebar.settings.users'), href: '/settings/users' },
+                        {
+                            label: $i18n.t('sidebar.settings.users'),
+                            href: '/settings/users',
+                            matcher: '/settings/users/**'
+                        },
                         {
                             label: $i18n.t('sidebar.settings.container-engines'),
-                            href: '/settings/container-engines'
+                            href: '/settings/container-engines',
+                            matcher: '/settings/container-engines/**'
                         },
                         {
                             label: $i18n.t('sidebar.settings.domains-and-hostnames'),
-                            href: '/settings/domains-and-hostnames'
+                            href: '/settings/domains-and-hostnames',
+                            matcher: '/settings/domains-and-hostnames/**'
                         }
                     ]
                 },
                 {
                     title: $i18n.t('sidebar.settings.system'),
                     list: [
-                        { label: $i18n.t('sidebar.settings.tasks'), href: '/settings/tasks' },
-                        { label: $i18n.t('sidebar.settings.logs'), href: '/settings/logs' },
-                        { label: $i18n.t('sidebar.settings.about'), href: '/settings/about' }
+                        {
+                            label: $i18n.t('sidebar.settings.tasks'),
+                            href: '/settings/tasks',
+                            matcher: '/settings/tasks/**'
+                        },
+                        {
+                            label: $i18n.t('sidebar.settings.logs'),
+                            href: '/settings/logs',
+                            matcher: '/settings/logs/**'
+                        },
+                        {
+                            label: $i18n.t('sidebar.settings.about'),
+                            href: '/settings/about',
+                            matcher: '/settings/about/**'
+                        }
                     ]
                 }
             ]
@@ -93,18 +117,16 @@
     // TODO not an ideal situation: it flashes on hydration. Solution: wait for Svelte 5s effect runes
     onMount(() => {
         function findCurrentItem() {
-            return appRailItems.findIndex((item) => {
-                return item.href === '/'
-                    ? $page.url.pathname === '/'
-                    : $page.url.pathname.substring(1).startsWith(item.href.substring(1));
-            });
+            return appRailItems.findIndex((item) =>
+                minimatch($page.url.pathname, item.matcher, { partial: true })
+            );
         }
         currentItem = findCurrentItem();
         page.subscribe(() => (currentItem = findCurrentItem()));
     });
 
-    $: submenuItemActive = (href: string) =>
-        $page.url.pathname?.includes(href) ? 'bg-primary-active-token' : '';
+    $: submenuItemActive = (matcher: string) =>
+        minimatch($page.url.pathname, matcher, { partial: true }) ? 'bg-primary-active-token' : '';
 
     // eslint-disable-next-line no-undef
     const REPOSITORY_URL = __REPOSITORY_URL__;
@@ -155,7 +177,7 @@
     }
 </script>
 
-<AppShell>
+<AppShell slotPageContent="container mx-auto p-4 h-full">
     <svelte:fragment slot="header">
         <AppBar class="shadow-2xl" slotDefault="flex justify-center">
             <svelte:fragment slot="lead">
@@ -264,9 +286,9 @@
                         <!-- Nav List -->
                         <nav class="list-nav">
                             <ul>
-                                {#each segment.list as { href, label, badge }}
+                                {#each segment.list as { href, matcher, label, badge }}
                                     <li>
-                                        <a {href} class={submenuItemActive(href)}>
+                                        <a {href} class={submenuItemActive(matcher)}>
                                             <span class="flex-auto truncate">{label}</span>
                                             {#if badge}
                                                 <span class="badge variant-filled-secondary">
@@ -286,7 +308,5 @@
         </div>
     </svelte:fragment>
 
-    <div class="container mx-auto p-4 h-full">
-        <slot />
-    </div>
+    <slot />
 </AppShell>

@@ -1,12 +1,10 @@
 import winston from 'winston';
 import Transport, { type TransportStreamOptions } from 'winston-transport';
 
-const MESSAGE = Symbol.for('message');
-const LEVEL = Symbol.for('level');
-
 type Log = {
-    [MESSAGE]: string;
-    [LEVEL]: string;
+    message: string;
+    level: string;
+    timestamp: string;
 };
 
 type ArrayTransportOptions = TransportStreamOptions & {
@@ -34,7 +32,12 @@ class ArrayTransport extends Transport {
             this.emit('logged', info);
         });
 
-        this.array.push(info);
+        // The keys are symbols, so we need to convert them to strings to be able to stringify them with devalue
+        this.array.push({
+            message: info.message,
+            level: info.level,
+            timestamp: info.timestamp
+        });
         if (this.limit && this.array.length > this.limit) {
             this.array.shift();
         }
@@ -78,5 +81,5 @@ export const logger = winston.createLogger({
         format
     ),
     levels: levels.levels,
-    transports: [new winston.transports.Console(), new ArrayTransport({ array: logs, limit: 1000 })]
+    transports: [new winston.transports.Console(), new ArrayTransport({ array: logs, limit: 30 })]
 });

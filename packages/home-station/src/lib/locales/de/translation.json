@@ -112,6 +112,13 @@
             "number-of-Cpus_other": "{{count}} CPUs",
             "total-memory": "{{value}} GB RAM"
         },
+        "logs": {
+            "logs": "Logs",
+            "refresh": "Aktualisieren",
+            "timestamp": "Datum und Uhrzeit",
+            "level": "Level",
+            "message": "Nachricht"
+        },
         "tasks": {
             "scheduled-tasks": "Geplante Aufgaben",
             "name": "Name",

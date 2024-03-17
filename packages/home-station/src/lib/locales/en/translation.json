@@ -112,6 +112,13 @@
             "number-of-Cpus_other": "{{count}} CPUs",
             "total-memory": "{{value}} GM RAM"
         },
+        "logs": {
+            "logs": "Logs",
+            "refresh": "Refresh",
+            "timestamp": "Date and time",
+            "level": "Level",
+            "message": "Message"
+        },
         "tasks": {
             "scheduled-tasks": "Scheduled tasks",
             "name": "Name",

@@ -52,7 +52,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="https://google.de">
+                                    <a href="/apps/{app.uuid}">
                                         <Settings class="h-6" />
                                         <span class="flex-auto">
                                             {$i18n.t('my-apps.settings')}
