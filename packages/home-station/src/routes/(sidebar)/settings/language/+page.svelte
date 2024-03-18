@@ -14,14 +14,16 @@
     } else if (form?.error) {
         sendNotification('error', form.error);
     }
+
+    let formElement: HTMLFormElement;
 </script>
 
 <h2 class="h2 mb-4">{$i18n.t("settings.language.language")}</h2>
 
-<form method="post" action="?/updateLanguage" use:enhance>
+<form method="post" action="?/updateLanguage" use:enhance bind:this={formElement}>
     <label class="label">
         <span>{$i18n.t('settings.language.language')}</span>
-        <select class="select" name="language">
+        <select class="select" name="language" on:change={() => formElement.requestSubmit()}>
             {#if dev}
                 <option value="cimode" selected={$i18n.language === 'cimode'}>
                     Translation keys
@@ -34,7 +36,4 @@
             {/each}
         </select>
     </label>
-    <button type="submit" class="btn variant-filled-primary mt-4">
-        <Save class="mr-2" />{$i18n.t('settings.language.save')}
-    </button>
 </form>
