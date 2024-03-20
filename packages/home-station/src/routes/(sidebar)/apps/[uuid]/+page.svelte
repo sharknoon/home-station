@@ -21,4 +21,6 @@
     });
 </script>
 
+<!-- TODO results from `docker stats -a --format json --no-stream` -->
+
 <div bind:this={terminal} class="h-full w-full bg-black rounded-container-token p-4" />
