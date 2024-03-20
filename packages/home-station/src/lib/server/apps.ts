@@ -10,6 +10,7 @@ import { down, up } from '$lib/server/compose';
 import { db } from '$lib/server/db';
 import { containerEngine } from '$lib/server/containerengines';
 import { marketplaceApps } from '$lib/server/schema';
+import { addReverseProxy } from './webserver';
 
 /**
  * Installs an app from the marketplace.
@@ -21,24 +22,26 @@ import { marketplaceApps } from '$lib/server/schema';
  * @returns A promise that resolves when the app is installed successfully.
  */
 export async function installApp(
-    marketplaceUrl: string,
-    appUuid: string,
-    version?: string,
+    app: MarketplaceApp,
     progress?: (progress: number) => void
 ): Promise<void> {
+    const { marketplaceUrl, uuid, version } = app;
     let versionToInstall;
     if (version) {
-        await isValidVersion(marketplaceUrl, appUuid, version);
+        await isValidVersion(marketplaceUrl, uuid, version);
         versionToInstall = version;
     } else {
-        versionToInstall = await getLatestVersion(marketplaceUrl, appUuid);
+        versionToInstall = await getLatestVersion(marketplaceUrl, uuid);
     }
     const composePath = path.join(
-        getMarketplaceAppPath(marketplaceUrl, appUuid),
+        getMarketplaceAppPath(marketplaceUrl, uuid),
         'versions',
         versionToInstall
     );
-    await up(composePath, undefined, appUuid, progress);
+    await up(composePath, undefined, uuid, progress);
+    for (const http of app.http ?? []) {
+        await addReverseProxy(http.subdomain, uuid, http.port);
+    }
 }
 
 /**

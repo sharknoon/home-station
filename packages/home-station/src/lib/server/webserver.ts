@@ -41,7 +41,7 @@ export async function init() {
         const installedApps = await getInstalledApps();
         for (const app of installedApps) {
             for (const http of app.http ?? []) {
-                await addReverseProxyUpstream(http.subdomain, app.uuid, http.port);
+                await addReverseProxy(http.subdomain, app.uuid, http.port);
             }
         }
 
@@ -65,7 +65,7 @@ export async function getVersion(): Promise<string> {
     return stripAnsi(version).split('\n')[0] ?? '';
 }
 
-export async function addReverseProxyUpstream(subdomain: string, host: string, port: number) {
+export async function addReverseProxy(subdomain: string, host: string, port: number) {
     await fetch('http://localhost:2019/id/home_station/routes', {
         method: 'POST',
         headers: {

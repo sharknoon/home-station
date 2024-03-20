@@ -16,7 +16,7 @@
 {#if data.apps.length > 0}
     <div class="grid grid-cols-6 place-items-center">
         {#each data.apps.filter((a) => a.status === 'running') as app, i}
-            <a href="https://google.com" class="group flex flex-col items-center m-16">
+            <a href={`http://${app.uuid}.localhost`} class="group flex flex-col items-center m-16">
                 <!-- TODO convert to snippet -->
                 <div class="relative">
                     <img

@@ -38,14 +38,10 @@ export const actions: Actions = {
         // Get necessary data
         const data = await request.formData();
         const appUuid = data.get('appUuid')?.toString() ?? '';
-        const containerEngineId = parseInt(data.get('containerEngineId')?.toString() ?? '');
-
+        
         // Validation
         if (!appUuid) {
             return fail(400, { appUuid, invalid: true });
-        }
-        if (!containerEngineId) {
-            return fail(400, { containerEngineId, invalid: true });
         }
         const marketplaceApp = await db.query.marketplaceApps.findFirst({
             where: eq(marketplaceApps.uuid, appUuid)
@@ -58,9 +54,7 @@ export const actions: Actions = {
 
         try {
             await installApp(
-                marketplaceApp.marketplaceUrl,
-                marketplaceApp.uuid,
-                undefined,
+                marketplaceApp,
                 (progress) =>
                     dispatchEvent('appStatus', { appUuid, status: 'installing', progress })
             );
