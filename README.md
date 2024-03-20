@@ -38,3 +38,15 @@ docker run -v /var/run/docker.sock:/var/run/docker.sock \
 ## 🚧 Roadmap
 - 🛟 Automatic Backups to popular cloud providers like Google Drive, Onedrive etc... as well as your own hardware
 - 🛡️ Single sign-on for all your apps
+
+## Motivation
+I have been using [Portainer](https://www.portainer.io) for all my docker compose stacks and [traefik](https://traefik.io/traefik/) as my reverse proxy. Installing a new open-source
+app incorporated at least the following steps:
+
+1. Copying the `docker-compose.yml` (or creating one from a given `docker run` command)
+2. Applying proxy settings in the form of labels to it
+3. Adding it to the reverse proxy network
+4. Creating volumes to persist data
+
+One day I had enough, because I already had installed ~100 compose stacks this way. I wanted to create an opiniated approach
+to installing apps, that just requires one click and is the same for everybody.
