@@ -1,12 +1,8 @@
 <script lang="ts">
     import type { ActionData, PageData } from './$types';
-    import { Stepper, Step, Accordion, AccordionItem } from '@skeletonlabs/skeleton';
+    import { Stepper, Step } from '@skeletonlabs/skeleton';
     import Minus from 'lucide-svelte/icons/minus';
-    import Network from 'lucide-svelte/icons/network';
-    import Plug2 from 'lucide-svelte/icons/plug-2';
     import Plus from 'lucide-svelte/icons/plus';
-    import RefreshCw from 'lucide-svelte/icons/refresh-cw';
-    import Unplug from 'lucide-svelte/icons/unplug';
     import TriangleAlert from 'lucide-svelte/icons/triangle-alert';
     import { i18n } from '$lib/i18n';
     import { enhance } from '$app/forms';
@@ -25,15 +21,7 @@
     $: passwordCorrect = password1.length >= 8;
     $: passwordsEqual = password1 === password2;
 
-    // Step 2 Connect container engine
-
-    // Loading state for the "Connect" button to test the connection to the container engines
-    let loading = false;
-
-    let name = 'Docker';
-    let host = '';
-
-    // Step 3 Add domains and hostnames
+    // Step 2 Add domains and hostnames
 
     let hostnameInput: string;
     let hostnames = data.detectedHostnames.map((hostname) => ({ hostname, autoDetected: true }));
@@ -76,15 +64,7 @@
         action="?/signup"
         enctype="multipart/form-data"
         class="card max-w-[35rem] p-4 overflow-y-auto"
-        use:enhance={() => {
-            // Skip loading animations if the duration is under 100ms to prevent flickering
-            const timeout = setTimeout(() => (loading = true), 100);
-            return async ({ update }) => {
-                clearTimeout(timeout);
-                loading = false;
-                update({ reset: false });
-            };
-        }}
+        use:enhance
     >
         <Stepper
             stepTerm={$i18n.t('setup.step')}
@@ -145,182 +125,10 @@
                 <!-- This is to remove the first "Back" button -->
                 <svelte:fragment slot="navigation">{''}</svelte:fragment>
             </Step>
-            <Step locked={!form?.success || name?.length === 0}>
-                <svelte:fragment slot="header"
-                    >{$i18n.t('setup.connect-container-engine')}</svelte:fragment
-                >
-                <p>{$i18n.t('setup.container-engine-explanation')}</p>
-                <Accordion autocollapse class="bg-surface-200-700-token rounded-container-token">
-                    <AccordionItem open>
-                        <svelte:fragment slot="lead"><Plug2 /></svelte:fragment>
-                        <svelte:fragment slot="summary">
-                            {$i18n.t('setup.local-container-engine')}
-                        </svelte:fragment>
-                        <svelte:fragment slot="content">
-                            <div class="space-y-2">
-                                <label class="label">
-                                    <span>{$i18n.t('setup.container-engine-name')}</span>
-                                    <input
-                                        class="input"
-                                        type="text"
-                                        name="name"
-                                        required
-                                        placeholder={$i18n.t(
-                                            'setup.container-engine-name-placeholder'
-                                        )}
-                                        bind:value={name}
-                                    />
-                                </label>
-                                <Accordion>
-                                    <AccordionItem>
-                                        <svelte:fragment slot="summary">
-                                            {$i18n.t('setup.more-settings')}
-                                        </svelte:fragment>
-                                        <svelte:fragment slot="content">
-                                            <label class="label">
-                                                <span>{$i18n.t('setup.override-socket')}</span>
-                                                <input
-                                                    class="input"
-                                                    type="text"
-                                                    name="socketPath"
-                                                    placeholder={$i18n.t(
-                                                        'setup.override-socket-placeholder'
-                                                    )}
-                                                />
-                                            </label>
-                                        </svelte:fragment>
-                                    </AccordionItem>
-                                </Accordion>
-                                <!-- TODO replace with svelte 5 snippets -->
-                                <div class="flex gap-4 items-center">
-                                    <button
-                                        type="submit"
-                                        formaction="?/connectLocal"
-                                        class="btn variant-filled-secondary"
-                                    >
-                                        {#if !loading}
-                                            <span><Unplug /></span>
-                                            <span>{$i18n.t('setup.test-connection')}</span>
-                                        {:else}
-                                            <span><RefreshCw class="animate-spin" /></span>
-                                            <span>{$i18n.t('setup.connecting')}</span>
-                                        {/if}
-                                    </button>
-                                    {#if form?.type === 'local' && form?.error}
-                                        <div class="text-error-500-400-token text-sm font-semibold">
-                                            {form.error}
-                                        </div>
-                                    {:else if form?.type === 'local' && form?.success}
-                                        <div
-                                            class="text-success-800-100-token text-sm font-semibold"
-                                        >
-                                            {$i18n.t('setup.successfully-connected')}
-                                        </div>
-                                    {/if}
-                                </div>
-                                {#if form?.type === 'local' && (form?.error?.includes('/var/run/docker.sock') || form?.error?.includes('//./pipe/docker_engine'))}
-                                    <span class="badge variant-filled-warning"
-                                        >{$i18n.t('setup.note')}</span
-                                    >
-                                    <span class="grow text-sm"
-                                        >{$i18n.t('setup.note-mounted-docker-socket')}</span
-                                    >
-                                {/if}
-                            </div>
-                        </svelte:fragment>
-                    </AccordionItem>
-                    <AccordionItem>
-                        <svelte:fragment slot="lead"><Network /></svelte:fragment>
-                        <svelte:fragment slot="summary">
-                            {$i18n.t('setup.remote-container-engine')}
-                        </svelte:fragment>
-                        <svelte:fragment slot="content">
-                            <div class="space-y-2 mb-2">
-                                <label class="label">
-                                    <span>{$i18n.t('setup.container-engine-name')}</span>
-                                    <input
-                                        class="input"
-                                        type="text"
-                                        name="name"
-                                        required
-                                        placeholder={$i18n.t(
-                                            'setup.container-engine-name-placeholder'
-                                        )}
-                                        bind:value={name}
-                                    />
-                                </label>
-                                <label class="label">
-                                    <span>{$i18n.t('setup.container-engine-api-url')}</span>
-                                    <input
-                                        class="input"
-                                        type="text"
-                                        name="host"
-                                        required
-                                        placeholder={$i18n.t(
-                                            'setup.container-engine-api-url-placeholder'
-                                        )}
-                                        bind:value={host}
-                                    />
-                                </label>
-                                <Accordion>
-                                    <AccordionItem>
-                                        <svelte:fragment slot="summary">
-                                            {$i18n.t('setup.more-settings')}
-                                        </svelte:fragment>
-                                        <svelte:fragment slot="content">
-                                            <label class="label">
-                                                <span>{$i18n.t('setup.tls-ca-certificate')}</span>
-                                                <input class="input" type="file" name="ca" />
-                                            </label>
-                                            <label class="label">
-                                                <span>{$i18n.t('setup.tls-certificate')}</span>
-                                                <input class="input" type="file" name="cert" />
-                                            </label>
-                                            <label class="label">
-                                                <span>{$i18n.t('setup.tls-key')}</span>
-                                                <input class="input" type="file" name="key" />
-                                            </label>
-                                        </svelte:fragment>
-                                    </AccordionItem>
-                                </Accordion>
-                                <div class="flex gap-4 items-center">
-                                    <button
-                                        type="submit"
-                                        formaction="?/connectRemote"
-                                        class="btn variant-filled-secondary"
-                                        disabled={!host}
-                                    >
-                                        {#if !loading}
-                                            <span><Unplug /></span>
-                                            <span>{$i18n.t('setup.test-connection')}</span>
-                                        {:else}
-                                            <span><RefreshCw class="animate-spin" /></span>
-                                            <span>{$i18n.t('setup.connecting')}</span>
-                                        {/if}
-                                    </button>
-                                    {#if form?.type === 'remote' && form?.error}
-                                        <div class="text-error-500-400-token text-sm font-semibold">
-                                            {form.error}
-                                        </div>
-                                    {:else if form?.type === 'remote' && form?.success}
-                                        <div
-                                            class="text-success-800-100-token text-sm font-semibold"
-                                        >
-                                            {$i18n.t('setup.successfully-connected')}
-                                        </div>
-                                    {/if}
-                                </div>
-                            </div>
-                        </svelte:fragment>
-                    </AccordionItem>
-                </Accordion>
-                <span class="badge variant-filled">{$i18n.t('setup.tip')}</span>
-                <span class="grow text-sm">{$i18n.t('setup.additional-container-engines')}</span>
-            </Step>
             <Step>
-                <svelte:fragment slot="header"
-                    >{$i18n.t('setup.add-domains-and-hostnames')}</svelte:fragment
-                >
+                <svelte:fragment slot="header">
+                    {$i18n.t('setup.add-domains-and-hostnames')}
+                </svelte:fragment>
                 <!-- Repeat all previous step inputs here, because the stepper deletes them from the DOM -->
                 <input type="hidden" name="username" bind:value={username} />
                 <input type="hidden" name="password" bind:value={password1} />

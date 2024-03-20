@@ -99,9 +99,9 @@
                             matcher: '{/settings/users,/settings/users/**}'
                         },
                         {
-                            label: $i18n.t('sidebar.settings.container-engines'),
-                            href: '/settings/container-engines',
-                            matcher: '{/settings/container-engines,/settings/container-engines/**}'
+                            label: $i18n.t('sidebar.settings.container-engine'),
+                            href: '/settings/container-engine',
+                            matcher: '{/settings/container-engine,/settings/container-engine/**}'
                         },
                         {
                             label: $i18n.t('sidebar.settings.domains-and-hostnames'),

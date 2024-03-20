@@ -6,10 +6,9 @@ import {
 } from '$lib/server/marketplaces';
 import path from 'node:path';
 import { inArray } from 'drizzle-orm';
-import type Dockerode from 'dockerode';
 import { down, up } from '$lib/server/compose';
 import { db } from '$lib/server/db';
-import { getEngine } from '$lib/server/containerengines';
+import { containerEngine } from '$lib/server/containerengines';
 import { marketplaceApps } from '$lib/server/schema';
 
 /**
@@ -74,13 +73,8 @@ export type InstalledApp = MarketplaceApp & {
  * @type InstalledApp The same as MarketplaceApp, but with an additional `status` property.
  */
 export async function getInstalledApps(): Promise<InstalledApp[]> {
-    const engines = await db.query.containerEngines.findMany();
-    const containers: Dockerode.ContainerInfo[] = [];
-    for (const engine of engines) {
-        const dockerode = await getEngine(engine);
-        const containersOfThisEngine = await dockerode.listContainers({ all: true });
-        containers.push(...containersOfThisEngine);
-    }
+    const containers = await containerEngine.listContainers({ all: true });
+
     const appContainers = containers
         .filter((c) => c.Labels['home-station.enable'] === 'true')
         .map((a) => [a.Labels['home-station.app'], a.Labels['home-station.app-version'], a.State])

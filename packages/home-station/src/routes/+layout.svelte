@@ -6,9 +6,9 @@
     import { init as initI18n } from '$lib/i18n';
     import { init as initPageLoadSpinner } from '$lib/pageloadspinner';
     import { init as initNotifications } from '$lib/notifications';
-    
+
     export let data: LayoutData;
-    
+
     // Initializes the ui framework skeleton
     initUiFramework();
     // Initializes the language based on browser language or the saved language from a previous visit

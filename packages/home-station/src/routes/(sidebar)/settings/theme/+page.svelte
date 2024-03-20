@@ -17,7 +17,7 @@
     }
 </script>
 
-<h2 class="h2 mb-4">{$i18n.t("settings.theme.theme")}</h2>
+<h2 class="h2 mb-4">{$i18n.t('settings.theme.theme')}</h2>
 
 <div class="grid grid-cols-3 gap-4">
     {#each themes as theme}

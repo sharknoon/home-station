@@ -34,18 +34,6 @@ export const sessions = sqliteTable('user_sessions', {
     expiresAt: integer('expires_at').notNull()
 });
 
-// The container engines (remote or local) for deploying the apps
-export const containerEngines = sqliteTable('container_engines', {
-    id: integer('id').primaryKey({ autoIncrement: true }),
-    name: text('name').notNull().unique(),
-    type: text('type', { enum: ['local', 'remote'] }).notNull(),
-    socketPath: text('socket_path'),
-    host: text('host'),
-    ca: text('ca'),
-    cert: text('cert'),
-    key: text('key')
-});
-
 // Git repositores that host apps
 export const marketplaces = sqliteTable('marketplaces', {
     gitRemoteUrl: text('git_remote_url').primaryKey(),

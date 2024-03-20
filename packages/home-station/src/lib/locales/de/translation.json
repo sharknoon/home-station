@@ -15,7 +15,7 @@
             "theme": "Erscheinungsbild",
             "general": "Allgemein",
             "users": "Benutzer",
-            "container-engines": "Container-Engines",
+            "container-engine": "Container-Engine",
             "domains-and-hostnames": "Domains und Hostnamen",
             "system": "System",
             "tasks": "Aufgaben",
@@ -23,8 +23,7 @@
             "about": "Über Home Station"
         },
         "toast-missing-mount": "Der Pfad \"{{- path}}\" wurde nicht richtig gemounted. Wenn der Container gestoppt oder neu gestartet wird, gehen alle Daten verloren.",
-        "search": "Suche nach Apps und Einstellungen",
-        "sign-out": "Abmelden"
+        "search": "Suche nach Apps und Einstellungen"
     },
     "brand": {
         "title": "Home Station"
@@ -46,11 +45,8 @@
         "marketplaces": "Marktplätze",
         "add-marketplace": "Marktplatz hinzufügen",
         "add-default-marketplace": "Standard-Marktplatz hinzufügen",
-        "install": "Installieren",
-        "popup-no-container-engines": {
-            "no-container-engine-available": "Keine Container-Engine verfügbar"
-        },
         "installing": "Installieren...",
+        "install": "Installieren",
         "open": "Öffnen",
         "start": "Starten",
         "apps": {
@@ -65,10 +61,6 @@
         "links": {
             "website": "Webseite",
             "repository": "Repository"
-        },
-        "container-engines-modal": {
-            "select-engine": "Container-Engine auswählen",
-            "select-engine-description": "Sie haben mehrere Container-Engines installiert. Wählen Sie die Container-Engine, auf der Sie die App installieren möchten."
         }
     },
     "settings": {
@@ -79,10 +71,8 @@
             "build-date": "Build-Datum",
             "caddy": "Caddy"
         },
-        "container-engines": {
-            "container-engines": "Container-Engines",
-            "local": "lokal",
-            "remote": "ferngesteuert",
+        "container-engine": {
+            "container-engine": "Container-Engine",
             "n-a": "N/A",
             "number-of-stacks_one": "{{count}} Stack",
             "number-of-stacks_other": "{{count}} Stacks",
@@ -98,8 +88,7 @@
         },
         "language": {
             "success": "Sprache erfolgreich geändert",
-            "language": "Sprache",
-            "save": "Speichern"
+            "language": "Sprache"
         },
         "logs": {
             "logs": "Logs",
@@ -139,6 +128,11 @@
             "language": "Sprache"
         }
     },
+    "error": {
+        "connection-to-container-engine-failed": "Verbindung zur Container-Engine fehlgeschlagen!",
+        "tips-for-docker-reachability": "Wurde der Container-Engine Socket gemounted (-v /var/run/docker.sock:/var/run/docker.sock)? Ist die Container Engine gestartet?",
+        "unknown-error-occured": "Unbekannter Fehler aufgetreten"
+    },
     "login": {
         "login-to-continue": "Anmelden um fortzufahren",
         "username": "Benutzername",
@@ -159,31 +153,11 @@
         "password": "Passwort",
         "password-requirements": "Das Passwort muss mindestens 8 Zeichen lang sein",
         "repeat-password": "Passwort wiederholen",
-        "connect-container-engine": "Verbinden Sie Ihre Container-Engine",
-        "container-engine-explanation": "Docker und Podman werden unterstützt. Sie können entweder eine lokale oder eine ferngesteuerte Container-Engine verwenden.",
-        "local-container-engine": "Lokale Container-Engine (Socket)",
-        "container-engine-name": "Name",
-        "container-engine-name-placeholder": "z.B. docker-prod01",
-        "more-settings": "Weitere Einstellungen",
-        "override-socket": "Standard-Socketpfad überschreiben",
-        "override-socket-placeholder": "z.B. /var/run/docker.sock (für Linux) oder //./pipe/docker_engine (für Windows)",
-        "test-connection": "Verbindung prüfen",
-        "connecting": "Verbinde...",
-        "successfully-connected": "Verbindung erfolgreich hergestellt 🎉",
-        "note": "Hinweis",
-        "note-mounted-docker-socket": "Wurde der Container-Engine Socket gemounted (-v /var/run/docker.sock:/var/run/docker.sock)? Ist die Container Engine gestartet?",
-        "remote-container-engine": "Ferngesteuerte Container-Engine (API)",
-        "container-engine-api-url": "Container-Engine API-URL",
-        "container-engine-api-url-placeholder": "z.B. 10.0.0.10:2375 oder meindocker.meinedomain.de:2375",
-        "tls-ca-certificate": "TLS CA Zertifikat",
-        "tls-certificate": "TLS Zertifikat",
-        "tls-key": "TLS Schlüssel (key)",
-        "tip": "Tipp",
-        "additional-container-engines": "Sie können in den Einstellungen weitere Container-Engines hinzufügen",
         "add-domains-and-hostnames": "Fügen Sie Ihre Domains hinzu",
         "auto-detected": "Automatisch erkannt",
         "add-domain-or-hostname": "Domain oder Hostname hinzufügen",
         "domain-hostname-placeholder": "z.B. meinedomain.de oder meinhostname",
+        "tip": "Tipp",
         "additional-domains-or-hostnames": "Sie können in den Einstellungen weitere Domains und Hostnamen hinzufügen"
     }
 }

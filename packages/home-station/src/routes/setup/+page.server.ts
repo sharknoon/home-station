@@ -3,9 +3,8 @@ import type { PageServerLoad, Actions } from './$types';
 import { eq } from 'drizzle-orm';
 import { db } from '$lib/server/db';
 import { lucia } from '$lib/server/auth';
-import { containerEngines, users, hostnames } from '$lib/server/schema';
+import { users, hostnames } from '$lib/server/schema';
 import { detectHostnames } from '$lib/server/network';
-import { testLocalConnection, testRemoteConnection } from '$lib/server/containerengines';
 import { generateId } from 'lucia';
 import bcrypt from 'bcrypt';
 
@@ -73,97 +72,5 @@ export const actions = {
             });
         }
         return redirect(302, '/');
-    },
-    async connectLocal({ request }) {
-        try {
-            const data = await request.formData();
-
-            const name = data.get('name')?.toString();
-            let socketPath = data.get('socketPath')?.toString();
-
-            if (!name) {
-                return fail(400, { type: 'local', name, missing: true });
-            }
-            if (!socketPath) socketPath = undefined;
-
-            const engine = await testLocalConnection(socketPath);
-            await db
-                .insert(containerEngines)
-                .values({
-                    id: 1,
-                    name,
-                    type: 'local',
-                    socketPath,
-                    host: undefined,
-                    ca: undefined,
-                    cert: undefined,
-                    key: undefined
-                })
-                .onConflictDoUpdate({
-                    target: containerEngines.id,
-                    set: {
-                        name,
-                        type: 'local',
-                        socketPath,
-                        host: undefined,
-                        ca: undefined,
-                        cert: undefined,
-                        key: undefined
-                    }
-                });
-            return { type: 'local', success: true, hostname: (await engine.info())?.Name };
-        } catch (e) {
-            return { type: 'local', error: String(e) };
-        }
-    },
-    async connectRemote({ request }) {
-        try {
-            const data = await request.formData();
-
-            const name = data.get('name')?.toString();
-            const host = data.get('host')?.toString();
-            let ca = await (data.get('ca') as File | null)?.text();
-            let cert = await (data.get('cert') as File | null)?.text();
-            let key = await (data.get('key') as File | null)?.text();
-
-            if (!name) {
-                return fail(400, { type: 'remote', name, missing: true });
-            }
-            if (!host) {
-                return fail(400, { type: 'remote', host, missing: true });
-            }
-            if (!ca) ca = undefined;
-            if (!cert) cert = undefined;
-            if (!key) key = undefined;
-
-            const engine = await testRemoteConnection(host, ca, cert, key);
-            await db
-                .insert(containerEngines)
-                .values({
-                    id: 1,
-                    name,
-                    type: 'remote',
-                    socketPath: undefined,
-                    host,
-                    ca,
-                    cert,
-                    key
-                })
-                .onConflictDoUpdate({
-                    target: containerEngines.id,
-                    set: {
-                        name,
-                        type: 'remote',
-                        socketPath: undefined,
-                        host,
-                        ca,
-                        cert,
-                        key
-                    }
-                });
-            return { type: 'remote', success: true, hostname: (await engine.info())?.Name };
-        } catch (e) {
-            return { type: 'remote', error: String(e) };
-        }
     }
 } satisfies Actions;

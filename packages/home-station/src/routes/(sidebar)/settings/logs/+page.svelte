@@ -51,7 +51,9 @@
         <tbody>
             {#each data.logs as log}
                 <tr>
-                    <td class="!table-cell-fit">{dateTimeFormatter.format(new Date(log.timestamp))}</td>
+                    <td class="!table-cell-fit"
+                        >{dateTimeFormatter.format(new Date(log.timestamp))}</td
+                    >
                     <td class="table-cell-fit">
                         <span class="badge {logLevelColor(log.level)}">{stripAnsi(log.level)}</span>
                     </td>

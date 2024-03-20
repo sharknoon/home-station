@@ -18,7 +18,7 @@
     let formElement: HTMLFormElement;
 </script>
 
-<h2 class="h2 mb-4">{$i18n.t("settings.language.language")}</h2>
+<h2 class="h2 mb-4">{$i18n.t('settings.language.language')}</h2>
 
 <form method="post" action="?/updateLanguage" use:enhance bind:this={formElement}>
     <label class="label">

@@ -2,7 +2,7 @@ import type { Actions, PageServerLoad } from './$types';
 import { db } from '$lib/server/db';
 import { fail } from '@sveltejs/kit';
 import { deleteMarketplace } from '$lib/server/marketplaces';
-import { marketplaceApps, containerEngines } from '$lib/server/schema';
+import { marketplaceApps } from '$lib/server/schema';
 import { eq } from 'drizzle-orm';
 import { getInstalledApps, installApp } from '$lib/server/apps';
 import { dispatchEvent } from '$lib/server/events';
@@ -17,11 +17,8 @@ export const load = (async () => {
     const marketplaces = await db.query.marketplaces.findMany({
         columns: { gitPassword: false }
     });
-    const containerEngines = await db.query.containerEngines.findMany({
-        columns: { id: true, name: true, type: true }
-    });
     const installedApps = await getInstalledApps();
-    return { marketplaceApps, marketplaces, containerEngines, installedApps };
+    return { marketplaceApps, marketplaces, installedApps };
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
@@ -55,12 +52,6 @@ export const actions: Actions = {
         });
         if (!marketplaceApp) {
             return fail(400, { appUuid, notFound: true });
-        }
-        const containerEngine = await db.query.containerEngines.findFirst({
-            where: eq(containerEngines.id, containerEngineId)
-        });
-        if (!containerEngine) {
-            return fail(400, { containerEngineId, notFound: true });
         }
 
         dispatchEvent('appStatus', { appUuid, status: 'installing', progress: 0 });

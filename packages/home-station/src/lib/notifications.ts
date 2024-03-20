@@ -36,7 +36,7 @@ function showNotification(level: NotificationType, message: string) {
         background,
         autohide,
         // People should not feel stressed about reading the notification
-        timeout: message.split(' ').length * 1000,
+        timeout: message.split(' ').length * 1000
     });
 }
 

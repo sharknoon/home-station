@@ -1,66 +1,38 @@
 import Docker from 'dockerode';
-import type { containerEngines } from './schema';
+import type Dockerode from 'dockerode';
+import { logger } from '$lib/server/logger';
 
-export type ContainerEngine = typeof containerEngines.$inferSelect;
+export let containerEngine: Dockerode;
 
-export async function getEngine(engine: ContainerEngine): Promise<Docker> {
-    switch (engine?.type ?? 'local') {
-        case 'local':
-            if (!engine.socketPath) return new Docker();
-            return new Docker({ socketPath: engine.socketPath });
-        case 'remote':
-            return new Docker({
-                host: engine.host ?? '', // Is required for type remote
-                ca: engine.ca ?? undefined,
-                cert: engine.cert ?? undefined,
-                key: engine.key ?? undefined
-            });
+export async function init() {
+    logger.info('Connecting to container engine');
+    containerEngine = new Docker();
+    const pong = await containerEngine.ping();
+    if (pong.toString('utf-8') !== 'OK') {
+        throw new Error('Docker ping did not return OK: ' + pong.toString('utf-8'));
+    }
+    const network = await containerEngine.listNetworks();
+    if (!network.find((n) => n.Name === 'home-station')) {
+        logger.info('Creating container engine network home-station');
+        await containerEngine.createNetwork({ Name: 'home-station' });
     }
 }
 
-export async function testLocalConnection(socketPath?: string): Promise<Docker> {
+export async function testConnection(): Promise<{ success: boolean; errors?: string[] }> {
     try {
-        const docker = socketPath ? new Docker({ socketPath }) : new Docker();
-        const result: Buffer = await docker.ping();
+        const result: Buffer = await containerEngine.ping();
         const ping = result.toString('utf-8');
         if (ping !== 'OK') {
-            return Promise.reject('Docker ping did not return OK: ' + ping);
+            return { success: false, errors: ['Docker ping did not return OK: ' + ping] };
         }
-        return docker;
+        return { success: true };
     } catch (err) {
         if (err instanceof AggregateError) {
-            const errors = err.errors.map((e) => String(e)).join(', ');
-            return Promise.reject("Couldn't connect to Docker: " + errors);
+            return { success: false, errors: err.errors.map((e) => String(e)) };
         }
         if (err instanceof Error) {
-            return Promise.reject("Couldn't connect to Docker: " + err.message);
+            return { success: false, errors: [err.message] };
         }
-        return Promise.reject("Couldn't connect to Docker: " + err);
-    }
-}
-
-export async function testRemoteConnection(
-    url: string,
-    ca?: string,
-    cert?: string,
-    key?: string
-): Promise<Docker> {
-    try {
-        const docker = new Docker({ host: url, ca, cert, key });
-        const result: Buffer = await docker.ping();
-        const ping = result.toString('utf-8');
-        if (ping !== 'OK') {
-            return Promise.reject('Docker ping did not return OK: ' + ping);
-        }
-        return docker;
-    } catch (err) {
-        if (err instanceof AggregateError) {
-            const errors = err.errors.map((e) => String(e)).join(', ');
-            return Promise.reject("Couldn't connect to Docker: " + errors);
-        }
-        if (err instanceof Error) {
-            return Promise.reject("Couldn't connect to Docker: " + err.message);
-        }
-        return Promise.reject("Couldn't connect to Docker: " + err);
+        return { success: false, errors: [String(err)] };
     }
 }

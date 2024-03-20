@@ -78,12 +78,18 @@ export async function getLatestVersion(marketplaceUrl: string, appUuid: string):
  * @param version - The version to check.
  * @returns A promise that resolves to a boolean indicating if the version is valid.
  */
-export async function isValidVersion(marketplaceUrl: string, appUuid: string, version: string): Promise<true> {
+export async function isValidVersion(
+    marketplaceUrl: string,
+    appUuid: string,
+    version: string
+): Promise<true> {
     const versions = await getVersionsOfApp(marketplaceUrl, appUuid);
     if (versions.includes(version)) {
         return true;
     } else {
-        throw new Error(`Version "${version}" not found for "${appUuid}" in "${marketplaceUrl}. Available versions: ${versions.join(', ')}"`);
+        throw new Error(
+            `Version "${version}" not found for "${appUuid}" in "${marketplaceUrl}. Available versions: ${versions.join(', ')}"`
+        );
     }
 }
 

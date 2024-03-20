@@ -36,7 +36,7 @@ interface DatabaseUserAttributes {
 }
 
 /**
- * Deletes expired sessions. This function seems unnecessary, but because 
+ * Deletes expired sessions. This function seems unnecessary, but because
  * it is in this module, it forces lucia to be initialized before it is called.
  */
 export async function deleteExpiredSessions(): Promise<void> {

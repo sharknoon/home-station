@@ -1,0 +1,37 @@
+{
+    "apps": {
+        "http": {
+            "servers": {
+                "home_station": {
+                    "@id": "home_station",
+                    "listen": [":80", ":443"],
+                    "routes": [
+                        {
+                            "match": [{ "host": ["localhost"] }],
+                            "handle": [
+                                {
+                                    "handler": "static_response",
+                                    "status_code": 301,
+                                    "headers": {
+                                        "Location": ["https://home-station.localhost/"]
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "match": [{ "host": ["home-station.localhost"] }],
+                            "handle": [
+                                {
+                                    "handler": "reverse_proxy",
+                                    "upstreams": [
+                                        { "dial": "localhost:3000" }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}

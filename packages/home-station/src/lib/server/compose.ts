@@ -1,20 +1,15 @@
 import { join } from 'path';
-import { getEngine, type ContainerEngine } from '$lib/server/containerengines';
-import { db } from '$lib/server/db';
+import { containerEngine } from '$lib/server/containerengines';
 import { exec } from '$lib/server/terminal';
 import { throttle } from '$lib/server/utils';
 import { stripAnsi } from '$lib/utils';
 
-export async function listStacks(engine?: ContainerEngine): Promise<string[]> {
-    const engines = engine ? [engine] : await db.query.containerEngines.findMany();
+export async function listStacks(): Promise<string[]> {
     const stacks = new Set<string>();
-    for (const engine of engines) {
-        const docker = await getEngine(engine);
-        const containers = await docker.listContainers({ all: true });
-        for (const container of containers) {
-            const stack = container.Labels['com.docker.compose.project'];
-            if (stack) stacks.add(stack);
-        }
+    const containers = await containerEngine.listContainers({ all: true });
+    for (const container of containers) {
+        const stack = container.Labels['com.docker.compose.project'];
+        if (stack) stacks.add(stack);
     }
     return Array.from(stacks);
 }

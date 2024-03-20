@@ -93,7 +93,6 @@
                         </div>
                         <AppButton
                             {app}
-                            containerEngines={data.containerEngines}
                             installedApps={data.installedApps}
                             size="small"
                             type="soft"

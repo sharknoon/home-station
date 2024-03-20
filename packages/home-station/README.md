@@ -4,8 +4,8 @@
 
 To be able to run Home Station, you need to have the following prerequisites installed:
 
-- [Node.js](https://nodejs.org/en/download/current)
-- [Caddy](https://caddyserver.com/docs/install)
+-   [Node.js](https://nodejs.org/en/download/current)
+-   [Caddy](https://caddyserver.com/docs/install)
 
 Once you've installed those prerequisites go ahead and install the dependencies and start a development server:
 

@@ -81,11 +81,7 @@
                 <img alt="GitHub Repo stars" class="mb-2" src={shieldsUrl} />
             {/if}
             <div class="flex gap-4">
-                <AppButton
-                    app={data.app}
-                    containerEngines={data.containerEngines}
-                    installedApps={data.installedApps}
-                />
+                <AppButton app={data.app} installedApps={data.installedApps} />
                 {#if data.installedApps.some((a) => a.uuid === data.app.uuid)}
                     <form method="post" action="/?/uninstallApp" use:enhance>
                         <input
