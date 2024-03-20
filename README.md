@@ -23,17 +23,6 @@ Requirements:
 
 - [Docker](https://docs.docker.com/engine/install/) 20+ / [Podman](https://podman.io/docs/installation)
 - (Podman only) podman-docker (Debian: `apt install podman-docker`)
-- OS:
-  - Major Linux distros that can run Docker/Podman such as:  
-    ✅ Ubuntu  
-    ✅ Debian (Bullseye or newer)  
-    ✅ Raspbian (Bullseye or newer)  
-    ✅ CentOS  
-    ✅ Fedora  
-    ✅ ArchLinux  
-    ❌ Debian/Raspbian Buster or lower is not supported  
-    ❌ Windows (Will be supported later)  
-    Arch: armv7, arm64, amd64 (a.k.a x86_64)
 
 Installation:
 
