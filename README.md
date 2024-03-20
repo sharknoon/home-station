@@ -50,7 +50,7 @@ TODO
 
 ## Screenshots
 
-TODO add scjre
+TODO
 
 ## Motivation
 I have been using [Portainer](https://www.portainer.io) for all my docker compose stacks and [traefik](https://traefik.io/traefik/) as my reverse proxy. Installing a new open-source
