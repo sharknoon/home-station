@@ -14,8 +14,12 @@ TODO SCREENSHOT
 - 🔐 Integrated reverse proxy, so you don't have to worry about ports and certificates
 - ⬆️ Automatic updates for your apps (can be turned off)
 - 🖥️ Fancy, easy-to-use and multi-language UI (with themes 🎨)
+- 👤 Multi user capable (share your home server with your family & friends)
+- 
 
-[//]: <> (Automatic Backups to popular cloud providers like Google Drive, Onedrive etc... as well as your own hardware)
+## 🚧 Roadmap
+- 🛟 Automatic Backups to popular cloud providers like Google Drive, Onedrive etc... as well as your own hardware
+- 🛡️ Single sign-on for all your apps
 
 # create-svelte
 
