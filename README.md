@@ -35,6 +35,8 @@ Requirements:
     ❌ Windows (Will be supported later)  
     Arch: armv7, arm64, amd64 (a.k.a x86_64)
 
+Installation:
+
 ```bash
 docker run -v /var/run/docker.sock:/var/run/docker.sock \
     -p 80:80 -p 443:443 \
