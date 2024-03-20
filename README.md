@@ -1,3 +1,5 @@
+TODO ICON OR FANCY HEADER LOGO
+
 # Home Station
 
 A fancy, easy-to-use, docker compose based app manager for your self-hosted home server. 
@@ -15,47 +17,33 @@ TODO SCREENSHOT
 - ⬆️ Automatic updates for your apps (can be turned off)
 - 🖥️ Fancy, easy-to-use and multi-language UI (with themes 🎨)
 - 👤 Multi user capable (share your home server with your family & friends)
-- 
+
+## 🔧 How to install
+Requirements:
+
+- [Docker](https://docs.docker.com/engine/install/) 20+ / [Podman](https://podman.io/docs/installation)
+- (Podman only) podman-docker (Debian: `apt install podman-docker`)
+- OS:
+  - Major Linux distros that can run Docker/Podman such as:  
+    ✅ Ubuntu  
+    ✅ Debian (Bullseye or newer)  
+    ✅ Raspbian (Bullseye or newer)  
+    ✅ CentOS  
+    ✅ Fedora  
+    ✅ ArchLinux  
+    ❌ Debian/Raspbian Buster or lower is not supported  
+    ❌ Windows (Will be supported later)  
+    Arch: armv7, arm64, amd64 (a.k.a x86_64)
+
+```bash
+docker run -v /var/run/docker.sock:/var/run/docker.sock \
+    -p 80:80 -p 443:443 \
+    ghcr.io/home-station-org/home-station
+```
+
+> Note: If you don't feel comfortable giving up your ports 80 and 443 yet, feel free to test Home Station with other ports:  
+> `-p 8080:80 -p 8433:443`
 
 ## 🚧 Roadmap
 - 🛟 Automatic Backups to popular cloud providers like Google Drive, Onedrive etc... as well as your own hardware
 - 🛡️ Single sign-on for all your apps
-
-# create-svelte
-
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
-
-## Creating a project
-
-If you're seeing this, you've probably already done this step. Congrats!
-
-```bash
-# create a new project in the current directory
-npm create svelte@latest
-
-# create a new project in my-app
-npm create svelte@latest my-app
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
