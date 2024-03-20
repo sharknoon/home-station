@@ -46,6 +46,7 @@ TODO
 ## 🚧 Roadmap
 - 🛟 Automatic Backups to popular cloud providers like Google Drive, Onedrive etc... as well as your own hardware
 - 🛡️ Single sign-on for all your apps
+- 🔗 Multi host support (allows multiple machines to be managed by one Home Station)
 
 ## Screenshots
 
