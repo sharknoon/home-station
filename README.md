@@ -10,6 +10,13 @@ A fancy, easy-to-use, docker compose based app manager for your self-hosted home
 
 TODO SCREENSHOT
 
+## Live Demo
+Try it!
+
+[https://demo.home-station.org/](https://demo.home-station.org/)
+
+It is a read-only live demo, you can't make any permanent changes.
+
 ## ⭐️ Features:
 - 🖱️ Install your favorite open-source apps with one click
 - 🏬 App marketplace with over 1 free apps
@@ -19,25 +26,30 @@ TODO SCREENSHOT
 - 👤 Multi user capable (share your home server with your family & friends)
 
 ## 🔧 How to install
-Requirements:
 
-- [Docker](https://docs.docker.com/engine/install/) 20+ / [Podman](https://podman.io/docs/installation)
-- (Podman only) podman-docker (Debian: `apt install podman-docker`)
-
-Installation:
+### 🐳 Docker
 
 ```bash
-docker run -v /var/run/docker.sock:/var/run/docker.sock \
-    -p 80:80 -p 443:443 \
-    ghcr.io/home-station-org/home-station
+docker run -d --restart=always -p 80:80 -p 443:443 -v home-station:/app/data -v /var/run/docker.sock:/var/run/docker.sock --name home-station ghcr.io/home-station-org/home-station
 ```
 
-> Note: If you don't feel comfortable giving up your ports 80 and 443 yet, feel free to test Home Station with other ports:  
+Home Station is now running at [https://home-station.localhost](https://home-station.localhost)
+
+> [!NOTE]
+> If your ports *80* and *443* are already occupied, feel free to test Home Station with other ports:  
 > `-p 8080:80 -p 8433:443`
+
+### 💪🏻 Non-Docker
+
+TODO
 
 ## 🚧 Roadmap
 - 🛟 Automatic Backups to popular cloud providers like Google Drive, Onedrive etc... as well as your own hardware
 - 🛡️ Single sign-on for all your apps
+
+## Screenshots
+
+TODO add scjre
 
 ## Motivation
 I have been using [Portainer](https://www.portainer.io) for all my docker compose stacks and [traefik](https://traefik.io/traefik/) as my reverse proxy. Installing a new open-source
@@ -50,3 +62,5 @@ app incorporated at least the following steps:
 
 One day I had enough, because I already had installed ~100 compose stacks this way. I wanted to create an opiniated approach
 to installing apps, that just requires one click and is the same for everybody.
+
+If you love this project, please consider giving it a ⭐.
