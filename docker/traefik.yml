@@ -1,0 +1,30 @@
+global:
+  checkNewVersion: false
+  sendAnonymousUsage: false
+
+entryPoints:
+  web:
+    address: :80
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
+  websecure:
+    address: :443
+    http:
+      tls:
+        certResolver: letsencrypt
+
+providers:
+  docker:
+    exposedByDefault: false
+    network: "home-station"
+
+api:
+
+certificatesResolvers:
+  letsencrypt:
+    acme:
+      email: "frank.josua@gmail.com"
+      storage: "acme.json"

@@ -43,5 +43,5 @@
             }
         )})
     </div>
-    <div>{$i18n.t('settings.about.caddy')}: <code>{data.caddyVersion}</code></div>
+    <div>{$i18n.t('settings.about.traefik')}: <code>{data.traefikVersion}</code></div>
 </div>

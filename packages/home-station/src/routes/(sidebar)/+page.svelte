@@ -6,17 +6,38 @@
     import Store from 'lucide-svelte/icons/store';
     import Trash_2 from 'lucide-svelte/icons/trash-2';
     import Settings from 'lucide-svelte/icons/settings';
-    import { Accordion, AccordionItem, popup } from '@skeletonlabs/skeleton';
+    import { Accordion, AccordionItem, getModalStore, popup } from '@skeletonlabs/skeleton';
     import { i18n, ts } from '$lib/i18n';
+    import type { MarketplaceApp } from '$lib/server/marketplaces';
     import rocket from './rocket.png';
+    import { goto } from '$app/navigation';
 
     export let data: PageData;
+
+    const modalStore = getModalStore();
+
+    function onAppClick(http: MarketplaceApp['http'], uuid: MarketplaceApp['uuid']) {
+        if (!http || http.length === 0) {
+            goto('/apps/' + uuid);
+        } else if (http.length === 1) {
+            window.open(`https://${http[0].subdomain}.localhost`, '_blank');
+        } else {
+            modalStore.trigger({
+                type: 'component',
+                component: 'appLaunchOptionsModal',
+                meta: { http }
+            });
+        }
+    }
 </script>
 
 {#if data.apps.length > 0}
     <div class="grid grid-cols-6 place-items-center">
         {#each data.apps.filter((a) => a.status === 'running') as app, i}
-            <a href={`http://${app.uuid}.localhost`} class="group flex flex-col items-center m-16">
+            <button
+                on:click={() => onAppClick(app.http, app.uuid)}
+                class="group flex flex-col items-center m-16"
+            >
                 <!-- TODO convert to snippet -->
                 <div class="relative">
                     <img
@@ -26,7 +47,7 @@
                     />
                     <button
                         class="group-hover:opacity-100 opacity-0 transition absolute right-0 top-0 btn-icon btn-icon-sm variant-filled-tertiary translate-x-[40%] -translate-y-[40%]"
-                        on:click|preventDefault={() => {}}
+                        on:click|stopPropagation
                         use:popup={{ event: 'click', target: `popupApp-${i}` }}
                     >
                         <Ellipsis class="h-6 w-6" />
@@ -43,17 +64,17 @@
                         <nav class="list-nav">
                             <ul>
                                 <li>
-                                    <a href="/discover/apps/{app.uuid}">
+                                    <a href="/discover/apps/{app.uuid}" on:click|stopPropagation>
                                         <Store class="h-6" />
-                                        <span class="flex-auto">
+                                        <span class="flex-auto text-left">
                                             {$i18n.t('my-apps.open-in-marketplace')}
                                         </span>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/apps/{app.uuid}">
+                                    <a href="/apps/{app.uuid}" on:click|stopPropagation>
                                         <Settings class="h-6" />
-                                        <span class="flex-auto">
+                                        <span class="flex-auto text-left">
                                             {$i18n.t('my-apps.settings')}
                                         </span>
                                     </a>
@@ -63,6 +84,7 @@
                                         type="submit"
                                         formaction="?/uninstallApp"
                                         class="w-full text-left"
+                                        on:click|stopPropagation
                                     >
                                         <Trash_2 class="h-6" />
                                         <span class="flex-auto">
@@ -78,7 +100,7 @@
                 <div class="mt-2">
                     {ts(app.name)}
                 </div>
-            </a>
+            </button>
         {/each}
         <a href="/discover">
             <div

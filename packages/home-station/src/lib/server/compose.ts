@@ -1,4 +1,3 @@
-import { join } from 'path';
 import { containerEngine } from '$lib/server/containerengines';
 import { exec } from '$lib/server/terminal';
 import { throttle } from '$lib/server/utils';
@@ -16,21 +15,20 @@ export async function listStacks(): Promise<string[]> {
 
 export async function up(
     cwd: string,
-    composeFile?: string,
-    projectName?: string,
+    projectName: string,
+    composeFiles?: string[],
     progress?: (progress: number) => void
 ): Promise<void> {
-    const customComposeFile = composeFile ? ['-f', composeFile] : [];
+    const customComposeFiles = composeFiles ? composeFiles.flatMap((c) => ['-f', c]) : [];
     const customProjectName = projectName ? ['-p', projectName] : [];
-    const composeFilePath = join(cwd, composeFile ?? 'compose.yml');
     const throttledProgress = throttle((p: number) => progress?.(p), 250);
     await exec(
         'docker',
-        ['compose', ...customComposeFile, ...customProjectName, 'up', '-d', '--remove-orphans'],
+        ['compose', ...customComposeFiles, ...customProjectName, 'up', '-d', '--remove-orphans'],
         cwd,
         (data) => {
             if (!progress) return;
-            const currentProgress = getPullProgress(composeFilePath, data);
+            const currentProgress = getPullProgress(projectName, data);
             if (currentProgress !== undefined) {
                 throttledProgress(currentProgress);
             }
@@ -68,10 +66,10 @@ export async function down(
  * This function converts the textual data from the terminal to an overall progress
  * An example of the data is:
  *  fdad3543d514 Downloading [>                                                  ]       0B/2.161MB
- * @param composeFile the path to the compose file, used as the key in the progress map
+ * @param projectName the project name of the compose project, used as the key in the progress map
  * @param data The data from the terminal
  */
-function getPullProgress(composeFile: string, data: string): number | undefined {
+function getPullProgress(projectName: string, data: string): number | undefined {
     data = stripAnsi(data);
     console.log("'" + data + "'");
     return undefined;

@@ -45,7 +45,7 @@ export async function init() {
             }
         }
 
-        logger.info('Webserver connected');
+        logger.info('Connected to webserver');
     } catch (error) {
         logger.error('Error connecting to webserver: ' + error);
         logger.error('Shutting down home station...');
@@ -72,7 +72,7 @@ export async function addReverseProxy(subdomain: string, host: string, port: num
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            match: [{ host: [`${subdomain}.localhost`] }],
+            match: [{ host: [`${subdomain}.localhost`]}],
             handle: [
                 {
                     handler: 'reverse_proxy',
@@ -80,5 +80,7 @@ export async function addReverseProxy(subdomain: string, host: string, port: num
                 }
             ]
         })
+    }).then(async (response) => {
+        console.log(await response.text())
     });
 }

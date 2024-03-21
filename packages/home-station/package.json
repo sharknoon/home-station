@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "dev": "caddy start && node scripts/setup-caddy.js && vite dev",
+        "dev": "node scripts/setup-traefik.js && vite dev",
         "build": "vite build",
         "preview": "vite preview",
         "test": "npm run test:integration && npm run test:unit",

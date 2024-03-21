@@ -28,11 +28,11 @@ try {
         }
     }
     db = drizzle(sqlite, { schema });
-    logger.info('Successfully connected to the database');
+    logger.info('Connected to the database');
 
     logger.info('Running migrations');
     migrate(db, { migrationsFolder: 'drizzle' });
-    logger.info('Migrations completed');
+    logger.info('Completed migrations');
 } catch (error) {
     logger.error('Failed to connect to the database: ' + error);
     process.exit(1);

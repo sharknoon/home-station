@@ -38,7 +38,7 @@ export async function installApp(
         'versions',
         versionToInstall
     );
-    await up(composePath, undefined, uuid, progress);
+    await up(composePath, uuid, undefined, progress);
     for (const http of app.http ?? []) {
         await addReverseProxy(http.subdomain, uuid, http.port);
     }
