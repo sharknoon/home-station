@@ -43,5 +43,13 @@
             }
         )})
     </div>
-    <div>{$i18n.t('settings.about.traefik')}: <code>{data.traefikVersion}</code></div>
+    <div>
+        {$i18n.t('settings.about.traefik')}:
+        <code>
+            {data.traefikVersion.Version} ({data.traefikVersion.Codename}) {data.traefikVersion
+                .startDate} ({intlFormatDistance(data.traefikVersion.startDate, new Date(), {
+                locale: $i18n.language
+            })})
+        </code>
+    </div>
 </div>

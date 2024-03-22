@@ -20,7 +20,7 @@
         if (!http || http.length === 0) {
             goto('/apps/' + uuid);
         } else if (http.length === 1) {
-            window.open(`https://${http[0].subdomain}.localhost`, '_blank');
+            window.open(`http://${http[0].subdomain}.localhost`, '_blank');
         } else {
             modalStore.trigger({
                 type: 'component',

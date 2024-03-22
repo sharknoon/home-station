@@ -1,50 +1,35 @@
 // This script sets up the reverse proxy (traefik) for the home-station app during development.
 // NOTE: Use this script only in development. In production, use the docker/traefik.yml file to configure traefik.
 
-import Dockerode from 'dockerode';
+import { exec } from 'node:child_process';
+import { promisify } from 'node:util';
 
 try {
-    await fetch('http://localhost:2019/config');
+    await fetch('http://localhost');
 } catch (error) {
     console.log('Creating the home-station-traefik container...');
-    const dockerode = new Dockerode();
-    // Create the home-station network to connect the reverse proxy to the apps
-    await dockerode.createNetwork({ Name: 'home-station' }).catch(() => {});
-    // Remove the home-station-traefik container if it exists
-    await dockerode
-        .getContainer('home-station-traefik')
-        ?.remove({ force: true })
-        .catch(() => {});
-    // Run the home-station-traefik container (reverse proxy)
-    dockerode.run(
-        'traefik:3.0',
-        [
-            '--global.checknewversion=false',
-            '--global.sendAnonymousUsage=false',
-            // we are mocking the websecure entrypoint, it isn't actually https
-            '--entrypoints.websecure.address=:80',
-            '--providers.docker=true',
-            '--providers.docker.exposedbydefault=false',
-            '--providers.docker.network=home-station',
-            '--api=true',
-            '--api.dashboard=true'
-        ],
-        process.stdout,
-        {
-            name: 'home-station-traefik',
-            HostConfig: {
-                NetworkMode: 'home-station',
-                PortBindings: { '80/tcp': [{ HostPort: '80' }] },
-                Binds: ['/var/run/docker.sock:/var/run/docker.sock']
-            },
-            ExposedPorts: { '80/tcp': {} },
-            Labels: {
-                'traefik.enable': 'true',
-                'traefik.http.routers.traefik.entrypoints': 'websecure',
-                'traefik.http.routers.traefik.rule': 'HostRegexp(`^traefik\\.[a-z.]+$`)',
-                'traefik.http.routers.traefik.service': 'api@internal'
-            }
-        },
-        {}
+    const execAsync = promisify(exec);
+    await execAsync('docker network create home-station').catch(() => {});
+    await execAsync('docker rm -f home-station-traefik').catch(() => {});
+    await execAsync(
+        'docker run -d --name home-station-traefik ' +
+            '--network home-station ' +
+            '-p 80:80 ' +
+            '-v /var/run/docker.sock:/var/run/docker.sock ' +
+            '-l traefik.enable=true ' +
+            '-l traefik.http.routers.traefik.entrypoints=websecure ' +
+            '-l traefik.http.routers.traefik.rule=Host(`localhost`) ' +
+            '-l traefik.http.routers.traefik.service=api@internal ' +
+            'traefik:3.0 ' +
+            '--global.checknewversion=false ' +
+            '--global.sendAnonymousUsage=false ' +
+            '--entrypoints.websecure.address=:80 ' +
+            '--providers.docker=true ' +
+            '--providers.docker.exposedbydefault=false ' +
+            '--providers.docker.network=home-station ' +
+            '--providers.docker.allowEmptyServices=true ' +
+            '--api=true ' +
+            '--api.dashboard=true ' +
+            '--log.level=DEBUG'
     );
 }
