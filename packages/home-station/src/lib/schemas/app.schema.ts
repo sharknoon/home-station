@@ -346,6 +346,17 @@ const appSchema = appRawSchema as {
             title: 'HTTP';
             description: 'The http ports and their corresponding subdomains of the app.';
             type: 'array';
+            contains: {
+                type: 'object';
+                properties: {
+                    default: {
+                        const: true;
+                    };
+                };
+                required: ['default'];
+            };
+            minContains: 1;
+            maxContains: 1;
             items: {
                 type: 'object';
                 $ref: '#/$defs/network';
@@ -358,10 +369,17 @@ const appSchema = appRawSchema as {
                         minLength: 2;
                         maxLength: 30;
                     };
+                    default: {
+                        title: 'Default';
+                        description: 'Whether this http endpoint is the default one (in case of multiple http endpoints) or not.';
+                        default: false;
+                        type: 'boolean';
+                    };
                 };
                 unevaluatedProperties: false;
                 required: ['subdomain'];
             };
+            uniqueItems: true;
         };
         udp: {
             title: 'UDP';
@@ -372,6 +390,7 @@ const appSchema = appRawSchema as {
                 $ref: '#/$defs/network';
                 unevaluatedProperties: false;
             };
+            uniqueItems: true;
         };
         tcp: {
             title: 'TCP';
@@ -382,6 +401,7 @@ const appSchema = appRawSchema as {
                 $ref: '#/$defs/network';
                 unevaluatedProperties: false;
             };
+            uniqueItems: true;
         };
         messages: {
             title: 'Messages';
@@ -522,6 +542,7 @@ const test: AppConfiguration = {
     ],
     http: [
         {
+            default: true,
             port: 12345,
             description: {
                 en: 'The port for clients to connect to.',

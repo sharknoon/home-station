@@ -10,7 +10,6 @@ import { down, up } from '$lib/server/compose';
 import { db } from '$lib/server/db';
 import { containerEngine } from '$lib/server/containerengines';
 import { marketplaceApps } from '$lib/server/schema';
-import { addReverseProxy } from './webserver';
 
 /**
  * Installs an app from the marketplace.
@@ -38,10 +37,7 @@ export async function installApp(
         'versions',
         versionToInstall
     );
-    await up(composePath, undefined, uuid, progress);
-    for (const http of app.http ?? []) {
-        await addReverseProxy(http.subdomain, uuid, http.port);
-    }
+    await up(composePath, uuid, undefined, progress);
 }
 
 /**

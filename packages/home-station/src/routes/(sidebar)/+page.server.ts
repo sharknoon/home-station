@@ -13,7 +13,8 @@ export const load: PageServerLoad = async () => {
         version: app.installedVersion,
         icon: app.icon,
         name: app.name,
-        status: app.status
+        status: app.status,
+        http: app.http,
     }));
     return { apps };
 };

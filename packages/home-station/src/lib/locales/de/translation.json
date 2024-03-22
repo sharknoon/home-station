@@ -69,7 +69,7 @@
             "commit": "Commit",
             "unkown": "Unbekannt",
             "build-date": "Build-Datum",
-            "caddy": "Caddy"
+            "traefik": "Traefik"
         },
         "container-engine": {
             "container-engine": "Container-Engine",

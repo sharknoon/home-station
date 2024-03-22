@@ -10,7 +10,7 @@
     export let data: LayoutData;
 
     // Initializes the ui framework skeleton
-    initUiFramework();
+    const modalRegistry = initUiFramework();
     // Initializes the language based on browser language or the saved language from a previous visit
     initI18n(data.user?.language);
     // Initializes a page load spinner that starts popping up after 500ms of navigating
@@ -20,7 +20,7 @@
 </script>
 
 <Toast />
-<Modal />
+<Modal components={modalRegistry} />
 <Drawer />
 
 <slot />

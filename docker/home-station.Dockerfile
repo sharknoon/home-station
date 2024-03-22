@@ -14,7 +14,7 @@ FROM alpine:${ALPINE_VERSION} as nodejs
 
 ARG NODE_VERSION=21
 ARG NPM_VERSION=10
-#ARG CADDY_VERSION=2
+#ARG TRAEFIK_VERSION=2
 
 # Set working directory for all build stages.
 WORKDIR /app
@@ -63,8 +63,8 @@ RUN npx -w home-station svelte-kit sync && PUBLIC_CONTAINERIZED=true npm -w home
 # where the necessary files are copied from the build stage.
 FROM nodejs as final
 
-# Install caddy, docker-cli and supervisor
-#RUN apk add "caddy>${CADDY_VERSION}" docker-cli supervisor
+# Install traefik and supervisor
+#RUN apk add "traefik>${TRAEFIK_VERSION}" supervisor
 
 # Use production node environment by default.
 ENV NODE_ENV=production
@@ -79,7 +79,6 @@ COPY --from=deps /app/node_modules node_modules
 COPY --from=build /app/packages/home-station/drizzle drizzle
 COPY --from=build /app/packages/home-station/build build
 #COPY docker/supervisord.conf /etc/supervisord.conf
-#COPY docker/Caddyfile /etc/caddy/Caddyfile
 
 # Run the application. Set the default type to module skip a package.json file with { "type": "module" }.
 #EXPOSE 80 443

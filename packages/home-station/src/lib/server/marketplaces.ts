@@ -348,7 +348,7 @@ async function parseAppYaml(appYamlPath: string): Promise<AppConfiguration> {
     const validate = ajv.compile<AppConfiguration>(schema);
     const validAppYaml = validate(yamlContent);
     if (!validAppYaml) {
-        throw new Error(`Invalid app.yml in "${appYamlPath}": ${validate.errors}`);
+        throw new Error(`Invalid app.yml in "${appYamlPath}": ${validate.errors?.map((e) => JSON.stringify(e)).join('\n')}`);
     }
     return yamlContent;
 }
