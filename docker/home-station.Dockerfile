@@ -14,7 +14,7 @@ FROM alpine:${ALPINE_VERSION} as nodejs
 
 ARG NODE_VERSION=21
 ARG NPM_VERSION=10
-#ARG TRAEFIK_VERSION=2
+ARG TRAEFIK_VERSION=2
 
 # Set working directory for all build stages.
 WORKDIR /app
@@ -64,7 +64,7 @@ RUN npx -w home-station svelte-kit sync && PUBLIC_CONTAINERIZED=true npm -w home
 FROM nodejs as final
 
 # Install traefik and supervisor
-#RUN apk add "traefik>${TRAEFIK_VERSION}" supervisor
+RUN apk add "traefik>${TRAEFIK_VERSION}" supervisor
 
 # Use production node environment by default.
 ENV NODE_ENV=production
@@ -79,9 +79,15 @@ COPY --from=deps /app/node_modules node_modules
 COPY --from=build /app/packages/home-station/drizzle drizzle
 COPY --from=build /app/packages/home-station/build build
 #COPY docker/supervisord.conf /etc/supervisord.conf
+COPY docker/command.sh /app/command.sh
+# yes the destination file ends with yaml, not yml. This is to override the default alpine traefik config.
+COPY docker/traefik.yml /etc/traefik/traefik.yaml
+COPY docker/dynamic_conf.yml /etc/traefik/dynamic_conf.yml
 
 # Run the application. Set the default type to module skip a package.json file with { "type": "module" }.
-#EXPOSE 80 443
-EXPOSE 3000
+EXPOSE 80 443
+#EXPOSE 3000
+
 #CMD ["/usr/bin/supervisord"]
-CMD [ "node", "--experimental-default-type=module",  "./build/index.js" ]
+#CMD [ "traefik", "&", "node", "--experimental-default-type=module",  "./build/index.js" ]
+CMD [ "sh", "/app/command.sh" ]

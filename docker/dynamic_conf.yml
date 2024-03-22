@@ -1,0 +1,13 @@
+http:
+  routers:
+    home-station:
+      entryPoints:
+        - websecure
+      service: home-station
+      rule: Host(`localhost`)
+
+  services:
+    home-station:
+      loadBalancer:
+        servers:
+          - url: http://localhost:3000

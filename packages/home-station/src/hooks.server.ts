@@ -26,7 +26,7 @@ const init = (async ({ event, resolve }) => {
         logger.error(thrownError);
         return redirect(
             302,
-            `/error?status=500&message=${encodeURIComponent((thrownError as Error)?.message)}`
+            `/error?status=500&message=${encodeURIComponent(String(thrownError))}`
         );
     }
     return await resolve(event);

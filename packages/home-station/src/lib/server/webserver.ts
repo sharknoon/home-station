@@ -1,21 +1,13 @@
 import { logger } from '$lib/server/logger';
 
 export async function init() {
-    try {
-        logger.info('Connecting to webserver');
-
-        // Test the connection to traefik
-        const response = await fetch('http://localhost/api/overview');
-        if (response.status !== 200) {
-            throw new Error(`${response.status} ${await response.text()}`);
-        }
-
-        logger.info('Connected to webserver');
-    } catch (error) {
-        logger.error('Error connecting to webserver: ' + String(error));
-        logger.error('Shutting down home station...');
-        process.exit(1);
+    logger.info('Connecting to webserver');
+    // Test the connection to traefik
+    const response = await fetch('http://localhost/api/overview');
+    if (response.status !== 200) {
+        throw new Error('Error connecting to webserver: ' + response.status + ' ' + response.statusText);
     }
+    logger.info('Connected to webserver');
 }
 
 /**

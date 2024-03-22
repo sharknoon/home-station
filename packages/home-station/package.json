@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "dev": "node scripts/setup-traefik.js && vite dev",
+        "dev": "docker compose -f traefik.compose.yml up -d && vite dev",
         "build": "vite build",
         "preview": "vite preview",
         "test": "npm run test:integration && npm run test:unit",
