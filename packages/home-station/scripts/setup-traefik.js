@@ -18,7 +18,7 @@ try {
             '-v /var/run/docker.sock:/var/run/docker.sock ' +
             '-l traefik.enable=true ' +
             '-l traefik.http.routers.traefik.entrypoints=websecure ' +
-            '-l "traefik.http.routers.traefik.rule=Host(\\`localhost\\`)" ' +
+            '-l traefik.http.routers.traefik.rule=Host(\\"localhost\\") ' +
             '-l traefik.http.routers.traefik.service=api@internal ' +
             'traefik:3.0 ' +
             '--global.checknewversion=false ' +
