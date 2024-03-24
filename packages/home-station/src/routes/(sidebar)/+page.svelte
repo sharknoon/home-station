@@ -52,15 +52,7 @@
                     >
                         <Ellipsis class="h-6 w-6" />
                     </button>
-                    <form
-                        method="post"
-                        class="card p-4 w-max shadow-xl"
-                        data-popup="popupApp-{i}"
-                        use:enhance
-                    >
-                        <input type="hidden" name="marketplaceUrl" value={app.marketplaceUrl} />
-                        <input type="hidden" name="appUuid" value={app.uuid} />
-                        <input type="hidden" name="version" value={app.version} />
+                    <div class="card p-4 w-max shadow-xl" data-popup="popupApp-{i}">
                         <nav class="list-nav">
                             <ul>
                                 <li>
@@ -80,22 +72,45 @@
                                     </a>
                                 </li>
                                 <li class="text-error-500-400-token">
-                                    <button
-                                        type="submit"
-                                        formaction="?/uninstallApp"
-                                        class="w-full text-left"
-                                        on:click|stopPropagation
+                                    <form
+                                        method="post"
+                                        action="?/uninstallApp"
+                                        use:enhance
                                     >
-                                        <Trash_2 class="h-6" />
-                                        <span class="flex-auto">
-                                            {$i18n.t('my-apps.remove-app')}
-                                        </span>
-                                    </button>
+                                        <input
+                                            type="hidden"
+                                            name="marketplaceUrl"
+                                            value={app.marketplaceUrl}
+                                        />
+                                        <input type="hidden" name="appUuid" value={app.uuid} />
+                                        <input type="hidden" name="version" value={app.version} />
+                                        <button
+                                            type="button"
+                                            class="w-full text-left"
+                                            on:click|stopPropagation={async ({ currentTarget }) => {
+                                                modalStore.trigger({
+                                                    type: 'confirm',
+                                                    title: $i18n.t('my-apps.remove-app'),
+                                                    body: $i18n.t('my-apps.remove-app-text', {
+                                                        name: ts(app.name)
+                                                    }),
+                                                    buttonTextCancel: $i18n.t('my-apps.cancel'),
+                                                    buttonTextConfirm: $i18n.t('my-apps.remove'),
+                                                    response: (r) => r && currentTarget.form?.requestSubmit()
+                                                });
+                                            }}
+                                        >
+                                            <Trash_2 class="h-6" />
+                                            <span class="flex-auto">
+                                                {$i18n.t('my-apps.remove-app')}
+                                            </span>
+                                        </button>
+                                    </form>
                                 </li>
                             </ul>
                         </nav>
                         <div class="arrow bg-surface-100-800-token" />
-                    </form>
+                    </div>
                 </div>
                 <div class="mt-2">
                     {ts(app.name)}

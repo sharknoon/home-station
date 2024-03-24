@@ -3,10 +3,8 @@
     import LayoutGrid from 'lucide-svelte/icons/layout-grid';
     import Settings from 'lucide-svelte/icons/settings';
     import Sparkles from 'lucide-svelte/icons/sparkles';
-    import ChevronDown from 'lucide-svelte/icons/chevron-down';
     import LogOut from 'lucide-svelte/icons/log-out';
     import Search from 'lucide-svelte/icons/search';
-    import CircleUserRound from 'lucide-svelte/icons/circle-user-round';
     import SimpleIcons from '$lib/components/SimpleIcons.svelte';
     import { siGithub } from 'simple-icons';
     import type { LayoutData } from './$types';
