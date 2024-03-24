@@ -6,6 +6,12 @@ http:
       service: home-station
       rule: Host(`localhost`)
 
+    api:
+      entryPoints:
+        - api
+      service: api@internal
+      rule: Host(`localhost`) && PathPrefix(`/api`)
+
   services:
     home-station:
       loadBalancer:

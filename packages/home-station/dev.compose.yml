@@ -6,6 +6,7 @@ services:
                 '--global.checknewversion=false',
                 '--global.sendAnonymousUsage=false',
                 '--entrypoints.websecure.address=:80',
+                '--entrypoints.api.address=:8080',
                 '--providers.docker=true',
                 '--providers.docker.exposedbydefault=false',
                 '--providers.docker.network=home-station',
@@ -18,12 +19,13 @@ services:
             - home-station
         ports:
             - 80:80
+            - 8080:8080
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
         labels:
             - traefik.enable=true
-            - traefik.http.routers.traefik.entrypoints=websecure
-            - traefik.http.routers.traefik.rule=Host(`localhost`)
+            - traefik.http.routers.traefik.entrypoints=api
+            - traefik.http.routers.traefik.rule=Host(`localhost`) && PathPrefix(`/api`)
             - traefik.http.routers.traefik.service=api@internal
 
 volumes:
