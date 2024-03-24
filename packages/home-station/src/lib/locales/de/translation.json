@@ -1,4 +1,34 @@
 {
+    "marketplace-app": {
+        "category": {
+            "books": "Bücher",
+            "medical": "Medizin",
+            "business": "Wirtschaft",
+            "music": "Musik",
+            "developer-tools": "Entwickler-Tools",
+            "navigation": "Navigation",
+            "education": "Bildung",
+            "news": "Nachrichten",
+            "entertainment": "Unterhaltung",
+            "photo-and-video": "Foto und Video",
+            "finance": "Finanzen",
+            "productivity": "Produktivität",
+            "food-and-drink": "Essen und Trinken",
+            "reference": "Nachschlagewerke",
+            "games": "Spiele",
+            "graphics-and-design": "Grafik und Design",
+            "shopping": "Shopping",
+            "health-and-fitness": "Gesundheit und Fitness",
+            "social-networking": "Soziale Netze",
+            "lifestyle": "Lifestyle",
+            "sports": "Sport",
+            "kids": "Kinder",
+            "travel": "Reisen",
+            "magazines-and-newspapers": "Zeitungen und Zeitschriften",
+            "utilities": "Dienstprogramme",
+            "weather": "Wetter"
+        }
+    },
     "tasks": {
         "update-marketplace-apps": "Abrufen von Apps aus Marktplätzen",
         "delete-expired-sessions": "Löschen von abgelaufenen Login-Sitzungen",
@@ -53,6 +83,10 @@
         "open": "Öffnen",
         "start": "Starten",
         "apps": {
+            "remove-app": "App entfernen",
+            "remove-app-text": "Möchsten Sie wirklich die App \"{{name}}\" entfernen? Alle zugehörigen Daten werden gelöscht und können nicht wiederhergestellt werden!",
+            "cancel": "Abbrechen",
+            "remove": "Entfernen",
             "uninstall": "Deinstallieren",
             "category": "Kategorie",
             "developer": "Entwickler",

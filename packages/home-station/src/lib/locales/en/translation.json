@@ -1,4 +1,34 @@
 {
+    "marketplace-app": {
+        "category": {
+            "books": "Books",
+            "medical": "Medical",
+            "business": "Business",
+            "music": "Music",
+            "developer-tools": "Developer tools",
+            "navigation": "Navigation",
+            "education": "Education",
+            "news": "News",
+            "entertainment": "Entertainment",
+            "photo-and-video": "Photo & video",
+            "finance": "Finance",
+            "productivity": "Productivity",
+            "food-and-drink": "Food & drink",
+            "reference": "Reference",
+            "games": "Games",
+            "graphics-and-design": "Graphics & design",
+            "shopping": "Shopping",
+            "health-and-fitness": "Health & fitness",
+            "social-networking": "Social networking",
+            "lifestyle": "Lifestyle",
+            "sports": "Sports",
+            "kids": "Kids",
+            "travel": "Travel",
+            "magazines-and-newspapers": "Magazines & newspapers",
+            "utilities": "Utilities",
+            "weather": "Weather"
+        }
+    },
     "tasks": {
         "update-marketplace-apps": "Fetch apps from marketplaces",
         "delete-expired-sessions": "Delete expired login-sessions",
@@ -53,6 +83,10 @@
         "open": "Open",
         "start": "Start",
         "apps": {
+            "remove-app": "Remove app",
+            "remove-app-text": "Are you sure you want to remove the app {{name}}? All data will be lost and cannot be restored.",
+            "cancel": "Cancel",
+            "remove": "Remove",
             "uninstall": "Uninstall",
             "category": "Category",
             "developer": "Developer",

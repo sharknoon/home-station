@@ -1,6 +1,7 @@
 <script lang="ts">
     import type { PageData } from './$types';
     import { enhance } from '$app/forms';
+    import { getModalStore } from '@skeletonlabs/skeleton';
     import ExternalLink from 'lucide-svelte/icons/external-link';
     import Globe from 'lucide-svelte/icons/globe';
     import Code from 'lucide-svelte/icons/code';
@@ -17,7 +18,8 @@
     import AppButton from '../../AppButton.svelte';
 
     export let data: PageData;
-    $: marketplaceUrl = new URL(data.app.marketplaceUrl);
+
+    // shields.io badge for GitHub / GitLab stars
 
     let shieldsUrl: string | undefined = undefined;
     if (data.app.links.repository.includes('github.com')) {
@@ -34,6 +36,12 @@
             shieldsUrl = `https://img.shields.io/gitlab/stars/${match[1]}%2F${match[2]}?style=social`;
         }
     }
+
+    // Uninstall button
+
+    const modalStore = getModalStore();
+
+    // Screenshots
 
     let elemScreenshots: HTMLDivElement;
 
@@ -55,11 +63,15 @@
         elemScreenshots.scroll(x, 0);
     }
 
+    // Details at the bottom
+
     const dateTimeFormatter = new Intl.DateTimeFormat($i18n.language, {
         year: 'numeric',
         month: 'short',
         day: 'numeric'
     });
+
+    $: marketplaceUrl = new URL(data.app.marketplaceUrl);
 </script>
 
 <header class="h-32 max-h-32 p-2 bg-white">
@@ -91,7 +103,22 @@
                         />
                         <input type="hidden" name="appUuid" value={data.app.uuid} />
                         <input type="hidden" name="version" value={data.app.version} />
-                        <button type="submit" class="btn variant-ringed-error">
+                        <button
+                            type="button"
+                            class="btn variant-ringed-error"
+                            on:click={async ({ currentTarget }) => {
+                                modalStore.trigger({
+                                    type: 'confirm',
+                                    title: $i18n.t('discover.apps.remove-app'),
+                                    body: $i18n.t('discover.apps.remove-app-text', {
+                                        name: ts(data.app.name)
+                                    }),
+                                    buttonTextCancel: $i18n.t('discover.apps.cancel'),
+                                    buttonTextConfirm: $i18n.t('discover.apps.remove'),
+                                    response: (r) => r && currentTarget.form?.requestSubmit()
+                                });
+                            }}
+                        >
                             <Trash_2 class="mr-2" />
                             {$i18n.t('discover.apps.uninstall')}
                         </button>

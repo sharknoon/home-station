@@ -59,31 +59,57 @@ export const marketplaceApps = sqliteTable('marketplace_apps', {
     developer: text('developer').notNull(),
     category: text('category', {
         enum: [
+            // i18n.t('marketplace-app.category.books')
             'books',
+            // i18n.t('marketplace-app.category.medical')
             'medical',
+            // i18n.t('marketplace-app.category.business')
             'business',
+            // i18n.t('marketplace-app.category.music')
             'music',
+            // i18n.t('marketplace-app.category.developer-tools')
             'developer-tools',
+            // i18n.t('marketplace-app.category.navigation')
             'navigation',
+            // i18n.t('marketplace-app.category.education')
             'education',
+            // i18n.t('marketplace-app.category.news')
             'news',
+            // i18n.t('marketplace-app.category.entertainment')
             'entertainment',
+            // i18n.t('marketplace-app.category.photo-and-video')
             'photo-and-video',
+            // i18n.t('marketplace-app.category.finance')
             'finance',
+            // i18n.t('marketplace-app.category.productivity')
             'productivity',
+            // i18n.t('marketplace-app.category.food-and-drink')
             'food-and-drink',
+            // i18n.t('marketplace-app.category.reference')
             'reference',
+            // i18n.t('marketplace-app.category.games')
             'games',
+            // i18n.t('marketplace-app.category.graphics-and-design')
             'graphics-and-design',
+            // i18n.t('marketplace-app.category.shopping')
             'shopping',
+            // i18n.t('marketplace-app.category.health-and-fitness')
             'health-and-fitness',
+            // i18n.t('marketplace-app.category.social-networking')
             'social-networking',
+            // i18n.t('marketplace-app.category.lifestyle')
             'lifestyle',
+            // i18n.t('marketplace-app.category.sports')
             'sports',
+            // i18n.t('marketplace-app.category.kids')
             'kids',
+            // i18n.t('marketplace-app.category.travel')
             'travel',
+            // i18n.t('marketplace-app.category.magazines-and-newspapers')
             'magazines-and-newspapers',
+            // i18n.t('marketplace-app.category.utilities')
             'utilities',
+            // i18n.t('marketplace-app.category.weather')
             'weather'
         ]
     }).notNull(),
