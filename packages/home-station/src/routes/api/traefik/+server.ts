@@ -4,18 +4,37 @@ import type { RequestHandler } from './$types';
 import { installedApps } from '$lib/server/apps';
 
 const host = 'localhost';
+
 const appRouters = derived(installedApps, ($installedApps) => {
-    return $installedApps.flatMap((app) => {
-        return (app.http ?? []).map((h) => {
-            return {
-                [app.uuid]: {
-                    entryPoints: [dev ? 'web' : 'websecure'],
-                    service: app.uuid,
-                    rule: dev ? `Host(\`${h.subdomain}.localhost\`)` : `Host(\`${h.subdomain}.${host}\`)`
+    const routers: Record<string, object> = {};
+    for (const app of $installedApps) {
+        for (const h of app.http ?? []) {
+            routers[`${app.uuid}-${h.subdomain}`] = {
+                entryPoints: [dev ? 'web' : 'websecure'],
+                service: `${app.uuid}-${h.subdomain}`,
+                rule: dev ? `Host(\`${h.subdomain}.localhost\`)` : `Host(\`${h.subdomain}.${host}\`)`
+            };
+        }
+    }
+    return routers;
+});
+
+const appServices = derived(installedApps, ($installedApps) => {
+    const services: Record<string, object> = {};
+    for (const app of $installedApps) {
+        for (const h of app.http ?? []) {
+            services[`${app.uuid}-${h.subdomain}`] = {
+                loadBalancer: {
+                    servers: [
+                        {
+                            url: `http://${app.uuid}:${h.port}`
+                        }
+                    ]
                 }
             };
-        });
-    });
+        }
+    }
+    return services;
 });
 
 export const GET: RequestHandler = async () => {
@@ -45,7 +64,8 @@ export const GET: RequestHandler = async () => {
                             }
                         ]
                     }
-                }
+                },
+                ...get(appServices)
             }
         }
     };
