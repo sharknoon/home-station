@@ -27,7 +27,7 @@ const appServices = derived(installedApps, ($installedApps) => {
                 loadBalancer: {
                     servers: [
                         {
-                            url: `http://${app.uuid}:${h.port}`
+                            url: `http://${h.hostname}:${h.port}`
                         }
                     ]
                 }

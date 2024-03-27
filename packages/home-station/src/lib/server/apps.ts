@@ -68,9 +68,14 @@ export type InstalledApp = MarketplaceApp & {
     installedVersion: string;
 };
 
-export const installedApps = writable<InstalledApp[]>(await refreshInstalledApps());
+export const installedApps = writable<InstalledApp[]>(await getInstalledApps());
 
 async function refreshInstalledApps() {
+    const apps = await getInstalledApps();
+    installedApps.set(apps);
+}
+
+async function getInstalledApps(): Promise<InstalledApp[]> {
     const containers = await containerEngine.listContainers({ all: true });
 
     const appContainers = containers
@@ -120,6 +125,5 @@ async function refreshInstalledApps() {
             installedVersion: container?.version ?? '0.0.0'
         };
     });
-
-    installedApps.set(apps);
+    return apps;
 }

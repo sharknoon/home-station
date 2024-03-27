@@ -464,6 +464,13 @@ const appSchema = appRawSchema as {
         network: {
             type: 'object';
             properties: {
+                hostname: {
+                    title: 'Hostname';
+                    description: 'The hostname of the container. Is needs to be a UUID to avoid any conflicts with apps from other repositories. This is needed for the reverse proxy to know which container should receive the traffic.';
+                    examples: ['018e7ff1-5f06-7e21-be3d-08acbb6240ec'];
+                    type: 'string';
+                    format: 'uuid';
+                };
                 port: {
                     title: 'Port';
                     description: 'The port to be exposed.';
@@ -485,7 +492,7 @@ const appSchema = appRawSchema as {
                     };
                 };
             };
-            required: ['port', 'description'];
+            required: ['hostname', 'port', 'description'];
         };
     };
 };
@@ -543,6 +550,7 @@ const test: AppConfiguration = {
     http: [
         {
             default: true,
+            hostname: '018e7ff1-5f06-7e21-be3d-08acbb6240ec',
             port: 12345,
             description: {
                 en: 'The port for clients to connect to.',
