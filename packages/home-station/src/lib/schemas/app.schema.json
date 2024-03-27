@@ -8,18 +8,14 @@
         "uuid": {
             "title": "UUID",
             "description": "The universally unique id of the app. You can generate a UUID here: https://www.uuidgenerator.net/version7 .",
-            "examples": [
-                "018e2df9-aa80-771c-98ba-0f2e68a302ab"
-            ],
+            "examples": ["018e2df9-aa80-771c-98ba-0f2e68a302ab"],
             "type": "string",
             "format": "uuid"
         },
         "name": {
             "title": "Name",
             "description": "The name of the app.",
-            "examples": [
-                "My App"
-            ],
+            "examples": ["My App"],
             "type": "object",
             "$ref": "#/$defs/localizedString",
             "additionalProperties": {
@@ -45,18 +41,14 @@
         "icon": {
             "title": "Icon",
             "description": "The icon of the app. It should be a square PNG or a SVG file. Transparent backgrounds are filled in with white. If the icon isn't square, the css property `object-fit: contain` will be applied.",
-            "examples": [
-                "icon.svg"
-            ],
+            "examples": ["icon.svg"],
             "type": "string",
             "format": "uri-reference"
         },
         "banner": {
             "title": "Banner",
             "description": "The banner of the app. It should be a PNG or a SVG file. The aspect ratio should be 16:9. Transparent backgrounds are filled in with white. If the banner isn't 16:9, the css property `object-fit: contain` will be applied.",
-            "examples": [
-                "banner.png"
-            ],
+            "examples": ["banner.png"],
             "type": "string",
             "format": "uri-reference"
         },
@@ -65,10 +57,7 @@
             "description": "Screenshots of the app. They should be PNG or SVG files. Transparent backgrounds are filled in with white.",
             "type": "array",
             "items": {
-                "examples": [
-                    "screenshot1.png",
-                    "screenshot2.png"
-                ],
+                "examples": ["screenshot1.png", "screenshot2.png"],
                 "type": "string",
                 "format": "uri-reference"
             }
@@ -81,18 +70,14 @@
                 "repository": {
                     "title": "Repository link",
                     "description": "The repository of the app.",
-                    "examples": [
-                        "https://github.com/example/example"
-                    ],
+                    "examples": ["https://github.com/example/example"],
                     "type": "string",
                     "format": "uri"
                 },
                 "website": {
                     "title": "Website link",
                     "description": "The website of the app.",
-                    "examples": [
-                        "https://example.com"
-                    ],
+                    "examples": ["https://example.com"],
                     "type": "string",
                     "format": "uri"
                 },
@@ -106,9 +91,7 @@
                             "name": {
                                 "title": "Link name",
                                 "description": "The name of the custom link.",
-                                "examples": [
-                                    "Documentation"
-                                ],
+                                "examples": ["Documentation"],
                                 "type": "object",
                                 "$ref": "#/$defs/localizedString",
                                 "additionalProperties": {
@@ -120,41 +103,30 @@
                             "url": {
                                 "title": "Link url",
                                 "description": "The url of the custom link.",
-                                "examples": [
-                                    "https://example.com"
-                                ],
+                                "examples": ["https://example.com"],
                                 "type": "string",
                                 "format": "uri"
                             }
                         },
                         "additionalProperties": false,
-                        "required": [
-                            "name",
-                            "url"
-                        ]
+                        "required": ["name", "url"]
                     }
                 }
             },
             "additionalProperties": false,
-            "required": [
-                "repository"
-            ]
+            "required": ["repository"]
         },
         "publishedAt": {
             "title": "Published at",
             "description": "The date and time when the app was published.",
-            "examples": [
-                "2024-03-11T15:48:54Z"
-            ],
+            "examples": ["2024-03-11T15:48:54Z"],
             "type": "string",
             "format": "date-time"
         },
         "developer": {
             "title": "Developer",
             "description": "The developer of the app.",
-            "examples": [
-                "John Doe"
-            ],
+            "examples": ["John Doe"],
             "type": "string",
             "minLength": 2,
             "maxLength": 30
@@ -162,9 +134,7 @@
         "category": {
             "title": "Category",
             "description": "The category of the app.",
-            "examples": [
-                "productivity"
-            ],
+            "examples": ["productivity"],
             "type": "string",
             "enum": [
                 "books",
@@ -198,9 +168,7 @@
         "license": {
             "title": "License",
             "description": "The license of the app.",
-            "examples": [
-                "Apache-2.0"
-            ],
+            "examples": ["Apache-2.0"],
             "type": "string",
             "minLength": 2
         },
@@ -214,9 +182,7 @@
                     "id": {
                         "title": "ID",
                         "description": "The id of the configuration option.",
-                        "examples": [
-                            "log-level"
-                        ],
+                        "examples": ["log-level"],
                         "type": "string",
                         "minLength": 2,
                         "maxLength": 30,
@@ -225,9 +191,7 @@
                     "name": {
                         "title": "Name",
                         "description": "The name of the configuration option.",
-                        "examples": [
-                            "Log level"
-                        ],
+                        "examples": ["Log level"],
                         "type": "object",
                         "$ref": "#/$defs/localizedString",
                         "additionalProperties": {
@@ -253,9 +217,7 @@
                     "type": {
                         "title": "Type",
                         "description": "The type of the configuration option.",
-                        "examples": [
-                            "select"
-                        ],
+                        "examples": ["select"],
                         "type": "string",
                         "enum": [
                             "string",
@@ -278,9 +240,7 @@
                     "environmentVariable": {
                         "title": "Environment variable",
                         "description": "The environment variable that is being set by the configuration option. Should be in uppercase and snake case. Example: `MY_ENVIRONMENT_VARIABLE`.",
-                        "examples": [
-                            "LOG_LEVEL"
-                        ],
+                        "examples": ["LOG_LEVEL"],
                         "type": "string"
                     },
                     "required": {
@@ -292,9 +252,7 @@
                     "default": {
                         "title": "Default",
                         "description": "The default value of the configuration option. This is mandatory if the `required` property is set to `false`.",
-                        "examples": [
-                            "info"
-                        ],
+                        "examples": ["info"],
                         "type": "string"
                     },
                     "selectOptions": {
@@ -302,11 +260,7 @@
                         "description": "The possible options of an select field. Only required if the type is `select`.",
                         "type": "array",
                         "items": {
-                            "examples": [
-                                "info",
-                                "warn",
-                                "error"
-                            ],
+                            "examples": ["info", "warn", "error"],
                             "type": "string"
                         },
                         "minItems": 2
@@ -341,30 +295,20 @@
                     "validation": {
                         "title": "Validation",
                         "description": "The regex pattern that the value of the configuration option has to match.",
-                        "examples": [
-                            "^[a-z0-9]+(?:-[a-z0-9]+)*$"
-                        ],
+                        "examples": ["^[a-z0-9]+(?:-[a-z0-9]+)*$"],
                         "type": "string",
                         "format": "regex"
                     },
                     "validationScript": {
                         "title": "Validation script",
                         "description": "The validation script of the configuration option. The script should return a boolean value.",
-                        "examples": [
-                            "myValidationScript.js"
-                        ],
+                        "examples": ["myValidationScript.js"],
                         "type": "string",
                         "format": "uri-reference"
                     }
                 },
                 "additionalProperties": false,
-                "required": [
-                    "id",
-                    "name",
-                    "description",
-                    "type",
-                    "environmentVariable"
-                ],
+                "required": ["id", "name", "description", "type", "environmentVariable"],
                 "allOf": [
                     {
                         "if": {
@@ -375,9 +319,7 @@
                             }
                         },
                         "then": {
-                            "required": [
-                                "default"
-                            ]
+                            "required": ["default"]
                         }
                     },
                     {
@@ -389,9 +331,7 @@
                             }
                         },
                         "then": {
-                            "required": [
-                                "selectOptions"
-                            ]
+                            "required": ["selectOptions"]
                         }
                     }
                 ]
@@ -408,9 +348,7 @@
                         "const": true
                     }
                 },
-                "required": [
-                    "default"
-                ]
+                "required": ["default"]
             },
             "minContains": 1,
             "maxContains": 1,
@@ -421,9 +359,7 @@
                     "subdomain": {
                         "title": "Subdomain",
                         "description": "The subdomain of the app.",
-                        "examples": [
-                            "myapp"
-                        ],
+                        "examples": ["myapp"],
                         "type": "string",
                         "minLength": 2,
                         "maxLength": 30
@@ -436,9 +372,7 @@
                     }
                 },
                 "unevaluatedProperties": false,
-                "required": [
-                    "subdomain"
-                ]
+                "required": ["subdomain"]
             },
             "uniqueItems": true
         },
@@ -472,9 +406,7 @@
                 "postInstall": {
                     "title": "Post install",
                     "description": "The notification that is being send after the app has been installed.",
-                    "examples": [
-                        "Use the username 'demo' and the password 'demo' to login."
-                    ],
+                    "examples": ["Use the username 'demo' and the password 'demo' to login."],
                     "type": "object",
                     "$ref": "#/$defs/localizedString",
                     "additionalProperties": {
@@ -500,19 +432,13 @@
     ],
     "oneOf": [
         {
-            "required": [
-                "http"
-            ]
+            "required": ["http"]
         },
         {
-            "required": [
-                "udp"
-            ]
+            "required": ["udp"]
         },
         {
-            "required": [
-                "tcp"
-            ]
+            "required": ["tcp"]
         }
     ],
     "$defs": {
@@ -526,14 +452,9 @@
                 }
             },
             "propertyNames": {
-                "enum": [
-                    "en",
-                    "de"
-                ]
+                "enum": ["en", "de"]
             },
-            "required": [
-                "en"
-            ]
+            "required": ["en"]
         },
         "network": {
             "type": "object",
@@ -541,9 +462,7 @@
                 "port": {
                     "title": "Port",
                     "description": "The port to be exposed.",
-                    "examples": [
-                        12345
-                    ],
+                    "examples": [12345],
                     "type": "integer",
                     "minimum": 0,
                     "maximum": 65535
@@ -551,9 +470,7 @@
                 "description": {
                     "title": "Description",
                     "description": "A description of the network.",
-                    "examples": [
-                        "The port for clients to connect to."
-                    ],
+                    "examples": ["The port for clients to connect to."],
                     "type": "object",
                     "$ref": "#/$defs/localizedString",
                     "additionalProperties": {
@@ -563,10 +480,7 @@
                     }
                 }
             },
-            "required": [
-                "port",
-                "description"
-            ]
+            "required": ["port", "description"]
         }
     }
 }

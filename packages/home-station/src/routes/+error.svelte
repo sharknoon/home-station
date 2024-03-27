@@ -50,4 +50,6 @@
             {/if}
         </div>
     </aside>
+
+    <a href="/" class="btn variant-filled-primary">{$i18n.t('error.back-to-home')}</a>
 </div>

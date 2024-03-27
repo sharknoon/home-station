@@ -1,6 +1,6 @@
 <script lang="ts">
     import { enhance } from '$app/forms';
-    import { ProgressRadial, getModalStore, popup } from '@skeletonlabs/skeleton';
+    import { ProgressRadial } from '@skeletonlabs/skeleton';
     import HardDriveDownload from 'lucide-svelte/icons/hard-drive-download';
     import Play from 'lucide-svelte/icons/play';
     import { i18n } from '$lib/i18n';
@@ -13,7 +13,6 @@
     export let size: 'small' | 'large' = 'large';
     export let type: 'primary' | 'soft' = 'primary';
 
-    const modalStore = getModalStore();
     let appInstallProgress = 0;
     let appInstallStatus = installedApps.some((app) => app.uuid === app.uuid)
         ? 'installed'

@@ -4,7 +4,7 @@ import { fail } from '@sveltejs/kit';
 import { deleteMarketplace } from '$lib/server/marketplaces';
 import { marketplaceApps } from '$lib/server/schema';
 import { eq } from 'drizzle-orm';
-import { getInstalledApps, installApp } from '$lib/server/apps';
+import { installedApps, installApp } from '$lib/server/apps';
 import { dispatchEvent } from '$lib/server/events';
 import { i18n, ts } from '$lib/i18n';
 import { get } from 'svelte/store';
@@ -17,8 +17,7 @@ export const load = (async () => {
     const marketplaces = await db.query.marketplaces.findMany({
         columns: { gitPassword: false }
     });
-    const installedApps = await getInstalledApps();
-    return { marketplaceApps, marketplaces, installedApps };
+    return { marketplaceApps, marketplaces, installedApps: get(installedApps) };
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
@@ -38,7 +37,7 @@ export const actions: Actions = {
         // Get necessary data
         const data = await request.formData();
         const appUuid = data.get('appUuid')?.toString() ?? '';
-        
+
         // Validation
         if (!appUuid) {
             return fail(400, { appUuid, invalid: true });
@@ -53,10 +52,8 @@ export const actions: Actions = {
         dispatchEvent('appStatus', { appUuid, status: 'installing', progress: 0 });
 
         try {
-            await installApp(
-                marketplaceApp,
-                (progress) =>
-                    dispatchEvent('appStatus', { appUuid, status: 'installing', progress })
+            await installApp(marketplaceApp, (progress) =>
+                dispatchEvent('appStatus', { appUuid, status: 'installing', progress })
             );
         } catch (e) {
             sendNotification(

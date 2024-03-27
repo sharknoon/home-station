@@ -3,7 +3,8 @@ import { eq } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
 import { marketplaceApps } from '$lib/server/schema';
 import { redirect } from '@sveltejs/kit';
-import { getInstalledApps } from '$lib/server/apps';
+import { installedApps } from '$lib/server/apps';
+import { get } from 'svelte/store';
 
 export const load = (async ({ params }) => {
     const app = await db.query.marketplaceApps.findFirst({
@@ -12,7 +13,6 @@ export const load = (async ({ params }) => {
     if (!app) {
         redirect(302, '/discover');
     }
-    const installedApps = await getInstalledApps();
 
-    return { app, installedApps };
+    return { app, installedApps: get(installedApps) };
 }) satisfies PageServerLoad;

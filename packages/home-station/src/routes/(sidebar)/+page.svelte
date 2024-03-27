@@ -72,11 +72,7 @@
                                     </a>
                                 </li>
                                 <li class="text-error-500-400-token">
-                                    <form
-                                        method="post"
-                                        action="?/uninstallApp"
-                                        use:enhance
-                                    >
+                                    <form method="post" action="?/uninstallApp" use:enhance>
                                         <input
                                             type="hidden"
                                             name="marketplaceUrl"
@@ -96,7 +92,8 @@
                                                     }),
                                                     buttonTextCancel: $i18n.t('my-apps.cancel'),
                                                     buttonTextConfirm: $i18n.t('my-apps.remove'),
-                                                    response: (r) => r && currentTarget.form?.requestSubmit()
+                                                    response: (r) =>
+                                                        r && currentTarget.form?.requestSubmit()
                                                 });
                                             }}
                                         >

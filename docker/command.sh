@@ -1,9 +1,11 @@
 #!/bin/bash
 
 # Start traefik
-traefik --config-file /app/traefik.yml &
+# The configuration file should be autodetected, it is specified just for clarity
+traefik --config-file /etc/traefik/traefik.yaml &
 
 # Start home-station
+# Set the default type to module skip a package.json file with { "type": "module" }
 node --experimental-default-type=module /app/build/index.js &
 
 # Wait for any process to exit

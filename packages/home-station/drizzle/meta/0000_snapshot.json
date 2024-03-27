@@ -1,80 +1,9 @@
 {
     "version": "5",
     "dialect": "sqlite",
-    "id": "bc494ba7-09ec-4c05-877d-ac41105b0ac7",
+    "id": "5a9a82fa-762f-411d-8cfc-21f0d091fd63",
     "prevId": "00000000-0000-0000-0000-000000000000",
     "tables": {
-        "container_engines": {
-            "name": "container_engines",
-            "columns": {
-                "id": {
-                    "name": "id",
-                    "type": "integer",
-                    "primaryKey": true,
-                    "notNull": true,
-                    "autoincrement": true
-                },
-                "name": {
-                    "name": "name",
-                    "type": "text",
-                    "primaryKey": false,
-                    "notNull": true,
-                    "autoincrement": false
-                },
-                "type": {
-                    "name": "type",
-                    "type": "text",
-                    "primaryKey": false,
-                    "notNull": true,
-                    "autoincrement": false
-                },
-                "socket_path": {
-                    "name": "socket_path",
-                    "type": "text",
-                    "primaryKey": false,
-                    "notNull": false,
-                    "autoincrement": false
-                },
-                "host": {
-                    "name": "host",
-                    "type": "text",
-                    "primaryKey": false,
-                    "notNull": false,
-                    "autoincrement": false
-                },
-                "ca": {
-                    "name": "ca",
-                    "type": "text",
-                    "primaryKey": false,
-                    "notNull": false,
-                    "autoincrement": false
-                },
-                "cert": {
-                    "name": "cert",
-                    "type": "text",
-                    "primaryKey": false,
-                    "notNull": false,
-                    "autoincrement": false
-                },
-                "key": {
-                    "name": "key",
-                    "type": "text",
-                    "primaryKey": false,
-                    "notNull": false,
-                    "autoincrement": false
-                }
-            },
-            "indexes": {
-                "container_engines_name_unique": {
-                    "name": "container_engines_name_unique",
-                    "columns": ["name"],
-                    "isUnique": true
-                }
-            },
-            "foreignKeys": {},
-            "compositePrimaryKeys": {},
-            "uniqueConstraints": {}
-        },
         "hostnames": {
             "name": "hostnames",
             "columns": {
@@ -182,7 +111,7 @@
                     "name": "license",
                     "type": "text",
                     "primaryKey": false,
-                    "notNull": true,
+                    "notNull": false,
                     "autoincrement": false
                 },
                 "config": {
@@ -196,7 +125,7 @@
                     "name": "http",
                     "type": "text",
                     "primaryKey": false,
-                    "notNull": true,
+                    "notNull": false,
                     "autoincrement": false
                 },
                 "messages": {

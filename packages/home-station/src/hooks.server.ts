@@ -1,10 +1,9 @@
-import { db } from '$lib/server/db';
 import { redirect, type Handle } from '@sveltejs/kit';
-import { lucia } from '$lib/server/auth';
 import { sequence } from '@sveltejs/kit/hooks';
 import { init as initContainerEngine } from '$lib/server/containerengines';
-import { init as initWebserver } from '$lib/server/webserver';
 import { init as initTasks } from '$lib/server/tasks';
+import { db } from '$lib/server/db';
+import { lucia } from '$lib/server/auth';
 import { logger } from '$lib/server/logger';
 
 // These functions run once on startup
@@ -12,8 +11,6 @@ let thrownError: unknown = undefined;
 try {
     // Creates the home-station network if it does not exist
     await initContainerEngine();
-    // Start the webserver to serve the apps with https support on subdomains
-    await initWebserver();
     // Schedule the tasks
     await initTasks();
 } catch (err) {
@@ -62,23 +59,22 @@ const authentication = (async ({ event, resolve }) => {
     return resolve(event);
 }) satisfies Handle;
 
+const unauthorizedPaths = ['/setup', '/login', '/error', '/api/traefik'];
+
 const authorization = (async ({ event, resolve }) => {
     // Check if the initial setup is completed
     const hasUsers = !!(await db.query.users.findFirst());
     if (
         !hasUsers &&
-        !event.url.pathname.startsWith('/setup') &&
-        !event.url.pathname.startsWith('/error')
+        !unauthorizedPaths
+            .filter((p) => p !== '/login')
+            .some((p) => event.url.pathname.startsWith(p))
     ) {
         return redirect(303, '/setup');
     }
 
-    // Only allow unauthenticated access to /setup, /login and /error
-    if (
-        !event.url.pathname.startsWith('/setup') &&
-        !event.url.pathname.startsWith('/login') &&
-        !event.url.pathname.startsWith('/error')
-    ) {
+    // Only allow unauthenticated access to some pages (see unauthorizedPaths array above)
+    if (!unauthorizedPaths.some((p) => event.url.pathname.startsWith(p))) {
         if (!event.locals.user) return redirect(303, '/login');
     }
 

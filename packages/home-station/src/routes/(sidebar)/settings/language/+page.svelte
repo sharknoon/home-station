@@ -2,7 +2,6 @@
     import type { ActionData } from './$types';
     import { dev } from '$app/environment';
     import { enhance } from '$app/forms';
-    import Save from 'lucide-svelte/icons/save';
     import { i18n } from '$lib/i18n';
     import { sendNotification } from '$lib/notifications';
 

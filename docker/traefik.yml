@@ -19,16 +19,14 @@ entryPoints:
     address: :8080
 
 providers:
-  file:
-    filename: /etc/traefik/dynamic_conf.yml
-  docker:
-    exposedByDefault: false
-    network: "home-station"
+  http:
+    endpoint: "http://127.0.0.1:3000/api/traefik"
 
 api:
 
 certificatesResolvers:
   letsencrypt:
     acme:
-      email: "frank.josua@gmail.com"
+      # Email address needs to be set via environment variable TRAEFIK_CERTIFICATESRESOLVERS_LETSENCRYPT_ACME_EMAIL
+      #email:
       storage: "acme.json"

@@ -1,14 +1,3 @@
-CREATE TABLE `container_engines` (
-	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
-	`name` text NOT NULL,
-	`type` text NOT NULL,
-	`socket_path` text,
-	`host` text,
-	`ca` text,
-	`cert` text,
-	`key` text
-);
---> statement-breakpoint
 CREATE TABLE `hostnames` (
 	`host` text PRIMARY KEY NOT NULL
 );
@@ -26,9 +15,9 @@ CREATE TABLE `marketplace_apps` (
 	`published_at` text NOT NULL,
 	`developer` text NOT NULL,
 	`category` text NOT NULL,
-	`license` text NOT NULL,
+	`license` text,
 	`config` text,
-	`http` text NOT NULL,
+	`http` text,
 	`messages` text,
 	FOREIGN KEY (`marketplace_url`) REFERENCES `marketplaces`(`git_remote_url`) ON UPDATE no action ON DELETE cascade
 );
@@ -54,5 +43,4 @@ CREATE TABLE `users` (
 	`theme` text DEFAULT 'skeleton' NOT NULL
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX `container_engines_name_unique` ON `container_engines` (`name`);--> statement-breakpoint
 CREATE UNIQUE INDEX `users_username_unique` ON `users` (`username`);

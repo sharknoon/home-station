@@ -63,8 +63,8 @@ RUN npx -w home-station svelte-kit sync && PUBLIC_CONTAINERIZED=true npm -w home
 # where the necessary files are copied from the build stage.
 FROM nodejs as final
 
-# Install traefik and supervisor
-RUN apk add "traefik>${TRAEFIK_VERSION}" supervisor
+# Install traefik
+RUN apk add "traefik>${TRAEFIK_VERSION}"
 
 # Use production node environment by default.
 ENV NODE_ENV=production
@@ -73,21 +73,20 @@ ENV NODE_ENV=production
 # https://kit.svelte.dev/docs/adapter-node#environment-variables-origin-protocolheader-hostheader-and-port-header
 ENV ORIGIN=http://localhost:3000
 
-# Copy the production dependencies from the deps stage and also
-# the built application from the build stage into the image.
+# Copy the production dependencies from the deps stage.
 COPY --from=deps /app/node_modules node_modules
+# Copy the db migration files from the build stage.
 COPY --from=build /app/packages/home-station/drizzle drizzle
+# Copy the build output from the build stage.
 COPY --from=build /app/packages/home-station/build build
-#COPY docker/supervisord.conf /etc/supervisord.conf
-COPY docker/command.sh /app/command.sh
-# yes the destination file ends with yaml, not yml. This is to override the default alpine traefik config.
+# Copy the traefik static configuration file.
+# The file ends with yaml, not yml on purpose. This is to override the default alpine traefik config.
 COPY docker/traefik.yml /etc/traefik/traefik.yaml
-COPY docker/dynamic_conf.yml /etc/traefik/dynamic_conf.yml
+# Copy the command script to run the application.
+COPY docker/command.sh /app/command.sh
 
-# Run the application. Set the default type to module skip a package.json file with { "type": "module" }.
+# 80: HTTP, 443: HTTPS
 EXPOSE 80 443
-#EXPOSE 3000
 
-#CMD ["/usr/bin/supervisord"]
-#CMD [ "traefik", "&", "node", "--experimental-default-type=module",  "./build/index.js" ]
+# Run the application.
 CMD [ "sh", "/app/command.sh" ]

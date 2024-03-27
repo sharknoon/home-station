@@ -10,6 +10,7 @@ import { down, up } from '$lib/server/compose';
 import { db } from '$lib/server/db';
 import { containerEngine } from '$lib/server/containerengines';
 import { marketplaceApps } from '$lib/server/schema';
+import { writable } from 'svelte/store';
 
 /**
  * Installs an app from the marketplace.
@@ -38,6 +39,7 @@ export async function installApp(
         versionToInstall
     );
     await up(composePath, uuid, undefined, progress);
+    await refreshInstalledApps();
 }
 
 /**
@@ -58,6 +60,7 @@ export async function uninstallApp(
         version
     );
     await down(composePath, undefined, appUuid, false);
+    await refreshInstalledApps();
 }
 
 export type InstalledApp = MarketplaceApp & {
@@ -65,13 +68,9 @@ export type InstalledApp = MarketplaceApp & {
     installedVersion: string;
 };
 
-/**
- * Retrieves the list of installed apps from docker.
- * It looks for the `home-station.enable: true` label of containers.
- * @returns A promise that resolves to an array of MarketplaceApp objects representing the installed apps.
- * @type InstalledApp The same as MarketplaceApp, but with an additional `status` property.
- */
-export async function getInstalledApps(): Promise<InstalledApp[]> {
+export const installedApps = writable<InstalledApp[]>(await refreshInstalledApps());
+
+async function refreshInstalledApps() {
     const containers = await containerEngine.listContainers({ all: true });
 
     const appContainers = containers
@@ -113,7 +112,7 @@ export async function getInstalledApps(): Promise<InstalledApp[]> {
                 appContainers.map((a) => a.uuid)
             )
         );
-    return appRecords.map((app) => {
+    const apps = appRecords.map((app) => {
         const container = appContainers.find((c) => c.uuid === app.uuid);
         return {
             ...app,
@@ -121,4 +120,6 @@ export async function getInstalledApps(): Promise<InstalledApp[]> {
             installedVersion: container?.version ?? '0.0.0'
         };
     });
+
+    installedApps.set(apps);
 }
