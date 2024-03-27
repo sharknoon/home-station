@@ -356,6 +356,13 @@
                 "type": "object",
                 "$ref": "#/$defs/network",
                 "properties": {
+                    "hostname": {
+                        "title": "Hostname",
+                        "description": "The hostname of the container. Is needs to be a UUID to avoid any conflicts with apps from other repositories. This is needed for the reverse proxy to know which container should receive the traffic.",
+                        "examples": ["018e7ff1-5f06-7e21-be3d-08acbb6240ec"],
+                        "type": "string",
+                        "format": "uuid"
+                    },
                     "subdomain": {
                         "title": "Subdomain",
                         "description": "The subdomain of the app.",
@@ -372,7 +379,7 @@
                     }
                 },
                 "unevaluatedProperties": false,
-                "required": ["subdomain"]
+                "required": ["hostname", "subdomain"]
             },
             "uniqueItems": true
         },
@@ -459,13 +466,6 @@
         "network": {
             "type": "object",
             "properties": {
-                "hostname": {
-                    "title": "Hostname",
-                    "description": "The hostname of the container. Is needs to be a UUID to avoid any conflicts with apps from other repositories. This is needed for the reverse proxy to know which container should receive the traffic.",
-                    "examples": ["018e7ff1-5f06-7e21-be3d-08acbb6240ec"],
-                    "type": "string",
-                    "format": "uuid"
-                },
                 "port": {
                     "title": "Port",
                     "description": "The port to be exposed.",
@@ -487,7 +487,7 @@
                     }
                 }
             },
-            "required": ["hostname", "port", "description"]
+            "required": ["port", "description"]
         }
     }
 }
