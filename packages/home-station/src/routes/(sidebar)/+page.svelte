@@ -56,7 +56,10 @@
                         <nav class="list-nav">
                             <ul>
                                 <li>
-                                    <a href="/discover/apps/{encodeURIComponent(app.id)}" on:click|stopPropagation>
+                                    <a
+                                        href="/discover/apps/{encodeURIComponent(app.id)}"
+                                        on:click|stopPropagation
+                                    >
                                         <Store class="h-6" />
                                         <span class="flex-auto text-left">
                                             {$i18n.t('my-apps.open-in-marketplace')}
@@ -64,7 +67,10 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/apps/{encodeURIComponent(app.id)}" on:click|stopPropagation>
+                                    <a
+                                        href="/apps/{encodeURIComponent(app.id)}"
+                                        on:click|stopPropagation
+                                    >
                                         <Settings class="h-6" />
                                         <span class="flex-auto text-left">
                                             {$i18n.t('my-apps.settings')}
@@ -154,7 +160,11 @@
                                         <nav class="list-nav">
                                             <ul>
                                                 <li>
-                                                    <a href="/discover/apps/{encodeURIComponent(app.id)}">
+                                                    <a
+                                                        href="/discover/apps/{encodeURIComponent(
+                                                            app.id
+                                                        )}"
+                                                    >
                                                         <Store class="h-6" />
                                                         <span class="flex-auto">
                                                             {$i18n.t('my-apps.open-in-marketplace')}

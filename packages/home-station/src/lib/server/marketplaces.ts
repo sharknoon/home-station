@@ -171,9 +171,7 @@ export async function updateMarketplaceApps(
                 const app = await convertAppYaml(appYaml, marketplace.gitRemoteUrl);
                 apps.push(app);
             } catch (e) {
-                logger.warn(
-                    `App "${appName}" could not be parsed: ${e}`
-                );
+                logger.warn(`App "${appName}" could not be parsed: ${e}`);
             }
         }
     }
@@ -197,14 +195,9 @@ async function convertAppYaml(
         logger.warn(error);
     }
 
-    let icon = await resolveFile(
-        appYaml.icon,
-        getMarketplaceAppPath(marketplaceUrl, appYaml.id)
-    );
+    let icon = await resolveFile(appYaml.icon, getMarketplaceAppPath(marketplaceUrl, appYaml.id));
     if (!icon) {
-        logger.warn(
-            `No icon found for "${appYaml.id}" (${appYaml.name.en})"!`
-        );
+        logger.warn(`No icon found for "${appYaml.id}" (${appYaml.name.en})"!`);
         icon = '';
     }
 
@@ -216,10 +209,7 @@ async function convertAppYaml(
     const screenshots = (
         await Promise.all(
             (appYaml.screenshots ?? []).map((screenshot) =>
-                resolveFile(
-                    screenshot,
-                    getMarketplaceAppPath(marketplaceUrl, appYaml.id)
-                )
+                resolveFile(screenshot, getMarketplaceAppPath(marketplaceUrl, appYaml.id))
             )
         )
     ).filter((screenshot) => screenshot) as string[];

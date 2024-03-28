@@ -33,7 +33,7 @@ describe('getMarketplacePath', () => {
             .replace('https://', '')
             .replace('http://', '')
             .replace(/\.git$/, '')
-            .replace(/[^a-z0-9]/gi, '-')
+            .replace(/[^a-z0-9]/gi, '_')
             .toLowerCase();
         const expectedPath = path.join(appdataPath, 'marketplaces', marketplaceId);
 
@@ -54,14 +54,14 @@ describe('getMarketplaceAppPath', () => {
             .replace('https://', '')
             .replace('http://', '')
             .replace(/\.git$/, '')
-            .replace(/[^a-z0-9]/gi, '-')
+            .replace(/[^a-z0-9]/gi, '_')
             .toLowerCase();
         const expectedPath = path.join(
             appdataPath,
             'marketplaces',
             marketplaceId,
             'apps',
-            app.id
+            app.id.split(':')[1]
         );
 
         const result = getMarketplaceAppPath(app.marketplaceUrl, app.id);
