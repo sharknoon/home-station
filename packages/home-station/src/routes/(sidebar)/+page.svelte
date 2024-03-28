@@ -18,7 +18,7 @@
 
     function onAppClick(http: MarketplaceApp['http'], id: MarketplaceApp['id']) {
         if (!http || http.length === 0) {
-            goto('/apps/' + id);
+            goto('/apps/' + encodeURIComponent(id));
         } else if (http.length === 1) {
             window.open(`http://${http[0].subdomain}.localhost`, '_blank');
         } else {
@@ -64,7 +64,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/apps/{app.id}" on:click|stopPropagation>
+                                    <a href="/apps/{encodeURIComponent(app.id)}" on:click|stopPropagation>
                                         <Settings class="h-6" />
                                         <span class="flex-auto text-left">
                                             {$i18n.t('my-apps.settings')}
