@@ -2,7 +2,7 @@ TODO ICON OR FANCY HEADER LOGO
 
 # Home Station
 
-A fancy, easy-to-use, docker compose based app manager for your self-hosted home server. 
+A fancy, easy-to-use, docker compose based app manager for your self-hosted home server.
 
 ![GitHub Repo stars](https://img.shields.io/github/stars/home-station-org/home-station)
 ![GitHub Release](https://img.shields.io/github/v/release/home-station-org/home-station)
@@ -11,13 +11,15 @@ A fancy, easy-to-use, docker compose based app manager for your self-hosted home
 TODO SCREENSHOT
 
 ## Live Demo
+
 Try it!
 
 [https://demo.home-station.org/](https://demo.home-station.org/)
 
 It is a read-only live demo, you can't make any permanent changes.
 
-## ⭐️ Features:
+## ⭐️ Features
+
 - 🖱️ Install your favorite open-source apps with one click
 - 🏬 App marketplace with over 1 free apps
 - 🔐 Integrated reverse proxy, so you don't have to worry about ports and certificates
@@ -30,7 +32,7 @@ It is a read-only live demo, you can't make any permanent changes.
 ### 🐳 Docker
 
 ```bash
-docker run -d --restart=always -p 80:80 -p 443:443 -v home-station:/app/data -v /var/run/docker.sock:/var/run/docker.sock --name home-station ghcr.io/home-station-org/home-station
+docker run -d --restart=always -p 80:80 -v home-station:/app/data -v /var/run/docker.sock:/var/run/docker.sock --name home-station ghcr.io/home-station-org/home-station
 ```
 
 Home Station is now running at [https://home-station.localhost](https://home-station.localhost)
@@ -44,6 +46,7 @@ Home Station is now running at [https://home-station.localhost](https://home-sta
 TODO
 
 ## 🚧 Roadmap
+
 - 🛟 Automatic Backups to popular cloud providers like Google Drive, Onedrive etc... as well as your own hardware
 - 🛡️ Single sign-on for all your apps
 - 🔗 Multi host support (allows multiple machines to be managed by one Home Station)
@@ -53,6 +56,7 @@ TODO
 TODO
 
 ## Motivation
+
 I have been using [Portainer](https://www.portainer.io) for all my docker compose stacks and [traefik](https://traefik.io/traefik/) as my reverse proxy. Installing a new open-source
 app incorporated at least the following steps:
 
