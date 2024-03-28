@@ -69,6 +69,7 @@ export async function uninstallApp(
 export type InstalledApp = MarketplaceApp & {
     status: 'running' | 'stopped' | 'error';
     installedVersion: string;
+    hostname: string;
 };
 
 export const installedApps = writable<InstalledApp[]>(await getInstalledApps());
@@ -83,8 +84,13 @@ async function getInstalledApps(): Promise<InstalledApp[]> {
 
     const appContainers = containers
         .filter((c) => c.Labels['home-station.enable'] === 'true')
-        .map((a) => [a.Labels['home-station.app'], a.Labels['home-station.app-version'], a.State])
-        .map(([id, version, s]) => {
+        .map((a) => [
+            a.Labels['home-station.app'],
+            a.Labels['home-station.app-version'],
+            a.State,
+            a.Names[0]
+        ])
+        .map(([id, version, s, name]) => {
             let state;
             switch (s) {
                 case 'running':
@@ -101,12 +107,14 @@ async function getInstalledApps(): Promise<InstalledApp[]> {
                     state = 'error';
                     break;
             }
-            return { id, version, state };
+            const hostname = name.startsWith('/') ? name.substring(1) : name;
+            return { id, version, state, hostname };
         })
         .filter((a) => a !== undefined) as {
         id: string;
         version: string;
         state: InstalledApp['status'];
+        hostname: string;
     }[];
 
     if (appContainers.length === 0) return [];
@@ -125,7 +133,8 @@ async function getInstalledApps(): Promise<InstalledApp[]> {
         return {
             ...app,
             status: container?.state ?? 'error',
-            installedVersion: container?.version ?? '0.0.0'
+            installedVersion: container?.version ?? '0.0.0',
+            hostname: container?.hostname ?? ''
         };
     });
     return apps;

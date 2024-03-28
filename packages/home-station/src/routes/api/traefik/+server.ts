@@ -35,7 +35,7 @@ const configuration = derived(installedApps, ($installedApps) => {
                 loadBalancer: {
                     servers: [
                         {
-                            url: `http://${h.hostname}:${h.port}`
+                            url: `http://${app.hostname}:${h.port}`
                         }
                     ]
                 }
