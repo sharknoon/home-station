@@ -4,7 +4,7 @@ import { fail } from '@sveltejs/kit';
 import { deleteMarketplace } from '$lib/server/marketplaces';
 import { marketplaceApps } from '$lib/server/schema';
 import { eq } from 'drizzle-orm';
-import { getInstalledApps, installApp } from '$lib/server/apps';
+import { installedApps, installApp } from '$lib/server/apps';
 import { dispatchEvent } from '$lib/server/events';
 import { i18n, ts } from '$lib/i18n';
 import { get } from 'svelte/store';
@@ -17,8 +17,7 @@ export const load = (async () => {
     const marketplaces = await db.query.marketplaces.findMany({
         columns: { gitPassword: false }
     });
-    const installedApps = await getInstalledApps();
-    return { marketplaceApps, marketplaces, installedApps };
+    return { marketplaceApps, marketplaces, installedApps: get(installedApps) };
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
@@ -37,26 +36,24 @@ export const actions: Actions = {
     installApp: async ({ request }) => {
         // Get necessary data
         const data = await request.formData();
-        const appUuid = data.get('appUuid')?.toString() ?? '';
-        
+        const appId = data.get('appId')?.toString() ?? '';
+
         // Validation
-        if (!appUuid) {
-            return fail(400, { appUuid, invalid: true });
+        if (!appId) {
+            return fail(400, { appId, invalid: true });
         }
-        const marketplaceApp = await db.query.marketplaceApps.findFirst({
-            where: eq(marketplaceApps.uuid, appUuid)
+        const app = await db.query.marketplaceApps.findFirst({
+            where: eq(marketplaceApps.id, appId)
         });
-        if (!marketplaceApp) {
-            return fail(400, { appUuid, notFound: true });
+        if (!app) {
+            return fail(400, { appId, notFound: true });
         }
 
-        dispatchEvent('appStatus', { appUuid, status: 'installing', progress: 0 });
+        dispatchEvent('appStatus', { appId, status: 'installing', progress: 0 });
 
         try {
-            await installApp(
-                marketplaceApp,
-                (progress) =>
-                    dispatchEvent('appStatus', { appUuid, status: 'installing', progress })
+            await installApp(app.marketplaceUrl, app.id, app.version, (progress) =>
+                dispatchEvent('appStatus', { appId, status: 'installing', progress })
             );
         } catch (e) {
             sendNotification(
@@ -65,8 +62,8 @@ export const actions: Actions = {
             );
         }
 
-        dispatchEvent('appStatus', { appUuid, status: 'installed', progress: 1 });
-        const postInstallMessage = marketplaceApp.messages?.postInstall;
+        dispatchEvent('appStatus', { appId, status: 'installed', progress: 1 });
+        const postInstallMessage = app.messages?.postInstall;
         if (postInstallMessage) {
             sendNotification('info', ts(postInstallMessage));
         }

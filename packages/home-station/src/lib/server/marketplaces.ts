@@ -35,76 +35,67 @@ await fs.mkdir(MARKETPLACES_PATH, { recursive: true });
  * @returns The path to the local cloned marketplace repository
  */
 export function getMarketplacePath(marketplaceUrl: string): string {
-    const dirName = getDirectoryNameFromUrl(marketplaceUrl);
-    return path.join(MARKETPLACES_PATH, dirName);
+    const marketplaceDirName = makeMarketplaceUrlFilesafe(marketplaceUrl);
+    return path.join(MARKETPLACES_PATH, marketplaceDirName);
 }
 
 /**
  * Returns the path to a specific app in the local cloned marketplace repository
  * @param marketplaceUrl The url to the marketplace repository
- * @param appUuid The uuid of the app
+ * @param appId The ID of the app
  * @returns The path to the app in the local cloned marketplace repository
  */
-export function getMarketplaceAppPath(marketplaceUrl: string, appUuid: string): string {
-    const dirName = getDirectoryNameFromUrl(marketplaceUrl);
-    return path.join(MARKETPLACES_PATH, dirName, 'apps', appUuid);
-}
-
-function getDirectoryNameFromUrl(url: string): string {
-    return url
-        .replace('https://', '')
-        .replace('http://', '')
-        .replace(/\.git$/, '')
-        .replace(/[^a-z0-9]/gi, '-')
-        .toLowerCase();
+export function getMarketplaceAppPath(marketplaceUrl: string, appId: string): string {
+    const marketplaceDirName = makeMarketplaceUrlFilesafe(marketplaceUrl);
+    return path.join(MARKETPLACES_PATH, marketplaceDirName, 'apps', appId.split(':')[1]);
 }
 
 /**
  * Retrieves the latest version of a marketplace app. It uses semver comparisons to get the latest version.
  * @see https://github.com/npm/node-semver?tab=readme-ov-file#comparison
  * @param marketplaceUrl The url to the marketplace repository
- * @param appUuid The uuid of the app
+ * @param appId The ID of the app
  * @returns A promise that resolves to the latest version of the app, or undefined if no versions are found.
  */
-export async function getLatestVersion(marketplaceUrl: string, appUuid: string): Promise<string> {
-    const versions = await getVersionsOfApp(marketplaceUrl, appUuid);
+export async function getLatestVersion(marketplaceUrl: string, appId: string): Promise<string> {
+    const versions = await getVersionsOfApp(marketplaceUrl, appId);
     return versions.sort(rcompare)[0];
 }
 
 /**
  * Checks if a given version is valid for an app in a marketplace.
  * @param marketplaceUrl - The URL of the marketplace.
- * @param appUuid - The UUID of the app.
+ * @param appId - The ID of the app.
  * @param version - The version to check.
  * @returns A promise that resolves to a boolean indicating if the version is valid.
  */
 export async function isValidVersion(
     marketplaceUrl: string,
-    appUuid: string,
+    appId: string,
     version: string
 ): Promise<true> {
-    const versions = await getVersionsOfApp(marketplaceUrl, appUuid);
+    const versions = await getVersionsOfApp(marketplaceUrl, appId);
     if (versions.includes(version)) {
         return true;
     } else {
         throw new Error(
-            `Version "${version}" not found for "${appUuid}" in "${marketplaceUrl}. Available versions: ${versions.join(', ')}"`
+            `Version "${version}" not found for "${appId}". Available versions: ${versions.join(', ')}"`
         );
     }
 }
 
-async function getVersionsOfApp(marketplaceUrl: string, appUuid: string): Promise<string[]> {
-    const versionsPath = path.join(getMarketplaceAppPath(marketplaceUrl, appUuid), 'versions');
+async function getVersionsOfApp(marketplaceUrl: string, appId: string): Promise<string[]> {
+    const versionsPath = path.join(getMarketplaceAppPath(marketplaceUrl, appId), 'versions');
     let versions: string[] = [];
     try {
         versions = await fs.readdir(versionsPath);
     } catch {
         throw new Error(
-            `No "versions" directory found in "${getMarketplaceAppPath(marketplaceUrl, appUuid)}"!`
+            `No "versions" directory found in "${getMarketplaceAppPath(marketplaceUrl, appId)}"!`
         );
     }
     if (versions.length === 0) {
-        throw new Error(`No versions found for "${appUuid}" in "${marketplaceUrl}"!`);
+        throw new Error(`No versions found for "${appId}"!`);
     }
     return versions;
 }
@@ -172,17 +163,15 @@ export async function updateMarketplaceApps(
     for (const marketplace of marketplaces) {
         await pullMarketplaceRepository(marketplace, progress);
         const marketplacePath = getMarketplacePath(marketplace.gitRemoteUrl);
-        const appUuids = await loadAppUuids(path.join(marketplacePath, 'apps'));
-        for (const appUuid of appUuids) {
+        const appNames = await loadAppIds(path.join(marketplacePath, 'apps'));
+        for (const appName of appNames) {
             try {
-                const appYamlPath = path.join(marketplacePath, 'apps', appUuid, 'app.yml');
+                const appYamlPath = path.join(marketplacePath, 'apps', appName, 'app.yml');
                 const appYaml = await parseAppYaml(appYamlPath);
                 const app = await convertAppYaml(appYaml, marketplace.gitRemoteUrl);
                 apps.push(app);
             } catch (e) {
-                logger.warn(
-                    `App "${appUuid}" in "${marketplace.gitRemoteUrl}" could not be parsed: ${e}`
-                );
+                logger.warn(`App "${appName}" could not be parsed: ${e}`);
             }
         }
     }
@@ -201,34 +190,26 @@ async function convertAppYaml(
 ): Promise<MarketplaceApp> {
     let version = '0.0.0';
     try {
-        version = await getLatestVersion(marketplaceUrl, appYaml.uuid);
+        version = await getLatestVersion(marketplaceUrl, appYaml.id);
     } catch (error) {
         logger.warn(error);
     }
 
-    let icon = await resolveFile(
-        appYaml.icon,
-        path.join(getMarketplacePath(marketplaceUrl), 'apps', appYaml.uuid)
-    );
+    let icon = await resolveFile(appYaml.icon, getMarketplaceAppPath(marketplaceUrl, appYaml.id));
     if (!icon) {
-        logger.warn(
-            `No icon found for "${appYaml.uuid}" (${appYaml.name.en}) in "${marketplaceUrl}"!`
-        );
+        logger.warn(`No icon found for "${appYaml.id}" (${appYaml.name.en})"!`);
         icon = '';
     }
 
     const banner = await resolveFile(
         appYaml.banner,
-        path.join(getMarketplacePath(marketplaceUrl), 'apps', appYaml.uuid)
+        getMarketplaceAppPath(marketplaceUrl, appYaml.id)
     );
 
     const screenshots = (
         await Promise.all(
             (appYaml.screenshots ?? []).map((screenshot) =>
-                resolveFile(
-                    screenshot,
-                    path.join(getMarketplacePath(marketplaceUrl), 'apps', appYaml.uuid)
-                )
+                resolveFile(screenshot, getMarketplaceAppPath(marketplaceUrl, appYaml.id))
             )
         )
     ).filter((screenshot) => screenshot) as string[];
@@ -317,12 +298,12 @@ async function pullMarketplaceRepository(
 }
 
 /**
- * Loads the app Uuids from a marketplace apps directory.
+ * Loads the app IDs from a marketplace apps directory.
  *
  * @param appsPath The path to the apps directory inside a marketplace.
- * @returns An array of app Uuids (the folder names).
+ * @returns An array of app IDs (the folder names).
  */
-async function loadAppUuids(appsPath: string): Promise<string[]> {
+async function loadAppIds(appsPath: string): Promise<string[]> {
     try {
         return await fs.readdir(appsPath);
     } catch {
@@ -348,7 +329,9 @@ async function parseAppYaml(appYamlPath: string): Promise<AppConfiguration> {
     const validate = ajv.compile<AppConfiguration>(schema);
     const validAppYaml = validate(yamlContent);
     if (!validAppYaml) {
-        throw new Error(`Invalid app.yml in "${appYamlPath}": ${validate.errors?.map((e) => JSON.stringify(e)).join('\n')}`);
+        throw new Error(
+            `Invalid app.yml in "${appYamlPath}": ${validate.errors?.map((e) => JSON.stringify(e)).join('\n')}`
+        );
     }
     return yamlContent;
 }
@@ -376,4 +359,13 @@ async function testCredentials(
             .catch(() => resolve(false))
             .then(() => resolve(true));
     });
+}
+
+function makeMarketplaceUrlFilesafe(url: string): string {
+    return url
+        .replace('https://', '')
+        .replace('http://', '')
+        .replace(/\.git$/, '')
+        .replace(/[^a-z0-9]/gi, '_')
+        .toLowerCase();
 }

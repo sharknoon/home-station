@@ -168,7 +168,8 @@
     "error": {
         "connection-to-container-engine-failed": "Connection to the container engine failed!",
         "tips-for-docker-reachability": "Has the container engine socket been mounted (-v /var/run/docker.sock:/var/run/docker.sock)? Has the container engine been started?",
-        "unknown-error-occured": "An unknown error occured"
+        "unknown-error-occured": "An unknown error occured",
+        "back-to-home": "Back to home"
     },
     "login": {
         "login-to-continue": "Login to continue",

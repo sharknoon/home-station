@@ -19,22 +19,3 @@ export async function init() {
     }
     logger.info('Connected to container engine');
 }
-
-export async function testConnection(): Promise<{ success: boolean; errors?: string[] }> {
-    try {
-        const result: Buffer = await containerEngine.ping();
-        const ping = result.toString('utf-8');
-        if (ping !== 'OK') {
-            return { success: false, errors: ['Docker ping did not return OK: ' + ping] };
-        }
-        return { success: true };
-    } catch (err) {
-        if (err instanceof AggregateError) {
-            return { success: false, errors: err.errors.map((e) => String(e)) };
-        }
-        if (err instanceof Error) {
-            return { success: false, errors: [err.message] };
-        }
-        return { success: false, errors: [String(err)] };
-    }
-}

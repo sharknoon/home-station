@@ -1,20 +1,20 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { lucia } from '$lib/server/auth';
-import { getInstalledApps, uninstallApp } from '$lib/server/apps';
+import { installedApps, uninstallApp } from '$lib/server/apps';
 import { get } from 'svelte/store';
 import { i18n } from '$lib/i18n';
 import { sendNotification } from '$lib/server/notifications';
 
 export const load: PageServerLoad = async () => {
-    const apps = (await getInstalledApps()).map((app) => ({
+    const apps = get(installedApps).map((app) => ({
         marketplaceUrl: app.marketplaceUrl,
-        uuid: app.uuid,
+        id: app.id,
         version: app.installedVersion,
         icon: app.icon,
         name: app.name,
         status: app.status,
-        http: app.http,
+        http: app.http
     }));
     return { apps };
 };
@@ -35,13 +35,13 @@ export const actions = {
     uninstallApp: async ({ request }) => {
         const data = await request.formData();
         const marketplaceUrl = data.get('marketplaceUrl')?.toString();
-        const appUuid = data.get('appUuid')?.toString();
+        const appId = data.get('appId')?.toString();
         const version = data.get('version')?.toString();
-        if (!marketplaceUrl || !appUuid || !version) {
+        if (!marketplaceUrl || !appId || !version) {
             return fail(400);
         }
         try {
-            await uninstallApp(marketplaceUrl, appUuid, version);
+            await uninstallApp(marketplaceUrl, appId, version);
         } catch (e) {
             sendNotification(
                 'error',

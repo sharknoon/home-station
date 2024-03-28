@@ -43,8 +43,7 @@ export const marketplaces = sqliteTable('marketplaces', {
 
 // Apps for the marketplace
 export const marketplaceApps = sqliteTable('marketplace_apps', {
-    // IDs for apps are only unique within a marketplace
-    uuid: text('uuid').primaryKey(),
+    id: text('id').primaryKey(),
     marketplaceUrl: text('marketplace_url')
         .notNull()
         .references(() => marketplaces.gitRemoteUrl, { onDelete: 'cascade' }),

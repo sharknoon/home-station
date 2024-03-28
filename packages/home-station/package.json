@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "dev": "docker compose -f dev.compose.yml up -d && vite dev",
+        "dev": "docker compose -f dev.compose.yml up -d && vite dev --host",
         "build": "vite build",
         "preview": "vite preview",
         "test": "npm run test:integration && npm run test:unit",

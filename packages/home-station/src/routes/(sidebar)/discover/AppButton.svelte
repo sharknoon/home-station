@@ -1,6 +1,6 @@
 <script lang="ts">
     import { enhance } from '$app/forms';
-    import { ProgressRadial, getModalStore, popup } from '@skeletonlabs/skeleton';
+    import { ProgressRadial } from '@skeletonlabs/skeleton';
     import HardDriveDownload from 'lucide-svelte/icons/hard-drive-download';
     import Play from 'lucide-svelte/icons/play';
     import { i18n } from '$lib/i18n';
@@ -13,22 +13,21 @@
     export let size: 'small' | 'large' = 'large';
     export let type: 'primary' | 'soft' = 'primary';
 
-    const modalStore = getModalStore();
     let appInstallProgress = 0;
-    let appInstallStatus = installedApps.some((app) => app.uuid === app.uuid)
+    let appInstallStatus = installedApps.some((app) => app.id === app.id)
         ? 'installed'
         : 'not installed';
     let buttonClasses = `${size === 'small' ? 'btn-sm' : ''} ${type === 'primary' ? 'variant-filled-primary' : 'variant-soft'}`;
 
     addEventListener('appStatus', (status) => {
-        if (status.appUuid !== app.uuid) return;
+        if (status.appId !== app.id) return;
         appInstallProgress = status.progress;
         appInstallStatus = status.status;
     });
 </script>
 
 <form method="post" use:enhance>
-    <input type="hidden" name="appUuid" value={app.uuid} />
+    <input type="hidden" name="appId" value={app.id} />
     <button
         type="submit"
         formaction="/discover?/installApp"
@@ -48,7 +47,7 @@
             <HardDriveDownload class="mr-2" />
             {$i18n.t('discover.install')}
         {:else if appInstallStatus === 'installed'}
-            {@const installedApp = installedApps.find((a) => a.uuid === app.uuid)}
+            {@const installedApp = installedApps.find((a) => a.id === app.id)}
             {#if installedApp?.status === 'running'}
                 <Play class="mr-2" />
                 {$i18n.t('discover.open')}

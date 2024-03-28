@@ -10,12 +10,12 @@ const appSchema = appRawSchema as {
     description: 'A Home Station app represented by a app.yml file';
     type: 'object';
     properties: {
-        uuid: {
-            title: 'UUID';
-            description: 'The universally unique id of the app. You can generate a UUID here: https://www.uuidgenerator.net/version7 .';
-            examples: ['018e2df9-aa80-771c-98ba-0f2e68a302ab'];
+        id: {
+            title: 'ID';
+            description: "The globally unique id of the app. It must match the form '@<repository>/<user or org>/<repo>:<app>'.";
+            examples: ['@github.com/user/repo:my-app'];
             type: 'string';
-            format: 'uuid';
+            pattern: '^@[a-z0-9][a-z0-9\\._/-]+:[a-z0-9][a-z0-9_-]+$';
         };
         name: {
             title: 'Name';
@@ -426,7 +426,7 @@ const appSchema = appRawSchema as {
     };
     additionalProperties: false;
     required: [
-        'uuid',
+        'id',
         'name',
         'description',
         'icon',
@@ -493,7 +493,7 @@ const appSchema = appRawSchema as {
 export type AppConfiguration = FromSchema<typeof appSchema>;
 
 const test: AppConfiguration = {
-    uuid: '018e2df9-aa80-771c-98ba-0f2e68a302ab',
+    id: '@github.com/user/repo:my-app',
     name: {
         en: 'My App',
         de: 'Meine App'

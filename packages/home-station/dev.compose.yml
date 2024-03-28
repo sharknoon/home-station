@@ -1,18 +1,17 @@
+name: home-station-dev
+
 services:
-    home-station-traefik:
+    traefik:
         image: traefik:3.0
+        container_name: traefik
         command:
             [
                 '--global.checknewversion=false',
                 '--global.sendAnonymousUsage=false',
-                '--entrypoints.websecure.address=:80',
-                '--entrypoints.api.address=:8080',
-                '--providers.docker=true',
-                '--providers.docker.exposedbydefault=false',
-                '--providers.docker.network=home-station',
-                '--providers.docker.allowEmptyServices=true',
+                '--entrypoints.web.address=:80',
+                '--entrypoints.traefik.address=:8080',
+                '--providers.http.endpoint=http://host.docker.internal:5173/api/traefik',
                 '--api=true',
-                '--api.dashboard=true',
                 '--log.level=DEBUG'
             ]
         networks:
@@ -22,11 +21,8 @@ services:
             - 8080:8080
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
-        labels:
-            - traefik.enable=true
-            - traefik.http.routers.traefik.entrypoints=api
-            - traefik.http.routers.traefik.rule=Host(`localhost`) && PathPrefix(`/api`)
-            - traefik.http.routers.traefik.service=api@internal
+        extra_hosts:
+            - 'host.docker.internal:host-gateway'
 
 volumes:
     data:

@@ -168,7 +168,8 @@
     "error": {
         "connection-to-container-engine-failed": "Verbindung zur Container-Engine fehlgeschlagen!",
         "tips-for-docker-reachability": "Wurde der Container-Engine Socket gemounted (-v /var/run/docker.sock:/var/run/docker.sock)? Ist die Container Engine gestartet?",
-        "unknown-error-occured": "Unbekannter Fehler aufgetreten"
+        "unknown-error-occured": "Unbekannter Fehler aufgetreten",
+        "back-to-home": "Zurück zur Startseite"
     },
     "login": {
         "login-to-continue": "Anmelden um fortzufahren",

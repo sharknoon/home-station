@@ -10,74 +10,87 @@ import { down, up } from '$lib/server/compose';
 import { db } from '$lib/server/db';
 import { containerEngine } from '$lib/server/containerengines';
 import { marketplaceApps } from '$lib/server/schema';
+import { writable } from 'svelte/store';
 
 /**
  * Installs an app from the marketplace.
  * @param marketplaceUrl - The URL of the marketplace where the app is located.
- * @param appUuid - The UUID of the app to install.
+ * @param appId - The ID of the app to install.
  * @param version - The version of the app to install. If not provided, the latest version will be installed.
  * @param progress - Optional callback to track the installation progress.
  * @throws If the app cannot be installed.
  * @returns A promise that resolves when the app is installed successfully.
  */
 export async function installApp(
-    app: MarketplaceApp,
+    marketplaceUrl: string,
+    appId: string,
+    version: string,
     progress?: (progress: number) => void
 ): Promise<void> {
-    const { marketplaceUrl, uuid, version } = app;
     let versionToInstall;
     if (version) {
-        await isValidVersion(marketplaceUrl, uuid, version);
+        await isValidVersion(marketplaceUrl, appId, version);
         versionToInstall = version;
     } else {
-        versionToInstall = await getLatestVersion(marketplaceUrl, uuid);
+        versionToInstall = await getLatestVersion(marketplaceUrl, appId);
     }
     const composePath = path.join(
-        getMarketplaceAppPath(marketplaceUrl, uuid),
+        getMarketplaceAppPath(marketplaceUrl, appId),
         'versions',
         versionToInstall
     );
-    await up(composePath, uuid, undefined, progress);
+    const projectName = appIdToProjectname(appId);
+    await up(composePath, projectName, undefined, progress);
+    await refreshInstalledApps();
 }
 
 /**
  * Uninstalls an app from the server.
  * @param marketplaceUrl - The URL of the marketplace where the app was installed from.
- * @param appUuid - The UUID of the app to uninstall.
+ * @param appId - The ID of the app to uninstall.
  * @param version - The version of the app to uninstall.
  * @returns A Promise that resolves when the app is successfully uninstalled.
  */
 export async function uninstallApp(
     marketplaceUrl: string,
-    appUuid: string,
+    appId: string,
     version: string
 ): Promise<void> {
     const composePath = path.join(
-        getMarketplaceAppPath(marketplaceUrl, appUuid),
+        getMarketplaceAppPath(marketplaceUrl, appId),
         'versions',
         version
     );
-    await down(composePath, undefined, appUuid, false);
+    const projectName = appIdToProjectname(appId);
+    await down(composePath, undefined, projectName, false);
+    await refreshInstalledApps();
 }
 
 export type InstalledApp = MarketplaceApp & {
     status: 'running' | 'stopped' | 'error';
     installedVersion: string;
+    hostname: string;
 };
 
-/**
- * Retrieves the list of installed apps from docker.
- * It looks for the `home-station.enable: true` label of containers.
- * @returns A promise that resolves to an array of MarketplaceApp objects representing the installed apps.
- * @type InstalledApp The same as MarketplaceApp, but with an additional `status` property.
- */
-export async function getInstalledApps(): Promise<InstalledApp[]> {
+export const installedApps = writable<InstalledApp[]>(await getInstalledApps());
+
+async function refreshInstalledApps() {
+    const apps = await getInstalledApps();
+    installedApps.set(apps);
+}
+
+async function getInstalledApps(): Promise<InstalledApp[]> {
     const containers = await containerEngine.listContainers({ all: true });
 
     const appContainers = containers
         .filter((c) => c.Labels['home-station.enable'] === 'true')
-        .map((a) => [a.Labels['home-station.app'], a.Labels['home-station.app-version'], a.State])
-        .map(([uuid, version, s]) => {
+        .map((a) => [
+            a.Labels['home-station.app'],
+            a.Labels['home-station.app-version'],
+            a.State,
+            a.Names[0]
+        ])
+        .map(([id, version, s, name]) => {
             let state;
             switch (s) {
                 case 'running':
@@ -94,12 +107,14 @@ export async function getInstalledApps(): Promise<InstalledApp[]> {
                     state = 'error';
                     break;
             }
-            return { uuid, version, state };
+            const hostname = name.startsWith('/') ? name.substring(1) : name;
+            return { id, version, state, hostname };
         })
         .filter((a) => a !== undefined) as {
-        uuid: string;
+        id: string;
         version: string;
         state: InstalledApp['status'];
+        hostname: string;
     }[];
 
     if (appContainers.length === 0) return [];
@@ -109,16 +124,24 @@ export async function getInstalledApps(): Promise<InstalledApp[]> {
         .from(marketplaceApps)
         .where(
             inArray(
-                marketplaceApps.uuid,
-                appContainers.map((a) => a.uuid)
+                marketplaceApps.id,
+                appContainers.map((a) => a.id)
             )
         );
-    return appRecords.map((app) => {
-        const container = appContainers.find((c) => c.uuid === app.uuid);
+    const apps = appRecords.map((app) => {
+        const container = appContainers.find((c) => c.id === app.id);
         return {
             ...app,
             status: container?.state ?? 'error',
-            installedVersion: container?.version ?? '0.0.0'
+            installedVersion: container?.version ?? '0.0.0',
+            hostname: container?.hostname ?? ''
         };
     });
+    return apps;
+}
+
+function appIdToProjectname(appId: string): string {
+    const [scope, name] = appId.split(':');
+    const newScope = scope.substring(1).replace(/[^a-z0-9]/g, '_');
+    return `${newScope}-${name}`;
 }

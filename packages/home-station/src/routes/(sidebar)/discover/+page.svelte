@@ -16,20 +16,17 @@
     let appsProgress: Map<string, number> = new Map();
 
     // TODO
-    addEventListener(
-        'appStatus',
-        (status: { appUuid: string; status: string; progress: number }) => {
-            if (status.status === 'installing') {
-                appsLoading = [...appsLoading, status.appUuid];
-                appsProgress.set(status.appUuid, status.progress);
-            } else {
-                appsLoading = appsLoading.filter((uuid) => uuid !== status.appUuid);
-                appsProgress.delete(status.appUuid);
-            }
-            appsLoading = appsLoading;
-            appsProgress = appsProgress;
+    addEventListener('appStatus', (status: { appId: string; status: string; progress: number }) => {
+        if (status.status === 'installing') {
+            appsLoading = [...appsLoading, status.appId];
+            appsProgress.set(status.appId, status.progress);
+        } else {
+            appsLoading = appsLoading.filter((id) => id !== status.appId);
+            appsProgress.delete(status.appId);
         }
-    );
+        appsLoading = appsLoading;
+        appsProgress = appsProgress;
+    });
 </script>
 
 <div class="flex justify-end">
@@ -78,7 +75,10 @@
 
 <div class="grid grid-cols-4 gap-4">
     {#each data.marketplaceApps as app}
-        <a href="/discover/apps/{app.uuid}" class="card card-hover overflow-hidden">
+        <a
+            href="/discover/apps/{encodeURIComponent(app.id)}"
+            class="card card-hover overflow-hidden"
+        >
             <div class="p-4 space-y-2">
                 <div class="flex gap-4 items-center">
                     <img

@@ -94,14 +94,14 @@
             {/if}
             <div class="flex gap-4">
                 <AppButton app={data.app} installedApps={data.installedApps} />
-                {#if data.installedApps.some((a) => a.uuid === data.app.uuid)}
+                {#if data.installedApps.some((a) => a.id === data.app.id)}
                     <form method="post" action="/?/uninstallApp" use:enhance>
                         <input
                             type="hidden"
                             name="marketplaceUrl"
                             value={data.app.marketplaceUrl}
                         />
-                        <input type="hidden" name="appUuid" value={data.app.uuid} />
+                        <input type="hidden" name="appId" value={data.app.id} />
                         <input type="hidden" name="version" value={data.app.version} />
                         <button
                             type="button"
