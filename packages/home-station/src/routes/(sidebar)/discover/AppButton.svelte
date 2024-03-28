@@ -14,20 +14,20 @@
     export let type: 'primary' | 'soft' = 'primary';
 
     let appInstallProgress = 0;
-    let appInstallStatus = installedApps.some((app) => app.uuid === app.uuid)
+    let appInstallStatus = installedApps.some((app) => app.id === app.id)
         ? 'installed'
         : 'not installed';
     let buttonClasses = `${size === 'small' ? 'btn-sm' : ''} ${type === 'primary' ? 'variant-filled-primary' : 'variant-soft'}`;
 
     addEventListener('appStatus', (status) => {
-        if (status.appUuid !== app.uuid) return;
+        if (status.appId !== app.id) return;
         appInstallProgress = status.progress;
         appInstallStatus = status.status;
     });
 </script>
 
 <form method="post" use:enhance>
-    <input type="hidden" name="appUuid" value={app.uuid} />
+    <input type="hidden" name="appId" value={app.id} />
     <button
         type="submit"
         formaction="/discover?/installApp"
@@ -47,7 +47,7 @@
             <HardDriveDownload class="mr-2" />
             {$i18n.t('discover.install')}
         {:else if appInstallStatus === 'installed'}
-            {@const installedApp = installedApps.find((a) => a.uuid === app.uuid)}
+            {@const installedApp = installedApps.find((a) => a.id === app.id)}
             {#if installedApp?.status === 'running'}
                 <Play class="mr-2" />
                 {$i18n.t('discover.open')}

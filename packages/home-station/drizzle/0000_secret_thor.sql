@@ -3,7 +3,7 @@ CREATE TABLE `hostnames` (
 );
 --> statement-breakpoint
 CREATE TABLE `marketplace_apps` (
-	`uuid` text PRIMARY KEY NOT NULL,
+	`id` text PRIMARY KEY NOT NULL,
 	`marketplace_url` text NOT NULL,
 	`version` text NOT NULL,
 	`name` text NOT NULL,

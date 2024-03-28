@@ -1,15 +1,17 @@
+name: home-station-dev
+
 services:
     traefik:
         image: traefik:3.0
+        container_name: traefik
         command:
             [
                 '--global.checknewversion=false',
                 '--global.sendAnonymousUsage=false',
                 '--entrypoints.web.address=:80',
-                '--entrypoints.api.address=:8080',
+                '--entrypoints.traefik.address=:8080',
                 '--providers.http.endpoint=http://host.docker.internal:5173/api/traefik',
                 '--api=true',
-                '--api.dashboard=true',
                 '--log.level=DEBUG'
             ]
         networks:

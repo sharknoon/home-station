@@ -46,7 +46,7 @@ describe('getMarketplacePath', () => {
 describe('getMarketplaceAppPath', () => {
     it('should return the correct path', async () => {
         const app = {
-            uuid: '3b59ad9c-6c47-4ce6-a7b6-0181ef507087',
+            id: 'github.com/my-org/my-repo:my-app',
             marketplaceUrl: 'https://github.com/my-org/my-repo'
         };
         const appdataPath = await getAppDataPath();
@@ -61,10 +61,10 @@ describe('getMarketplaceAppPath', () => {
             'marketplaces',
             marketplaceId,
             'apps',
-            app.uuid
+            app.id
         );
 
-        const result = getMarketplaceAppPath(app.marketplaceUrl, app.uuid);
+        const result = getMarketplaceAppPath(app.marketplaceUrl, app.id);
 
         expect(result).toBe(expectedPath);
     });

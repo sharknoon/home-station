@@ -10,12 +10,7 @@ entryPoints:
         entryPoint:
           to: websecure
           scheme: https
-  websecure:
-    address: :443
-    http:
-      tls:
-        certResolver: letsencrypt
-  api:
+  traefik:
     address: :8080
 
 providers:
@@ -23,10 +18,4 @@ providers:
     endpoint: "http://127.0.0.1:3000/api/traefik"
 
 api:
-
-certificatesResolvers:
-  letsencrypt:
-    acme:
-      # Email address needs to be set via environment variable TRAEFIK_CERTIFICATESRESOLVERS_LETSENCRYPT_ACME_EMAIL
-      #email:
-      storage: "acme.json"
+  dashboard: true

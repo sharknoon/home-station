@@ -7,8 +7,9 @@ import { installedApps } from '$lib/server/apps';
 import { get } from 'svelte/store';
 
 export const load = (async ({ params }) => {
+    const appId = decodeURIComponent(params.id);
     const app = await db.query.marketplaceApps.findFirst({
-        where: eq(marketplaceApps.uuid, params.uuid)
+        where: eq(marketplaceApps.id, appId)
     });
     if (!app) {
         redirect(302, '/discover');

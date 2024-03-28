@@ -16,9 +16,9 @@
 
     const modalStore = getModalStore();
 
-    function onAppClick(http: MarketplaceApp['http'], uuid: MarketplaceApp['uuid']) {
+    function onAppClick(http: MarketplaceApp['http'], id: MarketplaceApp['id']) {
         if (!http || http.length === 0) {
-            goto('/apps/' + uuid);
+            goto('/apps/' + id);
         } else if (http.length === 1) {
             window.open(`http://${http[0].subdomain}.localhost`, '_blank');
         } else {
@@ -35,7 +35,7 @@
     <div class="grid grid-cols-6 place-items-center">
         {#each data.apps.filter((a) => a.status === 'running') as app, i}
             <button
-                on:click={() => onAppClick(app.http, app.uuid)}
+                on:click={() => onAppClick(app.http, app.id)}
                 class="group flex flex-col items-center m-16"
             >
                 <!-- TODO convert to snippet -->
@@ -56,7 +56,7 @@
                         <nav class="list-nav">
                             <ul>
                                 <li>
-                                    <a href="/discover/apps/{app.uuid}" on:click|stopPropagation>
+                                    <a href="/discover/apps/{encodeURIComponent(app.id)}" on:click|stopPropagation>
                                         <Store class="h-6" />
                                         <span class="flex-auto text-left">
                                             {$i18n.t('my-apps.open-in-marketplace')}
@@ -64,7 +64,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/apps/{app.uuid}" on:click|stopPropagation>
+                                    <a href="/apps/{app.id}" on:click|stopPropagation>
                                         <Settings class="h-6" />
                                         <span class="flex-auto text-left">
                                             {$i18n.t('my-apps.settings')}
@@ -78,7 +78,7 @@
                                             name="marketplaceUrl"
                                             value={app.marketplaceUrl}
                                         />
-                                        <input type="hidden" name="appUuid" value={app.uuid} />
+                                        <input type="hidden" name="appId" value={app.id} />
                                         <input type="hidden" name="version" value={app.version} />
                                         <button
                                             type="button"
@@ -154,7 +154,7 @@
                                         <nav class="list-nav">
                                             <ul>
                                                 <li>
-                                                    <a href="/discover/apps/{app.uuid}">
+                                                    <a href="/discover/apps/{encodeURIComponent(app.id)}">
                                                         <Store class="h-6" />
                                                         <span class="flex-auto">
                                                             {$i18n.t('my-apps.open-in-marketplace')}

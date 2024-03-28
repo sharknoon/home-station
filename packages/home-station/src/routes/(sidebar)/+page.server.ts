@@ -9,7 +9,7 @@ import { sendNotification } from '$lib/server/notifications';
 export const load: PageServerLoad = async () => {
     const apps = get(installedApps).map((app) => ({
         marketplaceUrl: app.marketplaceUrl,
-        uuid: app.uuid,
+        id: app.id,
         version: app.installedVersion,
         icon: app.icon,
         name: app.name,
@@ -35,13 +35,13 @@ export const actions = {
     uninstallApp: async ({ request }) => {
         const data = await request.formData();
         const marketplaceUrl = data.get('marketplaceUrl')?.toString();
-        const appUuid = data.get('appUuid')?.toString();
+        const appId = data.get('appId')?.toString();
         const version = data.get('version')?.toString();
-        if (!marketplaceUrl || !appUuid || !version) {
+        if (!marketplaceUrl || !appId || !version) {
             return fail(400);
         }
         try {
-            await uninstallApp(marketplaceUrl, appUuid, version);
+            await uninstallApp(marketplaceUrl, appId, version);
         } catch (e) {
             sendNotification(
                 'error',
