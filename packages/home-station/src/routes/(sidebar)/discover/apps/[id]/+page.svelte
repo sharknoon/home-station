@@ -168,14 +168,22 @@
             class="snap-x snap-mandatory scroll-smooth flex gap-4 overflow-x-auto pb-4"
         >
             {#each data.app.screenshots as screenshot, i}
-                <div class="shrink-0 w-[28%] snap-start">
+                <button
+                    on:click={() =>
+                        modalStore.trigger({
+                            type: 'component',
+                            component: 'galleryModal',
+                            image: screenshot
+                        })}
+                    class="shrink-0 w-[28%] snap-start"
+                >
                     <img
                         class="rounded-container-token"
                         src={screenshot}
                         alt="Screenshot {i}"
                         loading="lazy"
                     />
-                </div>
+                </button>
             {/each}
         </div>
         <!-- Button-Right -->
