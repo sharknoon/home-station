@@ -5,6 +5,15 @@
 
     export let data: PageData;
 
+    const dateTimeFormatter = new Intl.DateTimeFormat($i18n.language, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric'
+    });
+
     // Redeclare the variables here to prevent "'__COMMIT_HASH__' is not definedsvelte(missing-declaration)" error
     // eslint-disable-next-line no-undef
     let REPOSITORY_URL = __REPOSITORY_URL__;
@@ -35,7 +44,7 @@
         {/if}
     </div>
     <div>
-        {$i18n.t('settings.about.build-date')}: {BUILD_DATE} ({intlFormatDistance(
+        {$i18n.t('settings.about.build-date')}: {dateTimeFormatter.format(new Date(BUILD_DATE))} ({intlFormatDistance(
             BUILD_DATE,
             new Date(),
             {
@@ -45,11 +54,6 @@
     </div>
     <div>
         {$i18n.t('settings.about.traefik')}:
-        <code>
-            {data.traefikVersion.Version} ({data.traefikVersion.Codename}) {data.traefikVersion
-                .startDate} ({intlFormatDistance(data.traefikVersion.startDate, new Date(), {
-                locale: $i18n.language
-            })})
-        </code>
+        <code>{data.traefikVersion.Version} ({data.traefikVersion.Codename})</code>
     </div>
 </div>

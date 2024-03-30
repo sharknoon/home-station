@@ -10,7 +10,7 @@ import { installedApps } from '$lib/server/apps';
 // Generates an easy to read and globally unique name for a service or a router
 // The subdomain is only needed if there are multiple accessible services on the same app
 function generateName(appId: string, subdomain?: string): string {
-    const [scope, name] = appId.split(':');
+    const [scope, name] = appId.toLowerCase().split(':');
     const newScope = scope.substring(1).replace(/[^a-z0-9]/g, '_');
     return subdomain ? `${newScope}-${name}-${subdomain}` : `${newScope}-${name}`;
 }
@@ -19,17 +19,33 @@ const configuration = derived(installedApps, ($installedApps) => {
     const routers: Record<string, object> = {};
     const services: Record<string, object> = {};
 
+    const subdomains = $installedApps.flatMap((app) => app.http?.map((h) => h.subdomain) ?? []);
+    const duplicateSubdomains = subdomains.filter((value, index, self) => self.indexOf(value) !== index);
+    const duplicateSubdomainsCounter: Record<string, number> = {};
+    for (const subdomain of duplicateSubdomains) {
+        duplicateSubdomainsCounter[subdomain] = 0;
+    }
+
+
     for (const app of $installedApps) {
         const needsFurtherNameSpecification = (app.http?.length ?? 0) > 1;
         for (const h of app.http ?? []) {
+            let subdomain = h.subdomain;
+            // If a subdomain is also used by another app, we need to add a number to the subdomain
+            if (duplicateSubdomains.includes(subdomain)) {
+                duplicateSubdomainsCounter[subdomain]++;
+                subdomain = `${subdomain}-${duplicateSubdomainsCounter[subdomain]}`;
+            }
+
             const name = generateName(
                 app.id,
-                needsFurtherNameSpecification ? h.subdomain : undefined
+                needsFurtherNameSpecification ? subdomain : undefined
             );
             routers[name] = {
                 entryPoints: ['web'],
                 service: name,
-                rule: `Host(\`${h.subdomain}.localhost\`)`
+                // Match the subdomain on every domain
+                rule: `HostRegexp(\`^${subdomain}\\..+$\`)`
             };
             services[name] = {
                 loadBalancer: {
@@ -49,12 +65,13 @@ const configuration = derived(installedApps, ($installedApps) => {
                 'home-station': {
                     entryPoints: ['web'],
                     service: 'home-station',
-                    rule: 'Host(`localhost`)'
+                    rule: 'HostRegexp(`.+`)',
+                    priority: 1
                 },
                 traefik: {
                     entryPoints: ['traefik'],
                     service: 'api@internal',
-                    rule: 'Host(`localhost`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))'
+                    rule: 'HostRegexp(`.+`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))'
                 },
                 ...routers
             },
