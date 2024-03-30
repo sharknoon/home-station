@@ -37,7 +37,7 @@ export async function installApp(
         'versions',
         versionToInstall
     );
-    const projectName = appIdToProjectname(app.id);
+    const projectName = generateProjectName(app.id, app.version);
     await up(composePath, projectName, undefined, progress);
     await refreshInstalledApps();
     const postInstallMessage = app.messages?.postInstall;
@@ -63,7 +63,7 @@ export async function uninstallApp(
         'versions',
         version
     );
-    const projectName = appIdToProjectname(appId);
+    const projectName = generateProjectName(appId, version);
     await down(composePath, undefined, projectName, false);
     await refreshInstalledApps();
 }
@@ -142,8 +142,9 @@ async function getInstalledApps(): Promise<InstalledApp[]> {
     return apps;
 }
 
-function appIdToProjectname(appId: string): string {
+function generateProjectName(appId: string, appVersion: string): string {
     const [scope, name] = appId.toLowerCase().split(':');
     const newScope = scope.substring(1).replace(/[^a-z0-9]/g, '_');
-    return `${newScope}-${name}`;
+    const newVersion = appVersion.toLowerCase().replace(/[^a-z0-9]/g, '_');
+    return `${newScope}-${name}-${newVersion}`;
 }
