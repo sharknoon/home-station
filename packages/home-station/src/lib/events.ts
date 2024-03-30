@@ -27,5 +27,5 @@ export type Event = 'updateStats' | 'appStatus' | 'notification';
 export type EventData<T extends Event> = 
     T extends 'updateStats' ? { id: string; stats: TaskStats } :
     T extends 'appStatus' ? { appId: string; status: "not installed" | "installing" | "installed"; progress: number } :
-    T extends 'notification' ? { level: NotificationType, message: string } :
+    T extends 'notification' ? { level: NotificationType, message: string, duration?: number } :
     never;

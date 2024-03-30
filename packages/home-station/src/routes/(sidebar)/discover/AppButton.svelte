@@ -30,7 +30,7 @@
     <input type="hidden" name="appId" value={app.id} />
     <button
         type="submit"
-        formaction="/discover?/installApp"
+        formaction="/?/installApp"
         class="btn font-semibold {buttonClasses}"
         on:click|stopPropagation
     >

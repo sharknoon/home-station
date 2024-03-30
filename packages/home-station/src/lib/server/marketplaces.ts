@@ -112,18 +112,16 @@ export async function createMarketplace(
     gitUsername?: string,
     gitPassword?: string
 ): Promise<void> {
-    gitRemoteUrl = gitRemoteUrl.trim();
-    if (gitRemoteUrl.endsWith('/'))
-        gitRemoteUrl = gitRemoteUrl.slice(0, gitRemoteUrl.lastIndexOf('/'));
-
     if (!isValidUrl(gitRemoteUrl)) {
-        throw new Error('Invalid URL (example: "https://github.com/<user>/<repo>")');
+        throw new Error('Invalid URL (example: "https://github.com/<user>/<repo>")', {
+            cause: 'invalid-url'
+        });
     }
 
     // Test if credentials are valid
     const validCredentials = await testCredentials(gitRemoteUrl, gitUsername, gitPassword);
     if (!validCredentials) {
-        throw new Error('Invalid credentials');
+        throw new Error('Invalid credentials', { cause: 'invalid-credentials' });
     }
 
     await db
@@ -133,6 +131,39 @@ export async function createMarketplace(
             target: marketplaces.gitRemoteUrl,
             set: { gitRemoteUrl, gitUsername, gitPassword }
         });
+
+    await updateMarketplaceApps();
+}
+
+/**
+ * Updates the Git username and Git password of a marketplace.
+ * @param gitRemoteUrl The Git remote URL of the marketplace.
+ * @param gitUsername The Git username for authentication.
+ * @param gitPassword The Git password for authentication.
+ * @returns A Promise that resolves when the marketplace is successfully updated.
+ * @throws An error if the credentials are invalid or the marketplace is not found.
+ */
+export async function updateMarketplace(
+    gitRemoteUrl: string,
+    gitUsername?: string,
+    gitPassword?: string
+): Promise<void> {
+    // Test if credentials are valid
+    const validCredentials = await testCredentials(gitRemoteUrl, gitUsername, gitPassword);
+    if (!validCredentials) {
+        throw new Error('Invalid credentials', { cause: 'invalid-credentials' });
+    }
+
+    const result = await db
+        .update(marketplaces)
+        .set({ gitUsername, gitPassword })
+        .where(eq(marketplaces.gitRemoteUrl, gitRemoteUrl));
+
+    if (result.changes === 0) {
+        throw new Error('Marketplace not found', { cause: 'marketplace-not-found' });
+    }
+
+    await updateMarketplaceApps();
 }
 
 /**
@@ -140,12 +171,12 @@ export async function createMarketplace(
  * @param url The url of the marketplace to delete
  */
 export async function deleteMarketplace(url: string): Promise<void> {
-    const deletedMarketplace = await db
+    const deletedMarketplaces = await db
         .delete(marketplaces)
         .where(eq(marketplaces.gitRemoteUrl, url))
         .returning();
     // For loop unnecessary, but it's easier and more safe to implement than deletedMarketplace[0]
-    for (const marketplace of deletedMarketplace) {
+    for (const marketplace of deletedMarketplaces) {
         const marketplacePath = getMarketplacePath(marketplace.gitRemoteUrl);
         await fs.rm(marketplacePath, { recursive: true, force: true });
     }
@@ -156,7 +187,7 @@ export async function deleteMarketplace(url: string): Promise<void> {
  * @param progress An optional callback that is called with the progress of the update
  */
 export async function updateMarketplaceApps(
-    progress: (progress: number | undefined) => void
+    progress?: (progress: number | undefined) => void
 ): Promise<void> {
     const marketplaces = await db.query.marketplaces.findMany();
     const apps: MarketplaceApp[] = [];
@@ -255,7 +286,7 @@ export async function resolveFile(
  */
 async function pullMarketplaceRepository(
     marketplace: Marketplace,
-    progress: (progress: number | undefined) => void
+    progress?: (progress: number | undefined) => void
 ) {
     const marketplacePath = getMarketplacePath(marketplace.gitRemoteUrl);
 
@@ -264,6 +295,7 @@ async function pullMarketplaceRepository(
         password: marketplace.gitPassword ?? undefined
     });
     const onProgress: ProgressCallback = (event) => {
+        if (!progress) return;
         if (event.total) {
             progress(event.loaded / event.total);
         } else {

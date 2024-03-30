@@ -7,10 +7,12 @@ let toastStore: ToastStore;
 
 export function init() {
     toastStore = getToastStore();
-    addEventListener('notification', (data) => showNotification(data.level, data.message));
+    addEventListener('notification', (data) =>
+        showNotification(data.level, data.message, data.duration)
+    );
 }
 
-function showNotification(level: NotificationType, message: string) {
+function showNotification(level: NotificationType, message: string, duration?: number) {
     let background;
     let autohide = true;
     switch (level) {
@@ -31,15 +33,29 @@ function showNotification(level: NotificationType, message: string) {
             background = 'variant-filled-surface';
             break;
     }
+    let timeout: number;
+    if ((duration ?? 0) < 0) {
+        // This is the maximum value the timeout can be set to, this is being used to set the timeout to "infinite"
+        timeout = 2147483647;
+    } else if (duration !== undefined) {
+        timeout = duration;
+    } else {
+        timeout = message.length * 200;
+    }
     toastStore.trigger({
         message,
         background,
         autohide,
-        // People should not feel stressed about reading the notification
-        timeout: message.split(' ').length * 1000
+        timeout
     });
 }
 
-export function sendNotification(level: NotificationType, message: string) {
-    showNotification(level, message);
+/**
+ * Sends a notification with the specified level, message, and optional duration.
+ * @param level - The level of the notification.
+ * @param message - The message to be displayed in the notification.
+ * @param duration - The duration in ms for which the notification should be displayed (optional). -1 for infinite.
+ */
+export function sendNotification(level: NotificationType, message: string, duration?: number) {
+    showNotification(level, message, duration);
 }

@@ -59,8 +59,8 @@
         "title": "Home Station"
     },
     "notification": {
-        "app-uninstallation-error": "Fehler beim Deinstallieren der App: {{error}}",
-        "app-installation-error": "Fehler beim Installieren der App: {{error}}"
+        "app-installation-error": "Fehler beim Installieren der App: {{error}}",
+        "app-uninstallation-error": "Fehler beim Deinstallieren der App: {{error}}"
     },
     "my-apps": {
         "open-in-marketplace": "Im Marktplatz öffnen",
@@ -75,6 +75,10 @@
         "discover-apps": "Apps entdecken"
     },
     "discover": {
+        "marketplace-added": "Marktplatz erfolgreich hinzugefügt",
+        "invalid-marketplace-credentials": "Die Zugangsdaten für das Git-Repository sind leider falsch",
+        "marketplace-deleted": "Marktplatz erfolgreich gelöscht",
+        "marketplace-in-use": "Der Marktplatz wird von einer oder mehreren Apps verwendet und kann daher nicht gelöscht werden",
         "marketplaces": "Marktplätze",
         "add-marketplace": "Marktplatz hinzufügen",
         "add-default-marketplace": "Standard-Marktplatz hinzufügen",
@@ -98,6 +102,28 @@
         "links": {
             "website": "Webseite",
             "repository": "Repository"
+        },
+        "new-marketplace-modal": {
+            "title": "Neuen Marktplatz hinzufügen",
+            "body": "Um Apps von Drittanbietern oder private Apps zu installieren, fügen Sie einen neuen Marktplatzes hinzu.",
+            "git-repository-url": "Git-Repository-URL",
+            "git-repository-url-placeholder": "https://github.com/benutzer/repository",
+            "git-username": "Git-Benutzername (optional)",
+            "git-username-placeholder": "benutzer42",
+            "git-password-or-token": "Git-Passwort oder Token (optional)",
+            "git-password-or-token-placeholder": "********",
+            "cancel": "Abbrechen",
+            "save": "Speichern"
+        },
+        "update-marketplace-modal": {
+            "title": "Marktplatz bearbeiten",
+            "body": "Sollten sich die Zugangsdaten deines Marktplatzes ändern, kannst du sie hier aktualisieren.",
+            "git-username": "Git-Benutzername (optional)",
+            "git-username-placeholder": "benutzer42",
+            "git-password-or-token": "Git-Passwort oder Token (optional)",
+            "git-password-or-token-placeholder": "********",
+            "cancel": "Abbrechen",
+            "save": "Speichern"
         }
     },
     "settings": {

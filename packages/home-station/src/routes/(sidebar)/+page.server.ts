@@ -1,10 +1,14 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { lucia } from '$lib/server/auth';
-import { installedApps, uninstallApp } from '$lib/server/apps';
 import { get } from 'svelte/store';
+import { eq } from 'drizzle-orm';
+import { lucia } from '$lib/server/auth';
+import { installApp, installedApps, uninstallApp } from '$lib/server/apps';
 import { i18n } from '$lib/i18n';
 import { sendNotification } from '$lib/server/notifications';
+import { db } from '$lib/server/db';
+import { marketplaceApps } from '$lib/server/schema';
+import { dispatchEvent } from '$lib/server/events';
 
 export const load: PageServerLoad = async () => {
     const apps = get(installedApps).map((app) => ({
@@ -31,6 +35,37 @@ export const actions = {
             ...sessionCookie.attributes
         });
         redirect(302, '/login');
+    },
+    installApp: async ({ request }) => {
+        // Get necessary data
+        const data = await request.formData();
+        const appId = data.get('appId')?.toString() ?? '';
+
+        // Validation
+        if (!appId) {
+            return fail(400, { appId, invalid: true });
+        }
+        const app = await db.query.marketplaceApps.findFirst({
+            where: eq(marketplaceApps.id, appId)
+        });
+        if (!app) {
+            return fail(400, { appId, notFound: true });
+        }
+
+        dispatchEvent('appStatus', { appId, status: 'installing', progress: 0 });
+
+        try {
+            await installApp(app, (progress) =>
+                dispatchEvent('appStatus', { appId, status: 'installing', progress })
+            );
+        } catch (e) {
+            sendNotification(
+                'error',
+                get(i18n).t('notification.app-installation-error', { error: String(e) })
+            );
+        }
+
+        dispatchEvent('appStatus', { appId, status: 'installed', progress: 1 });
     },
     uninstallApp: async ({ request }) => {
         const data = await request.formData();

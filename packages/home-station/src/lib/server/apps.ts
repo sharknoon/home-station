@@ -11,37 +11,39 @@ import { db } from '$lib/server/db';
 import { containerEngine } from '$lib/server/containerengines';
 import { marketplaceApps } from '$lib/server/schema';
 import { writable } from 'svelte/store';
+import { sendNotification } from '$lib/server/notifications';
+import { ts } from '$lib/i18n';
 
 /**
  * Installs an app from the marketplace.
- * @param marketplaceUrl - The URL of the marketplace where the app is located.
- * @param appId - The ID of the app to install.
- * @param version - The version of the app to install. If not provided, the latest version will be installed.
+ * @param app - The app to be installed
  * @param progress - Optional callback to track the installation progress.
  * @throws If the app cannot be installed.
  * @returns A promise that resolves when the app is installed successfully.
  */
 export async function installApp(
-    marketplaceUrl: string,
-    appId: string,
-    version: string,
+    app: MarketplaceApp,
     progress?: (progress: number) => void
 ): Promise<void> {
     let versionToInstall;
-    if (version) {
-        await isValidVersion(marketplaceUrl, appId, version);
-        versionToInstall = version;
+    if (app.version) {
+        await isValidVersion(app.marketplaceUrl, app.id, app.version);
+        versionToInstall = app.version;
     } else {
-        versionToInstall = await getLatestVersion(marketplaceUrl, appId);
+        versionToInstall = await getLatestVersion(app.marketplaceUrl, app.id);
     }
     const composePath = path.join(
-        getMarketplaceAppPath(marketplaceUrl, appId),
+        getMarketplaceAppPath(app.marketplaceUrl, app.id),
         'versions',
         versionToInstall
     );
-    const projectName = appIdToProjectname(appId);
+    const projectName = appIdToProjectname(app.id);
     await up(composePath, projectName, undefined, progress);
     await refreshInstalledApps();
+    const postInstallMessage = app.messages?.postInstall;
+    if (postInstallMessage) {
+        sendNotification('info', ts(postInstallMessage), -1);
+    }
 }
 
 /**
@@ -141,7 +143,7 @@ async function getInstalledApps(): Promise<InstalledApp[]> {
 }
 
 function appIdToProjectname(appId: string): string {
-    const [scope, name] = appId.split(':');
+    const [scope, name] = appId.toLowerCase().split(':');
     const newScope = scope.substring(1).replace(/[^a-z0-9]/g, '_');
     return `${newScope}-${name}`;
 }

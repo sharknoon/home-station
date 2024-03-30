@@ -9,7 +9,7 @@ import { logger } from '$lib/server/logger';
 // These functions run once on startup
 let thrownError: unknown = undefined;
 try {
-    // Creates the home-station network if it does not exist
+    // Checks the connection to the container engine and creates the home-station network if it does not exist
     await initContainerEngine();
     // Schedule the tasks
     await initTasks();

@@ -15,7 +15,7 @@ const appSchema = appRawSchema as {
             description: "The globally unique id of the app. It must match the form '@<repository>/<user or org>/<repo>:<app>'.";
             examples: ['@github.com/user/repo:my-app'];
             type: 'string';
-            pattern: '^@[a-z0-9][a-z0-9\\._/-]+:[a-z0-9][a-z0-9_-]+$';
+            pattern: '^@[a-zA-Z0-9][a-zA-Z0-9\\._/-]+:[a-z0-9][a-z0-9_-]+$';
         };
         name: {
             title: 'Name';

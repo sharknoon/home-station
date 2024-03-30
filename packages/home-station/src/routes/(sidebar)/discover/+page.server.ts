@@ -1,14 +1,11 @@
 import type { Actions, PageServerLoad } from './$types';
 import { db } from '$lib/server/db';
 import { fail } from '@sveltejs/kit';
-import { deleteMarketplace } from '$lib/server/marketplaces';
-import { marketplaceApps } from '$lib/server/schema';
-import { eq } from 'drizzle-orm';
-import { installedApps, installApp } from '$lib/server/apps';
-import { dispatchEvent } from '$lib/server/events';
-import { i18n, ts } from '$lib/i18n';
+import { createMarketplace, deleteMarketplace, updateMarketplace } from '$lib/server/marketplaces';
+import { installedApps } from '$lib/server/apps';
 import { get } from 'svelte/store';
 import { sendNotification } from '$lib/server/notifications';
+import { i18n } from '$lib/i18n';
 
 export const load = (async () => {
     const marketplaceApps = await db.query.marketplaceApps.findMany({
@@ -21,51 +18,88 @@ export const load = (async () => {
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
-    deleteRepository: async ({ request }) => {
+    addMarketplace: async ({ request }) => {
         const data = await request.formData();
-        const url = data.get('url')?.toString();
+        const gitRemoteUrl = data.get('gitRemoteUrl')?.toString();
+        const gitUsername = data.get('gitUsername')?.toString();
+        const gitPassword = data.get('gitPassword')?.toString();
 
-        if (!url) {
-            return fail(400, { url, invalid: true });
+        if (!gitRemoteUrl) {
+            return fail(400, { action: 'addMarketplace', gitRemoteUrl, invalid: true });
+        }
+
+        try {
+            await createMarketplace(gitRemoteUrl, gitUsername, gitPassword);
+            sendNotification('success', get(i18n).t('discover.marketplace-added'));
+            return { action: 'addMarketplace', success: true };
+        } catch (error) {
+            switch ((error as Error).cause) {
+                case 'invalid-url':
+                    return fail(400, { action: 'addMarketplace', gitRemoteUrl, invalid: true });
+                case 'invalid-credentials':
+                    sendNotification(
+                        'error',
+                        get(i18n).t('discover.invalid-marketplace-credentials')
+                    );
+                    return fail(400, {
+                        action: 'addMarketplace',
+                        credentials: 'credentials',
+                        invalid: true
+                    });
+                default:
+                    return fail(500, { action: 'addMarketplace', gitRemoteUrl, error });
+            }
+        }
+    },
+    updateMarketplace: async ({ request }) => {
+        const data = await request.formData();
+        const gitRemoteUrl = data.get('gitRemoteUrl')?.toString();
+        const gitUsername = data.get('gitUsername')?.toString();
+        const gitPassword = data.get('gitPassword')?.toString();
+
+        if (!gitRemoteUrl) {
+            return fail(400, { action: 'updateMarketplace', gitRemoteUrl, invalid: true });
+        }
+
+        try {
+            await updateMarketplace(gitRemoteUrl, gitUsername, gitPassword);
+            sendNotification('success', get(i18n).t('discover.marketplace-updated'));
+            return { action: 'updateMarketplace', success: true };
+        } catch (error) {
+            switch ((error as Error).cause) {
+                case 'marketplace-not-found':
+                    return fail(400, { action: 'updateMarketplace', gitRemoteUrl, notFound: true });
+                case 'invalid-credentials':
+                    sendNotification(
+                        'error',
+                        get(i18n).t('discover.invalid-marketplace-credentials')
+                    );
+                    return fail(400, {
+                        action: 'updateMarketplace',
+                        credentials: 'credentials',
+                        invalid: true
+                    });
+                default:
+                    return fail(500, { action: 'updateMarketplace', gitRemoteUrl, error });
+            }
+        }
+    },
+    deleteMarketplace: async ({ request }) => {
+        const data = await request.formData();
+        const gitRemoteUrl = data.get('gitRemoteUrl')?.toString();
+
+        if (!gitRemoteUrl) {
+            return fail(400, { action: 'deleteMarketplace', gitRemoteUrl, invalid: true });
         }
 
         // TODO check if the repository is used by an app
-
-        await deleteMarketplace(url);
-    },
-    installApp: async ({ request }) => {
-        // Get necessary data
-        const data = await request.formData();
-        const appId = data.get('appId')?.toString() ?? '';
-
-        // Validation
-        if (!appId) {
-            return fail(400, { appId, invalid: true });
-        }
-        const app = await db.query.marketplaceApps.findFirst({
-            where: eq(marketplaceApps.id, appId)
-        });
-        if (!app) {
-            return fail(400, { appId, notFound: true });
+        if (get(installedApps).some((app) => app.marketplaceUrl === gitRemoteUrl)) {
+            sendNotification('error', get(i18n).t('discover.marketplace-in-use'));
+            return fail(400, { action: 'deleteMarketplace', gitRemoteUrl, used: true });
         }
 
-        dispatchEvent('appStatus', { appId, status: 'installing', progress: 0 });
-
-        try {
-            await installApp(app.marketplaceUrl, app.id, app.version, (progress) =>
-                dispatchEvent('appStatus', { appId, status: 'installing', progress })
-            );
-        } catch (e) {
-            sendNotification(
-                'error',
-                get(i18n).t('notification.app-installation-error', { error: String(e) })
-            );
-        }
-
-        dispatchEvent('appStatus', { appId, status: 'installed', progress: 1 });
-        const postInstallMessage = app.messages?.postInstall;
-        if (postInstallMessage) {
-            sendNotification('info', ts(postInstallMessage));
-        }
+        await deleteMarketplace(gitRemoteUrl);
+        sendNotification('success', get(i18n).t('discover.marketplace-deleted'));
+        return { action: 'deleteMarketplace', success: true };
     }
 };

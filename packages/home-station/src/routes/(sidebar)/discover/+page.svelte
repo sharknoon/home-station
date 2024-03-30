@@ -1,32 +1,19 @@
 <script lang="ts">
-    import { enhance } from '$app/forms';
     import type { PageData } from './$types';
-    import { popup } from '@skeletonlabs/skeleton';
+    import { enhance } from '$app/forms';
+    import { getModalStore, popup } from '@skeletonlabs/skeleton';
     import Store from 'lucide-svelte/icons/store';
     import Trash2 from 'lucide-svelte/icons/trash-2';
     import Plus from 'lucide-svelte/icons/plus';
     import Pencil from 'lucide-svelte/icons/pencil';
     import { i18n, ts } from '$lib/i18n';
-    import { addEventListener } from '$lib/events';
     import AppButton from './AppButton.svelte';
+    import NewMarketplaceModal from './NewMarketplaceModal.svelte';
+    import UpdateMarketplaceModal from './UpdateMarketplaceModal.svelte';
 
     export let data: PageData;
 
-    let appsLoading: string[] = [];
-    let appsProgress: Map<string, number> = new Map();
-
-    // TODO
-    addEventListener('appStatus', (status: { appId: string; status: string; progress: number }) => {
-        if (status.status === 'installing') {
-            appsLoading = [...appsLoading, status.appId];
-            appsProgress.set(status.appId, status.progress);
-        } else {
-            appsLoading = appsLoading.filter((id) => id !== status.appId);
-            appsProgress.delete(status.appId);
-        }
-        appsLoading = appsLoading;
-        appsProgress = appsProgress;
-    });
+    const modalStore = getModalStore();
 </script>
 
 <div class="flex justify-end">
@@ -37,37 +24,77 @@
     >
         <Store />
     </button>
-    <div class="card p-4 max-w-[36rem] shadow-xl" data-popup="popupMarketplaces">
+    <div class="card p-4 shadow-xl" data-popup="popupMarketplaces">
         <div class="space-y-2">
             <h3 class="h3">{$i18n.t('discover.marketplaces')}</h3>
             <ul class="list">
                 {#each data.marketplaces as marketplace}
                     <li>
-                        <form method="post" class="flex items-center gap-1" use:enhance>
-                            <input type="hidden" name="url" value={marketplace.gitRemoteUrl} />
-                            <span class="mr-2">{marketplace.gitRemoteUrl}</span>
-                            <!-- TODO -->
-                            <button disabled class="btn-icon"><Pencil /></button>
+                        <div class="flex items-center gap-1 w-full">
+                            <span class="mr-2 grow">{marketplace.gitRemoteUrl}</span>
                             <button
-                                formaction="?/deleteRepository"
-                                class="btn-icon text-error-500-400-token"><Trash2 /></button
+                                type="button"
+                                class="btn-icon"
+                                on:click={() =>
+                                    modalStore.trigger({
+                                        type: 'component',
+                                        component: { ref: UpdateMarketplaceModal },
+                                        meta: {
+                                            gitRemoteUrl: marketplace.gitRemoteUrl,
+                                            gitUsername: marketplace.gitUsername
+                                        }
+                                    })}
                             >
-                        </form>
+                                <Pencil />
+                            </button>
+                            <form method="post" action="?/deleteMarketplace" use:enhance>
+                                <input
+                                    type="hidden"
+                                    name="gitRemoteUrl"
+                                    value={marketplace.gitRemoteUrl}
+                                />
+                                <button class="btn-icon text-error-500-400-token">
+                                    <Trash2 />
+                                </button>
+                            </form>
+                        </div>
                     </li>
                 {/each}
             </ul>
-            <!-- TODO -->
-            <button disabled class="btn btn-sm variant-filled-primary space-x-2">
-                <Plus />
-                <span>{$i18n.t('discover.add-marketplace')}</span>
-            </button>
-            <!-- TODO implement and make default repo dynamic-->
-            {#if !data.marketplaces.some((marketplace) => marketplace.gitRemoteUrl === 'https://github.com/home-station-org/apps.git')}
-                <button disabled class="btn btn-sm variant-filled-secondary space-x-2 ml-2">
+            <div class="flex gap-2">
+                <button
+                    class="btn btn-sm variant-filled-primary space-x-2"
+                    on:click={() =>
+                        modalStore.trigger({
+                            type: 'component',
+                            component: { ref: NewMarketplaceModal }
+                        })}
+                >
                     <Plus />
-                    <span>{$i18n.t('discover.add-default-marketplace')}</span>
+                    <span>{$i18n.t('discover.add-marketplace')}</span>
                 </button>
-            {/if}
+                <!-- TODO make default repo dynamic-->
+                {#if !data.marketplaces.some((marketplace) => marketplace.gitRemoteUrl === 'https://github.com/home-station-org/apps.git')}
+                    <form method="post" action="?/addMarketplace" use:enhance>
+                        <input
+                            type="hidden"
+                            name="gitRemoteUrl"
+                            value="https://github.com/home-station-org/apps.git"
+                        />
+                        <!-- TODO remove username and token once public -->
+                        <input type="hidden" name="gitUsername" value="Sharknoon" />
+                        <input
+                            type="hidden"
+                            name="gitPassword"
+                            value="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"
+                        />
+                        <button class="btn btn-sm variant-filled-secondary space-x-2">
+                            <Plus />
+                            <span>{$i18n.t('discover.add-default-marketplace')}</span>
+                        </button>
+                    </form>
+                {/if}
+            </div>
         </div>
         <div class="arrow bg-surface-100-800-token" />
     </div>

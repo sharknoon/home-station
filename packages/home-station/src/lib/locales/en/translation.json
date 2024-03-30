@@ -59,8 +59,8 @@
         "title": "Home Station"
     },
     "notification": {
-        "app-uninstallation-error": "An error occurred while uninstalling the app: {{error}}",
-        "app-installation-error": "An error occurred while installing the app: {{error}}"
+        "app-installation-error": "An error occurred while installing the app: {{error}}",
+        "app-uninstallation-error": "An error occurred while uninstalling the app: {{error}}"
     },
     "my-apps": {
         "open-in-marketplace": "Open in marketplace",
@@ -75,6 +75,10 @@
         "discover-apps": "Discover apps"
     },
     "discover": {
+        "marketplace-added": "Successfully added marketplace",
+        "invalid-marketplace-credentials": "The credentials for the git repository are wrong",
+        "marketplace-deleted": "Successfully deleted marketplace",
+        "marketplace-in-use": "The marketplace is in use by one or more apps and cannot be deleted",
         "marketplaces": "Marketplace",
         "add-marketplace": "Add marketplace",
         "add-default-marketplace": "Add default marketplace",
@@ -98,6 +102,28 @@
         "links": {
             "website": "Website",
             "repository": "Repository"
+        },
+        "new-marketplace-modal": {
+            "title": "Add new marketplace",
+            "body": "To install thrird-party apps or to install private apps, you can add a new marketplace.",
+            "git-repository-url": "Git repository URL",
+            "git-repository-url-placeholder": "https://github.com/user/repo",
+            "git-username": "Git username (optional)",
+            "git-username-placeholder": "username42",
+            "git-password-or-token": "Git password or token (optional)",
+            "git-password-or-token-placeholder": "********",
+            "cancel": "Cancel",
+            "save": "Save"
+        },
+        "update-marketplace-modal": {
+            "title": "Update marketplace",
+            "body": "In case the credentials for the git repository have changed, you can update them here.",
+            "git-username": "Git username (optional)",
+            "git-username-placeholder": "username42",
+            "git-password-or-token": "Git password or token (optional)",
+            "git-password-or-token-placeholder": "********",
+            "cancel": "Cancel",
+            "save": "Save"
         }
     },
     "settings": {
