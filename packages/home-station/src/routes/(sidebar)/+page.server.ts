@@ -37,7 +37,6 @@ export const actions = {
         redirect(302, '/login');
     },
     installApp: async ({ request }) => {
-        // Get necessary data
         const data = await request.formData();
         const appId = data.get('appId')?.toString() ?? '';
 
@@ -69,14 +68,21 @@ export const actions = {
     },
     uninstallApp: async ({ request }) => {
         const data = await request.formData();
-        const marketplaceUrl = data.get('marketplaceUrl')?.toString();
         const appId = data.get('appId')?.toString();
-        const version = data.get('version')?.toString();
-        if (!marketplaceUrl || !appId || !version) {
-            return fail(400);
+
+        // Validation
+        if (!appId) {
+            return fail(400, { appId, invalid: true });
         }
+        const app = await db.query.marketplaceApps.findFirst({
+            where: eq(marketplaceApps.id, appId)
+        });
+        if (!app) {
+            return fail(400, { appId, notFound: true });
+        }
+
         try {
-            await uninstallApp(marketplaceUrl, appId, version);
+            await uninstallApp(app);
         } catch (e) {
             sendNotification(
                 'error',

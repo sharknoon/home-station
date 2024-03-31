@@ -48,22 +48,18 @@ export async function installApp(
 
 /**
  * Uninstalls an app from the server.
- * @param marketplaceUrl - The URL of the marketplace where the app was installed from.
- * @param appId - The ID of the app to uninstall.
- * @param version - The version of the app to uninstall.
+ * @param app - The app to be uninstalled
  * @returns A Promise that resolves when the app is successfully uninstalled.
  */
 export async function uninstallApp(
-    marketplaceUrl: string,
-    appId: string,
-    version: string
+    app: MarketplaceApp
 ): Promise<void> {
     const composePath = path.join(
-        getMarketplaceAppPath(marketplaceUrl, appId),
+        getMarketplaceAppPath(app.marketplaceUrl, app.id),
         'versions',
-        version
+        app.version
     );
-    const projectName = generateProjectName(appId, version);
+    const projectName = generateProjectName(app.id, app.version);
     await down(composePath, undefined, projectName, false);
     await refreshInstalledApps();
 }

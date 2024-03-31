@@ -79,13 +79,7 @@
                                 </li>
                                 <li class="text-error-500-400-token">
                                     <form method="post" action="?/uninstallApp" use:enhance>
-                                        <input
-                                            type="hidden"
-                                            name="marketplaceUrl"
-                                            value={app.marketplaceUrl}
-                                        />
                                         <input type="hidden" name="appId" value={app.id} />
-                                        <input type="hidden" name="version" value={app.version} />
                                         <button
                                             type="button"
                                             class="w-full text-left"
@@ -161,35 +155,52 @@
                                             <ul>
                                                 <li>
                                                     <a
-                                                        href="/discover/apps/{encodeURIComponent(
-                                                            app.id
-                                                        )}"
+                                                        href="/discover/apps/{encodeURIComponent(app.id)}"
+                                                        on:click|stopPropagation
                                                     >
                                                         <Store class="h-6" />
-                                                        <span class="flex-auto">
+                                                        <span class="flex-auto text-left">
                                                             {$i18n.t('my-apps.open-in-marketplace')}
                                                         </span>
                                                     </a>
                                                 </li>
                                                 <li>
-                                                    <a href="https://google.de">
+                                                    <a
+                                                        href="/apps/{encodeURIComponent(app.id)}"
+                                                        on:click|stopPropagation
+                                                    >
                                                         <Settings class="h-6" />
-                                                        <span class="flex-auto">
+                                                        <span class="flex-auto text-left">
                                                             {$i18n.t('my-apps.settings')}
                                                         </span>
                                                     </a>
                                                 </li>
                                                 <li class="text-error-500-400-token">
-                                                    <button
-                                                        type="submit"
-                                                        formaction="?/uninstallApp"
-                                                        class="w-full text-left"
-                                                    >
-                                                        <Trash_2 class="h-6" />
-                                                        <span class="flex-auto">
-                                                            {$i18n.t('my-apps.remove-app')}
-                                                        </span>
-                                                    </button>
+                                                    <form method="post" action="?/uninstallApp" use:enhance>
+                                                        <input type="hidden" name="appId" value={app.id} />
+                                                        <button
+                                                            type="button"
+                                                            class="w-full text-left"
+                                                            on:click|stopPropagation={async ({ currentTarget }) => {
+                                                                modalStore.trigger({
+                                                                    type: 'confirm',
+                                                                    title: $i18n.t('my-apps.remove-app'),
+                                                                    body: $i18n.t('my-apps.remove-app-text', {
+                                                                        name: ts(app.name)
+                                                                    }),
+                                                                    buttonTextCancel: $i18n.t('my-apps.cancel'),
+                                                                    buttonTextConfirm: $i18n.t('my-apps.remove'),
+                                                                    response: (r) =>
+                                                                        r && currentTarget.form?.requestSubmit()
+                                                                });
+                                                            }}
+                                                        >
+                                                            <Trash_2 class="h-6" />
+                                                            <span class="flex-auto">
+                                                                {$i18n.t('my-apps.remove-app')}
+                                                            </span>
+                                                        </button>
+                                                    </form>
                                                 </li>
                                             </ul>
                                         </nav>

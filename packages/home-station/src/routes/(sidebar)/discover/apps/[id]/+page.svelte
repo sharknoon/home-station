@@ -96,13 +96,7 @@
                 <AppButton app={data.app} installedApps={data.installedApps} />
                 {#if data.installedApps.some((a) => a.id === data.app.id)}
                     <form method="post" action="/?/uninstallApp" use:enhance>
-                        <input
-                            type="hidden"
-                            name="marketplaceUrl"
-                            value={data.app.marketplaceUrl}
-                        />
                         <input type="hidden" name="appId" value={data.app.id} />
-                        <input type="hidden" name="version" value={data.app.version} />
                         <button
                             type="button"
                             class="btn variant-ringed-error"
