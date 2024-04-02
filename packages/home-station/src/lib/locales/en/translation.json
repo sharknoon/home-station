@@ -77,8 +77,9 @@
     "discover": {
         "marketplace-added": "Successfully added marketplace",
         "invalid-marketplace-credentials": "The credentials for the git repository are wrong",
-        "marketplace-deleted": "Successfully deleted marketplace",
+        "marketplace-updated": "Successfully updated marketplace",
         "marketplace-in-use": "The marketplace is in use by one or more apps and cannot be deleted",
+        "marketplace-deleted": "Successfully deleted marketplace",
         "marketplaces": "Marketplace",
         "add-marketplace": "Add marketplace",
         "add-default-marketplace": "Add default marketplace",
@@ -206,10 +207,6 @@
     },
     "setup": {
         "missing-mount": "The path \"{{- path}}\" was not mounted properly. All data will be lost when the container is stopped or restarted.",
-        "step": "Step",
-        "back": "← Back",
-        "next": "Next →",
-        "complete": "Complete",
         "welcome": "Welcome to Home Station",
         "get-started-account": "Get started by creating an account",
         "username": "Username",
@@ -217,11 +214,6 @@
         "password": "Password",
         "password-requirements": "The password must be at least 8 characters long",
         "repeat-password": "Repeat password",
-        "add-domains-and-hostnames": "Add your domains",
-        "auto-detected": "auto-detected",
-        "add-domain-or-hostname": "Add domain or hostname",
-        "domain-hostname-placeholder": "e.g. mydomain.com or myhostname",
-        "tip": "Tip",
-        "additional-domains-or-hostnames": "You can add additional domains and hostnames in the settings"
+        "create-account": "Next"
     }
 }
