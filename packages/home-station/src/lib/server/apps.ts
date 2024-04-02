@@ -71,6 +71,7 @@ async function refreshInstalledApps() {
 }
 
 async function getInstalledApps(): Promise<InstalledApp[]> {
+    if (!containerEngine) return [];
     const containers = await containerEngine.listContainers({ all: true });
 
     const appContainers = containers
