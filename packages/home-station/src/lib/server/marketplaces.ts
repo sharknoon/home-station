@@ -57,31 +57,9 @@ export function getMarketplaceAppPath(marketplaceUrl: string, appId: string): st
  * @param appId The ID of the app
  * @returns A promise that resolves to the latest version of the app, or undefined if no versions are found.
  */
-export async function getLatestVersion(marketplaceUrl: string, appId: string): Promise<string> {
+async function getLatestVersion(marketplaceUrl: string, appId: string): Promise<string> {
     const versions = await getVersionsOfApp(marketplaceUrl, appId);
     return versions.sort(rcompare)[0];
-}
-
-/**
- * Checks if a given version is valid for an app in a marketplace.
- * @param marketplaceUrl - The URL of the marketplace.
- * @param appId - The ID of the app.
- * @param version - The version to check.
- * @returns A promise that resolves to a boolean indicating if the version is valid.
- */
-export async function isValidVersion(
-    marketplaceUrl: string,
-    appId: string,
-    version: string
-): Promise<true> {
-    const versions = await getVersionsOfApp(marketplaceUrl, appId);
-    if (versions.includes(version)) {
-        return true;
-    } else {
-        throw new Error(
-            `Version "${version}" not found for "${appId}". Available versions: ${versions.join(', ')}"`
-        );
-    }
 }
 
 async function getVersionsOfApp(marketplaceUrl: string, appId: string): Promise<string[]> {
@@ -219,9 +197,9 @@ async function convertAppYaml(
     appYaml: AppConfiguration,
     marketplaceUrl: string
 ): Promise<MarketplaceApp> {
-    let version = '0.0.0';
+    let latestVersion = '0.0.0';
     try {
-        version = await getLatestVersion(marketplaceUrl, appYaml.id);
+        latestVersion = await getLatestVersion(marketplaceUrl, appYaml.id);
     } catch (error) {
         logger.warn(error);
     }
@@ -248,7 +226,7 @@ async function convertAppYaml(
     return {
         ...appYaml,
         marketplaceUrl,
-        version,
+        latestVersion,
         icon,
         banner,
         screenshots

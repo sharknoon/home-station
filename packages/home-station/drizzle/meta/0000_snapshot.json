@@ -1,7 +1,7 @@
 {
     "version": "5",
     "dialect": "sqlite",
-    "id": "97a07e47-00fe-49d4-a464-b5118f63098f",
+    "id": "f642d45c-adf5-4ac2-b29e-589c03338722",
     "prevId": "00000000-0000-0000-0000-000000000000",
     "tables": {
         "hostnames": {
@@ -37,8 +37,8 @@
                     "notNull": true,
                     "autoincrement": false
                 },
-                "version": {
-                    "name": "version",
+                "latest_version": {
+                    "name": "latest_version",
                     "type": "text",
                     "primaryKey": false,
                     "notNull": true,
@@ -116,13 +116,6 @@
                 },
                 "config": {
                     "name": "config",
-                    "type": "text",
-                    "primaryKey": false,
-                    "notNull": false,
-                    "autoincrement": false
-                },
-                "http": {
-                    "name": "http",
                     "type": "text",
                     "primaryKey": false,
                     "notNull": false,

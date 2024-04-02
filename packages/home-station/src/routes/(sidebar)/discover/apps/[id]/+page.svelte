@@ -225,7 +225,7 @@
         <div class="text-center flex flex-col items-center gap-1 px-4">
             <div class="uppercase text-sm">{$i18n.t('discover.apps.version')}</div>
             <div><FileStack class="h-8 w-8" /></div>
-            <div>{data.app.version}</div>
+            <div>{data.app.latestVersion}</div>
         </div>
     </div>
 </div>

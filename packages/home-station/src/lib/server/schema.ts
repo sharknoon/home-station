@@ -47,7 +47,7 @@ export const marketplaceApps = sqliteTable('marketplace_apps', {
     marketplaceUrl: text('marketplace_url')
         .notNull()
         .references(() => marketplaces.gitRemoteUrl, { onDelete: 'cascade' }),
-    version: text('version').notNull(),
+    latestVersion: text('latest_version').notNull(),
     name: text('name', { mode: 'json' }).notNull().$type<LocalizedString>(),
     description: text('description', { mode: 'json' }).notNull().$type<LocalizedString>(),
     icon: text('icon').notNull(),
@@ -114,11 +114,6 @@ export const marketplaceApps = sqliteTable('marketplace_apps', {
     }).notNull(),
     license: text('license'),
     config: text('config', { mode: 'json' }).$type<AppConfiguration['config']>(),
-    // TODO add check contraint to ensure only one of these 3 networking configuration options are set
-    // See https://orm.drizzle.team/docs/indexes-constraints#check
-    http: text('http', { mode: 'json' }).$type<AppConfiguration['http']>(),
-    tcp: text('http', { mode: 'json' }).$type<AppConfiguration['tcp']>(),
-    udp: text('http', { mode: 'json' }).$type<AppConfiguration['udp']>(),
     messages: text('messages', { mode: 'json' }).$type<AppConfiguration['messages']>()
 });
 export const marketplaceAppsRelations = relations(marketplaceApps, ({ one }) => ({

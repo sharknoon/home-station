@@ -342,67 +342,6 @@ const appSchema = appRawSchema as {
                 ];
             };
         };
-        http: {
-            title: 'HTTP';
-            description: 'The http ports and their corresponding subdomains of the app.';
-            type: 'array';
-            contains: {
-                type: 'object';
-                properties: {
-                    default: {
-                        const: true;
-                    };
-                };
-                required: ['default'];
-            };
-            minContains: 1;
-            maxContains: 1;
-            items: {
-                type: 'object';
-                $ref: '#/$defs/network';
-                properties: {
-                    subdomain: {
-                        title: 'Subdomain';
-                        description: 'The subdomain of the app.';
-                        examples: ['myapp'];
-                        type: 'string';
-                        minLength: 2;
-                        maxLength: 30;
-                    };
-                    default: {
-                        title: 'Default';
-                        description: 'Whether this http endpoint is the default one (in case of multiple http endpoints) or not.';
-                        default: false;
-                        type: 'boolean';
-                    };
-                };
-                unevaluatedProperties: false;
-                required: ['subdomain'];
-            };
-            uniqueItems: true;
-        };
-        udp: {
-            title: 'UDP';
-            description: 'The udp ports of the app.';
-            type: 'array';
-            items: {
-                type: 'object';
-                $ref: '#/$defs/network';
-                unevaluatedProperties: false;
-            };
-            uniqueItems: true;
-        };
-        tcp: {
-            title: 'TCP';
-            description: 'The tcp ports of the app.';
-            type: 'array';
-            items: {
-                type: 'object';
-                $ref: '#/$defs/network';
-                unevaluatedProperties: false;
-            };
-            uniqueItems: true;
-        };
         messages: {
             title: 'Messages';
             description: 'Messages that are being send by specific events as notifications.';
@@ -435,17 +374,6 @@ const appSchema = appRawSchema as {
         'developer',
         'category'
     ];
-    oneOf: [
-        {
-            required: ['http'];
-        },
-        {
-            required: ['udp'];
-        },
-        {
-            required: ['tcp'];
-        }
-    ];
     $defs: {
         localizedString: {
             title: 'Localized string';
@@ -460,32 +388,6 @@ const appSchema = appRawSchema as {
                 enum: ['en', 'de'];
             };
             required: ['en'];
-        };
-        network: {
-            type: 'object';
-            properties: {
-                port: {
-                    title: 'Port';
-                    description: 'The port to be exposed.';
-                    examples: [12345];
-                    type: 'integer';
-                    minimum: 0;
-                    maximum: 65535;
-                };
-                description: {
-                    title: 'Description';
-                    description: 'A description of the network.';
-                    examples: ['The port for clients to connect to.'];
-                    type: 'object';
-                    $ref: '#/$defs/localizedString';
-                    additionalProperties: {
-                        type: 'string';
-                        minLength: 2;
-                        maxLength: 1000;
-                    };
-                };
-            };
-            required: ['port', 'description'];
         };
     };
 };
@@ -538,17 +440,6 @@ const test: AppConfiguration = {
             required: false,
             default: 'info',
             selectOptions: ['info', 'warn', 'error']
-        }
-    ],
-    http: [
-        {
-            default: true,
-            port: 12345,
-            description: {
-                en: 'The port for clients to connect to.',
-                de: 'Der Port, an den sich die Clients verbinden.'
-            },
-            subdomain: 'myapp'
         }
     ],
     messages: {

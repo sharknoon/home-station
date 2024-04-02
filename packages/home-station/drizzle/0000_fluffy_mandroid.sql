@@ -5,7 +5,7 @@ CREATE TABLE `hostnames` (
 CREATE TABLE `marketplace_apps` (
 	`id` text PRIMARY KEY NOT NULL,
 	`marketplace_url` text NOT NULL,
-	`version` text NOT NULL,
+	`latest_version` text NOT NULL,
 	`name` text NOT NULL,
 	`description` text NOT NULL,
 	`icon` text NOT NULL,
@@ -17,7 +17,6 @@ CREATE TABLE `marketplace_apps` (
 	`category` text NOT NULL,
 	`license` text,
 	`config` text,
-	`http` text,
 	`messages` text,
 	FOREIGN KEY (`marketplace_url`) REFERENCES `marketplaces`(`git_remote_url`) ON UPDATE no action ON DELETE cascade
 );

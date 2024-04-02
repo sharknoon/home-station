@@ -1,6 +1,9 @@
 <script lang="ts">
+    //import type { PageData } from './$types';
     import { onMount } from 'svelte';
     import '@xterm/xterm/css/xterm.css';
+
+    //export let data: PageData;
 
     let terminal: HTMLDivElement;
 

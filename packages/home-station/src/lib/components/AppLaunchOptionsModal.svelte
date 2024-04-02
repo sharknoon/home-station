@@ -4,7 +4,7 @@
 
     //const modalStore = getModalStore();
 
-    //const http = $modalStore[0].meta as MarketplaceApp['http'];
+    //const launchOptions = $modalStore[0].meta.launchOptions as InstalledApp['launchOptions'];
 
     // TODO
 </script>

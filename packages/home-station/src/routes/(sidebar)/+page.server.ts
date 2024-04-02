@@ -18,7 +18,7 @@ export const load: PageServerLoad = async () => {
         icon: app.icon,
         name: app.name,
         status: app.status,
-        http: app.http
+        launchOptions: app.launchOptions
     }));
     return { apps };
 };
@@ -74,9 +74,7 @@ export const actions = {
         if (!appId) {
             return fail(400, { appId, invalid: true });
         }
-        const app = await db.query.marketplaceApps.findFirst({
-            where: eq(marketplaceApps.id, appId)
-        });
+        const app = get(installedApps).find((app) => app.id === appId);
         if (!app) {
             return fail(400, { appId, notFound: true });
         }

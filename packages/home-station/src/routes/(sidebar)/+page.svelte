@@ -8,24 +8,26 @@
     import Settings from 'lucide-svelte/icons/settings';
     import { Accordion, AccordionItem, getModalStore, popup } from '@skeletonlabs/skeleton';
     import { i18n, ts } from '$lib/i18n';
-    import type { MarketplaceApp } from '$lib/server/marketplaces';
     import rocket from './rocket.png';
     import { goto } from '$app/navigation';
+    import type { InstalledApp } from '$lib/server/apps';
 
     export let data: PageData;
 
     const modalStore = getModalStore();
 
-    function onAppClick(http: MarketplaceApp['http'], id: MarketplaceApp['id']) {
-        if (!http || http.length === 0) {
+    function onAppClick(id: InstalledApp['id'], launchOptions: InstalledApp['launchOptions']) {
+        if (!launchOptions || launchOptions.length === 0) {
+            // If the app has no HTTP route, we open the settings page
             goto('/apps/' + encodeURIComponent(id));
-        } else if (http.length === 1) {
-            window.open(`http://${http[0].subdomain}.localhost`, '_blank');
+        } else if (launchOptions.length === 1) {
+            // If the app has only one HTTP route, we open it in a new tab
+            window.open(`http://${launchOptions[0].subdomain}.localhost`, '_blank');
         } else {
             modalStore.trigger({
                 type: 'component',
                 component: 'appLaunchOptionsModal',
-                meta: { http }
+                meta: { launchOptions }
             });
         }
     }
@@ -35,7 +37,7 @@
     <div class="grid grid-cols-6 place-items-center">
         {#each data.apps.filter((a) => a.status === 'running') as app, i}
             <button
-                on:click={() => onAppClick(app.http, app.id)}
+                on:click={() => onAppClick(app.id, app.launchOptions)}
                 class="group flex flex-col items-center m-16"
             >
                 <!-- TODO convert to snippet -->
@@ -155,7 +157,9 @@
                                             <ul>
                                                 <li>
                                                     <a
-                                                        href="/discover/apps/{encodeURIComponent(app.id)}"
+                                                        href="/discover/apps/{encodeURIComponent(
+                                                            app.id
+                                                        )}"
                                                         on:click|stopPropagation
                                                     >
                                                         <Store class="h-6" />
@@ -176,22 +180,40 @@
                                                     </a>
                                                 </li>
                                                 <li class="text-error-500-400-token">
-                                                    <form method="post" action="?/uninstallApp" use:enhance>
-                                                        <input type="hidden" name="appId" value={app.id} />
+                                                    <form
+                                                        method="post"
+                                                        action="?/uninstallApp"
+                                                        use:enhance
+                                                    >
+                                                        <input
+                                                            type="hidden"
+                                                            name="appId"
+                                                            value={app.id}
+                                                        />
                                                         <button
                                                             type="button"
                                                             class="w-full text-left"
-                                                            on:click|stopPropagation={async ({ currentTarget }) => {
+                                                            on:click|stopPropagation={async ({
+                                                                currentTarget
+                                                            }) => {
                                                                 modalStore.trigger({
                                                                     type: 'confirm',
-                                                                    title: $i18n.t('my-apps.remove-app'),
-                                                                    body: $i18n.t('my-apps.remove-app-text', {
-                                                                        name: ts(app.name)
-                                                                    }),
-                                                                    buttonTextCancel: $i18n.t('my-apps.cancel'),
-                                                                    buttonTextConfirm: $i18n.t('my-apps.remove'),
+                                                                    title: $i18n.t(
+                                                                        'my-apps.remove-app'
+                                                                    ),
+                                                                    body: $i18n.t(
+                                                                        'my-apps.remove-app-text',
+                                                                        {
+                                                                            name: ts(app.name)
+                                                                        }
+                                                                    ),
+                                                                    buttonTextCancel:
+                                                                        $i18n.t('my-apps.cancel'),
+                                                                    buttonTextConfirm:
+                                                                        $i18n.t('my-apps.remove'),
                                                                     response: (r) =>
-                                                                        r && currentTarget.form?.requestSubmit()
+                                                                        r &&
+                                                                        currentTarget.form?.requestSubmit()
                                                                 });
                                                             }}
                                                         >

@@ -19,18 +19,21 @@ const configuration = derived(installedApps, ($installedApps) => {
     const routers: Record<string, object> = {};
     const services: Record<string, object> = {};
 
-    const subdomains = $installedApps.flatMap((app) => app.http?.map((h) => h.subdomain) ?? []);
-    const duplicateSubdomains = subdomains.filter((value, index, self) => self.indexOf(value) !== index);
+    const subdomains = $installedApps.flatMap(
+        (app) => app.launchOptions?.map((lo) => lo.subdomain) ?? []
+    );
+    const duplicateSubdomains = subdomains.filter(
+        (value, index, self) => self.indexOf(value) !== index
+    );
     const duplicateSubdomainsCounter: Record<string, number> = {};
     for (const subdomain of duplicateSubdomains) {
         duplicateSubdomainsCounter[subdomain] = 0;
     }
 
-
     for (const app of $installedApps) {
-        const needsFurtherNameSpecification = (app.http?.length ?? 0) > 1;
-        for (const h of app.http ?? []) {
-            let subdomain = h.subdomain;
+        const needsFurtherNameSpecification = (app.launchOptions?.length ?? 0) > 1;
+        for (const lo of app.launchOptions ?? []) {
+            let subdomain = lo.subdomain;
             // If a subdomain is also used by another app, we need to add a number to the subdomain
             if (duplicateSubdomains.includes(subdomain)) {
                 duplicateSubdomainsCounter[subdomain]++;
@@ -45,13 +48,13 @@ const configuration = derived(installedApps, ($installedApps) => {
                 entryPoints: ['web'],
                 service: name,
                 // Match the subdomain on every domain
-                rule: `HostRegexp(\`^${subdomain}\\..+$\`)`
+                rule: `HostRegexp(\`^${lo.subdomain}\\..+$\`)`
             };
             services[name] = {
                 loadBalancer: {
                     servers: [
                         {
-                            url: `http://${app.hostname}:${h.port}`
+                            url: `http://${lo.hostname}:${lo.port}`
                         }
                     ]
                 }
