@@ -12,7 +12,7 @@ import yaml from 'js-yaml';
 import { db } from '$lib/server/db';
 import { marketplaces, marketplaceApps } from '$lib/server/schema';
 import { exists } from '$lib/server/utils';
-import { getAppDataPath } from '$lib/server/appdata';
+import { getDataPath } from '$lib/server/data';
 import { eq } from 'drizzle-orm';
 import { logger } from '$lib/server/logger';
 import { rcompare } from 'semver';
@@ -25,8 +25,8 @@ import schema from '$lib/schemas/app.schema.json';
 export type MarketplaceApp = typeof marketplaceApps.$inferInsert;
 export type Marketplace = typeof marketplaces.$inferInsert;
 
-const APPDATA_PATH = await getAppDataPath();
-const MARKETPLACES_PATH = path.join(APPDATA_PATH, 'marketplaces');
+const DATA_PATH = await getDataPath();
+const MARKETPLACES_PATH = path.join(DATA_PATH, 'marketplaces');
 await fs.mkdir(MARKETPLACES_PATH, { recursive: true });
 
 /**
@@ -252,7 +252,7 @@ export async function resolveFile(
     // Assume the file is a relative path to a local file
     const filePath = path.join(cwd, file);
     if (await exists(filePath)) {
-        return '/' + path.relative(await getAppDataPath(), filePath).replace(/\\/g, '/');
+        return '/' + path.relative(await getDataPath(), filePath).replace(/\\/g, '/');
     }
     // Either a wrong URL or a non-existing file
     logger.warn(`"${file}" is not a valid URL or cannot be found in "${cwd}"`);

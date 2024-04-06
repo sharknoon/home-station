@@ -6,7 +6,7 @@ import {
     getMarketplacePath,
     updateMarketplaceApps
 } from './marketplaces';
-import { getAppDataPath } from './appdata';
+import { getDataPath } from './data';
 import path from 'node:path';
 import { db } from './db';
 import { eq } from 'drizzle-orm';
@@ -15,27 +15,27 @@ import fs from 'fs/promises';
 
 beforeAll(async () => {
     await db.delete(marketplaces);
-    const marketplacePath = path.join(await getAppDataPath(), 'marketplaces');
+    const marketplacePath = path.join(await getDataPath(), 'marketplaces');
     await fs.rm(marketplacePath, { recursive: true, force: true });
 });
 
 afterEach(async () => {
     await db.delete(marketplaces);
-    const marketplacePath = path.join(await getAppDataPath(), 'marketplaces');
+    const marketplacePath = path.join(await getDataPath(), 'marketplaces');
     await fs.rm(marketplacePath, { recursive: true, force: true });
 });
 
 describe('getMarketplacePath', () => {
     it('should return the correct path', async () => {
         const marketplace = { gitRemoteUrl: 'https://github.com/my-org/my-repo' };
-        const appdataPath = await getAppDataPath();
+        const dataPath = await getDataPath();
         const marketplaceId = marketplace.gitRemoteUrl
             .replace('https://', '')
             .replace('http://', '')
             .replace(/\.git$/, '')
             .replace(/[^a-z0-9]/gi, '_')
             .toLowerCase();
-        const expectedPath = path.join(appdataPath, 'marketplaces', marketplaceId);
+        const expectedPath = path.join(dataPath, 'marketplaces', marketplaceId);
 
         const result = getMarketplacePath(marketplace.gitRemoteUrl);
 
@@ -49,7 +49,7 @@ describe('getMarketplaceAppPath', () => {
             id: 'github.com/my-org/my-repo:my-app',
             marketplaceUrl: 'https://github.com/my-org/my-repo'
         };
-        const appdataPath = await getAppDataPath();
+        const dataPath = await getDataPath();
         const marketplaceId = app.marketplaceUrl
             .replace('https://', '')
             .replace('http://', '')
@@ -57,7 +57,7 @@ describe('getMarketplaceAppPath', () => {
             .replace(/[^a-z0-9]/gi, '_')
             .toLowerCase();
         const expectedPath = path.join(
-            appdataPath,
+            dataPath,
             'marketplaces',
             marketplaceId,
             'apps',

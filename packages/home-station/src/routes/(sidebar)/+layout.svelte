@@ -151,10 +151,10 @@
     // Toast
 
     const toastStore = getToastStore();
-    if (!data.appDataPersistency.isPersistent) {
+    if (!data.dataPersistency.isPersistent) {
         toastStore.trigger({
             message: $i18n.t('sidebar.toast-missing-mount', {
-                path: data.appDataPersistency.defaultAppDataPath
+                path: data.dataPersistency.defaultDataPath
             }),
             background: 'variant-filled-warning',
             hideDismiss: true,

@@ -25,13 +25,13 @@
         </span>
     </h1>
 
-    {#if !data.appDataPersistency.isPersistent}
+    {#if !data.dataPersistency.isPersistent}
         <aside class="alert variant-filled-warning max-w-[35rem]">
             <div><TriangleAlert /></div>
             <div class="alert-message">
                 <p>
                     {$i18n.t('setup.missing-mount', {
-                        path: data.appDataPersistency.defaultAppDataPath
+                        path: data.dataPersistency.defaultDataPath
                     })}
                 </p>
             </div>

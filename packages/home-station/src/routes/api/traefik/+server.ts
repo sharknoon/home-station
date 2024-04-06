@@ -3,12 +3,38 @@ import { derived, get } from 'svelte/store';
 import type { RequestHandler } from './$types';
 import { installedApps } from '$lib/server/apps';
 
-// TODO add a toggle in the ui for HTTPS
-// if this toggle is enabled, there should be two new fields editable, email for certificates and the domain(s) for the certificate
-// when save, check the certificate if the ip adress if the domain resolves to the same ip adress as our public ip adress
+// This is the main configuration endpoint for traefik. More information here:
+// https://doc.traefik.io/traefik/v3.0/routing/overview/
 
-// Generates an easy to read and globally unique name for a service or a router
-// The subdomain is only needed if there are multiple accessible services on the same app
+// TODO
+const httpsEnabled: boolean = false;
+const domains: string[] = [];
+
+/**
+ * Generates the TLS section of the router specification
+ * https://doc.traefik.io/traefik/v3.0/routing/routers/#tls
+ * @param domains The domains to be added
+ * @param subdomain An optional subdomain to be added
+ * @returns A TLS section of the router configuration
+ */
+function generateTLSSection(domains: string[], subdomain?: string): object {
+    return {
+        tls: {
+            certResolver: 'letsencrypt',
+            domains: domains.map((domain) => ({
+                main: subdomain ? `${subdomain}.${domain}` : domain
+            }))
+        }
+    };
+}
+
+/**
+ * Generates an easy to read and globally unique name for a service or a router
+ * The subdomain is only needed if there are multiple accessible services on the same app
+ * @param appId The id of the app used for creating the name
+ * @param subdomain An optional subdomain. Only needed when there are multiple http services by an app
+ * @returns A new unique name as string
+ */
 function generateName(appId: string, subdomain?: string): string {
     const [scope, name] = appId.toLowerCase().split(':');
     const newScope = scope.substring(1).replace(/[^a-z0-9]/g, '_');
@@ -45,10 +71,11 @@ const configuration = derived(installedApps, ($installedApps) => {
                 needsFurtherNameSpecification ? subdomain : undefined
             );
             routers[name] = {
-                entryPoints: ['web'],
+                entryPoints: [httpsEnabled ? 'websecure' : 'web'],
                 service: name,
                 // Match the subdomain on every domain
-                rule: `HostRegexp(\`^${lo.subdomain}\\..+$\`)`
+                rule: `HostRegexp(\`^${subdomain}\\..+$\`)`,
+                ...(httpsEnabled ? generateTLSSection(domains, subdomain) : {})
             };
             services[name] = {
                 loadBalancer: {
@@ -66,10 +93,11 @@ const configuration = derived(installedApps, ($installedApps) => {
         http: {
             routers: {
                 'home-station': {
-                    entryPoints: ['web'],
+                    entryPoints: [httpsEnabled ? 'websecure' : 'web'],
                     service: 'home-station',
                     rule: 'HostRegexp(`.+`)',
-                    priority: 1
+                    priority: 1,
+                    ...(httpsEnabled ? generateTLSSection(domains) : {})
                 },
                 traefik: {
                     entryPoints: ['traefik'],

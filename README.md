@@ -32,7 +32,7 @@ It is a read-only live demo, you can't make any permanent changes.
 ### 🐳 Docker
 
 ```bash
-docker run -d --restart=always -p 80:80 -v home-station:/app/data -v /var/run/docker.sock:/var/run/docker.sock --name home-station ghcr.io/home-station-org/home-station
+docker run -d --restart=always -p 80:80 -v home-station:/data -v /var/run/docker.sock:/var/run/docker.sock --name home-station ghcr.io/home-station-org/home-station
 ```
 
 Home Station is now running at [https://home-station.localhost](https://home-station.localhost)
