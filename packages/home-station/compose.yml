@@ -1,0 +1,23 @@
+name: home-station
+
+services:
+    home-station:
+        image: ghcr.io/home-station-org/home-station
+        container_name: home-station
+        restart: always
+        networks:
+            - home-station
+        ports:
+            - 80:80
+            - 443:443
+        volumes:
+            - data:/data
+            - /var/run/docker.sock:/var/run/docker.sock
+
+volumes:
+    data:
+        name: home-station
+
+networks:
+    home-station:
+        name: home-station

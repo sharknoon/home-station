@@ -32,7 +32,7 @@ It is a read-only live demo, you can't make any permanent changes.
 ### 🐳 Docker
 
 ```bash
-docker run -d --restart=always -p 80:80 -v home-station:/data -v /var/run/docker.sock:/var/run/docker.sock --name home-station ghcr.io/home-station-org/home-station
+docker run -d --restart=always -p 80:80 -p 443:443 -v home-station:/data -v /var/run/docker.sock:/var/run/docker.sock --name home-station ghcr.io/home-station-org/home-station
 ```
 
 Home Station is now running at [https://home-station.localhost](https://home-station.localhost)
@@ -40,6 +40,24 @@ Home Station is now running at [https://home-station.localhost](https://home-sta
 > [!NOTE]
 > If your ports *80* and *443* are already occupied, feel free to test Home Station with other ports:  
 > `-p 8080:80 -p 8433:443`
+
+### 🎶 Docker Compose
+
+```bash
+curl -L -o compose.yml https://raw.githubusercontent.com/home-station-org/home-station/main/packages/home-station/compose.yml
+docker compose up -d
+```
+
+Home Station is now running at [https://home-station.localhost](https://home-station.localhost)
+
+> [!NOTE]
+> If your ports *80* and *443* are already occupied, feel free to test Home Station with other ports by editing the downlaoded compose.yml file:  
+>
+> ```yaml
+>ports:
+>    - 8080:80
+>    - 8433:443
+> ```
 
 ### 💪🏻 Non-Docker
 

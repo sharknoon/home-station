@@ -1,3 +1,4 @@
+# Development traefik static configuration
 global:
   checkNewVersion: false
   sendAnonymousUsage: false
@@ -10,6 +11,9 @@ entryPoints:
 
 providers:
   http:
-    endpoint: "http://127.0.0.1:3000/api/traefik"
+    endpoint: "http://host.docker.internal:5173/api/traefik"
 
 api: {}
+
+log:
+  level: DEBUG

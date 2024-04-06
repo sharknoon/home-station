@@ -4,7 +4,6 @@ import { building } from '$app/environment';
 import path from 'node:path';
 import fs from 'node:fs/promises';
 import os from 'node:os';
-import shell from "shelljs";
 import { exists } from '$lib/server/utils';
 import { logger } from '$lib/server/logger';
 
@@ -28,7 +27,7 @@ if (PUBLIC_CONTAINERIZED === 'true') {
             logger.warn('| docker run -v /path/to/data:/data ...             |');
             logger.warn('-----------------------------------------------------');
         }
-        dataPath = shell.tempdir();
+        dataPath = os.tmpdir();
         await fs.mkdir(dataPath, { recursive: true });
     }
     logger.info(`Running in container, using "${dataPath}" as data directory`);

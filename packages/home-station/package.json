@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "dev": "docker compose -f dev.compose.yml up -d && vite dev --host",
+        "dev": "copyfiles -s traefik.yml ~/.home-station && docker compose -f dev.compose.yml up -d && vite dev --host",
         "build": "vite build",
         "preview": "vite preview",
         "test": "npm run test:integration && npm run test:unit",
@@ -63,6 +63,7 @@
         "@typescript-eslint/eslint-plugin": "^7.5.0",
         "@typescript-eslint/parser": "^7.5.0",
         "autoprefixer": "^10.4.19",
+        "copyfiles": "^2.4.1",
         "drizzle-kit": "^0.20.14",
         "eslint": "^9.0.0",
         "eslint-config-prettier": "^9.1.0",

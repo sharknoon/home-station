@@ -3,6 +3,7 @@ import { settings } from '$lib/server/schema';
 import { fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { eq } from 'drizzle-orm';
+import { applyStaticConfiguration } from '$lib/server/webserver';
 
 export const load = (async () => {
     const httpsEnabled =
@@ -36,6 +37,7 @@ export const actions: Actions = {
             .insert(settings)
             .values({ key: 'certificateEmail', value: certificateEmail })
             .onConflictDoUpdate({ target: settings.key, set: { value: certificateEmail } });
+        await applyStaticConfiguration();
         return { success: true };
     }
 };
