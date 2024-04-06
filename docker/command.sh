@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Start traefik
-# The configuration file should be autodetected, it is specified just for clarity
-traefik --config-file /etc/traefik/traefik.yaml &
+# Use the custom configuration file from /data
+traefik --config-file /data/traefik.yml &
 
 # Start home-station
 # Set the default type to module skip a package.json file with { "type": "module" }

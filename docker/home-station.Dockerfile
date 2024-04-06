@@ -80,8 +80,7 @@ COPY --from=build /app/packages/home-station/drizzle drizzle
 # Copy the build output from the build stage.
 COPY --from=build /app/packages/home-station/build build
 # Copy the traefik static configuration file.
-# The file ends with yaml, not yml on purpose. This is to override the default alpine traefik config.
-COPY docker/traefik.yml /etc/traefik/traefik.yaml
+COPY docker/traefik.yml /data/traefik.yml
 # Copy the command script to run the application.
 COPY docker/command.sh /app/command.sh
 
