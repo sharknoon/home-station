@@ -46,7 +46,7 @@
             "general": "General",
             "users": "Users",
             "container-engine": "Container engine",
-            "domains-and-hostnames": "Domains and hostnames",
+            "proxy": "Proxy",
             "system": "System",
             "tasks": "Tasks",
             "logs": "Logs",
@@ -170,6 +170,27 @@
             "requirements": "The password must be at least 8 characters long",
             "confirm": "Confirm new password",
             "save": "Save"
+        },
+        "proxy": {
+            "https-certificates": "HTTPS certificates",
+            "https-certificates-description": "If your server is directly reachable from the Internet, you can automatically create Let's Encrypt certificates for Home Station and all your apps.",
+            "certificate-email": "Certificate email",
+            "certificate-email-description": "The email address is being used to obtain the certificates from Let's Encrypt.",
+            "domains": "Domains",
+            "no-domains": "No domains added",
+            "add-domain": "Add domain",
+            "save": "Save",
+            "add-domain-modal": {
+                "success": "Successfully added domain",
+                "title": "Add new domain",
+                "body": "The domain has to point to this server, in order to get added.",
+                "domain": "Domain",
+                "domain-placeholder": "example.com",
+                "error": "The domain does not point to this server.",
+                "error-body": "Please check the DNS settings. The domain must point to the public IP address of this server.",
+                "cancel": "Cancel",
+                "add-domain": "Add domain"
+            }
         },
         "tasks": {
             "scheduled-tasks": "Scheduled tasks",

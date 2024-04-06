@@ -11,6 +11,7 @@
     import rocket from './rocket.png';
     import { goto } from '$app/navigation';
     import type { InstalledApp } from '$lib/server/apps';
+    import { dev } from '$app/environment';
 
     export let data: PageData;
 
@@ -22,7 +23,8 @@
             goto('/apps/' + encodeURIComponent(id));
         } else if (launchOptions.length === 1) {
             // If the app has only one HTTP route, we open it in a new tab
-            window.open(`http://${launchOptions[0].subdomain}.localhost`, '_blank');
+            const host = dev ? "localhost" : window.location.host;
+            window.open(`http://${launchOptions[0].subdomain}.${host}`, '_blank');
         } else {
             modalStore.trigger({
                 type: 'component',

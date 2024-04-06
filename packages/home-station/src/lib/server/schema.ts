@@ -123,7 +123,11 @@ export const marketplaceAppsRelations = relations(marketplaceApps, ({ one }) => 
     })
 }));
 
-// Domains and Hostnames for apps
-export const hostnames = sqliteTable('hostnames', {
-    host: text('host').primaryKey()
+export const domains = sqliteTable('domains', {
+    domain: text('domain').primaryKey()
+});
+
+export const settings = sqliteTable('settings', {
+    key: text('key', { enum: ['httpsEnabled', 'certificateEmail'] }).primaryKey(),
+    value: text('value')
 });

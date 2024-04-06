@@ -17,6 +17,15 @@ export async function getPublicIp(): Promise<string> {
 }
 
 /**
+ * Resolves the IP address of a given domain.
+ * @param domain The domain to resolve.
+ * @returns A promise that resolves to the IP address of the domain.
+ */
+export async function getDomainIp(domain: string): Promise<string> {
+    return (await dns.resolve4(domain))[0];
+}
+
+/**
  * Returns a list of hostnames and domains that point to this server
  * @returns A string array of hostnames and domains
  */

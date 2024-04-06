@@ -102,10 +102,10 @@
                             matcher: '{/settings/container-engine,/settings/container-engine/**}'
                         },
                         {
-                            label: $i18n.t('sidebar.settings.domains-and-hostnames'),
-                            href: '/settings/domains-and-hostnames',
+                            label: $i18n.t('sidebar.settings.proxy'),
+                            href: '/settings/proxy',
                             matcher:
-                                '{/settings/domains-and-hostnames,/settings/domains-and-hostnames/**}'
+                                '{/settings/proxy,/settings/proxy/**}'
                         }
                     ]
                 },

@@ -46,7 +46,7 @@
             "general": "Allgemein",
             "users": "Benutzer",
             "container-engine": "Container-Engine",
-            "domains-and-hostnames": "Domains und Hostnamen",
+            "proxy": "Proxy",
             "system": "System",
             "tasks": "Aufgaben",
             "logs": "Logs",
@@ -170,6 +170,27 @@
             "requirements": "Das Passwort muss mindestens 8 Zeichen lang sein",
             "confirm": "Passwort bestätigen",
             "save": "Speichern"
+        },
+        "proxy": {
+            "https-certificates": "HTTPS-Zertifikate",
+            "https-certificates-description": "Wenn Ihr Server direkt über das Internet erreichbar ist, können Sie automatisch Let's Encrypt-Zertifikate für die Home Station und alle Ihre Anwendungen erstellen.",
+            "certificate-email": "E-Mail-Adresse für Zertifikate",
+            "certificate-email-description": "Die E-Mail-Adresse wird verwendet, um Let's Encrypt-Zertifikate zu beantragen.",
+            "domains": "Domains",
+            "no-domains": "Keine Domains hinzugefügt",
+            "add-domain": "Domain hinzufügen",
+            "save": "Speichern",
+            "add-domain-modal": {
+                "success": "Domain erfolgreich hinzugefügt",
+                "title": "Neue Domain hinzufügen",
+                "body": "Die Domain muss auf diese Home-Station Instanz zeigen, um hinzugefügt werden zu können.",
+                "domain": "Domain",
+                "domain-placeholder": "beispiel.com",
+                "error": "Diese Domain löst nicht zu diesem Server auf.",
+                "error-body": "Bitte überprüfe die DNS-Einstellungen. Die Domain muss auf die öffentliche IP-Adresse dieses Servers zeigen.",
+                "cancel": "Abbrechen",
+                "add-domain": "Domain hinzufügen"
+            }
         },
         "tasks": {
             "scheduled-tasks": "Geplante Aufgaben",
