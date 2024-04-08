@@ -71,7 +71,7 @@ describe('getMarketplaceAppPath', () => {
 });
 
 describe('createMarketplace', () => {
-    it('should create a new marketplace without authentication', async () => {
+    it('should create a new marketplace without authentication', { timeout: 60000 }, async () => {
         // Test input
         const url = 'https://github.com/vitest-dev/vitest.git';
 
