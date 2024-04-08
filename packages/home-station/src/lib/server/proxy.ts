@@ -67,6 +67,8 @@ export async function startProxy(): Promise<void> {
     const httpsPort = env.HOME_STATION_HTTPS_PORT ?? '443';
 
     const proxy = await containerEngine.createContainer({
+        Image: 'traefik:3.0',
+        Cmd: ['traefik', ...args],
         name: 'home-station-proxy',
         Labels: { 'home-station.proxy': 'true' },
         HostConfig: {

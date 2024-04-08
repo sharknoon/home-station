@@ -76,8 +76,8 @@ COPY --from=build /app/packages/home-station/drizzle drizzle
 # Copy the build output from the build stage.
 COPY --from=build /app/packages/home-station/build build
 
-# 80: HTTP, 443: HTTPS
-EXPOSE 80 443
+# The Home Statio ui
+EXPOSE 3000
 
 # Run the application.
 # Set the default type to module skip a package.json file with { "type": "module" }
