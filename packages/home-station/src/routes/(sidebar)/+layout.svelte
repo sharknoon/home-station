@@ -104,8 +104,7 @@
                         {
                             label: $i18n.t('sidebar.settings.proxy'),
                             href: '/settings/proxy',
-                            matcher:
-                                '{/settings/proxy,/settings/proxy/**}'
+                            matcher: '{/settings/proxy,/settings/proxy/**}'
                         }
                     ]
                 },

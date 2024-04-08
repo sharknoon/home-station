@@ -1,4 +1,4 @@
-import { getVersion } from '$lib/server/webserver';
+import { getVersion } from '$lib/server/proxy';
 import type { PageServerLoad } from './$types';
 
 export const load = (async () => {

@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "dev": "copyfiles -s traefik.yml ~/.home-station && docker compose -f dev.compose.yml up -d && vite dev --host",
+        "dev": "vite dev --host",
         "build": "vite build",
         "preview": "vite preview",
         "test": "npm run test:integration && npm run test:unit",
@@ -41,7 +41,7 @@
         "minimatch": "^9.0.4",
         "semver": "^7.6.0",
         "shelljs": "^0.8.5",
-        "simple-icons": "^11.11.0",
+        "simple-icons": "^11.12.0",
         "winston": "^3.13.0"
     },
     "devDependencies": {
@@ -63,11 +63,10 @@
         "@typescript-eslint/eslint-plugin": "^7.5.0",
         "@typescript-eslint/parser": "^7.5.0",
         "autoprefixer": "^10.4.19",
-        "copyfiles": "^2.4.1",
         "drizzle-kit": "^0.20.14",
-        "eslint": "^9.0.0",
+        "eslint": "^8.57.0",
         "eslint-config-prettier": "^9.1.0",
-        "eslint-plugin-svelte": "^2.35.1",
+        "eslint-plugin-svelte": "^2.36.0",
         "i18next-parser": "^8.13.0",
         "json-schema-to-ts": "^3.0.1",
         "postcss": "^8.4.38",

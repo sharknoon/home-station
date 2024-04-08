@@ -17,7 +17,7 @@ npm run dev
 You can access Home Station now at [localhost:5173](http://localhost:5173) and traefik at [localhost:8080/dashboard/](http://localhost:8080/dashboard/)
 
 > [!NOTE]
-> The trailing `/` int the traefik url is mandatory
+> The trailing `/` in the traefik url is mandatory
 
 ## Building
 
@@ -28,3 +28,10 @@ npm run build
 ```
 
 You can preview the production build with `npm run preview`.
+
+## All-in-one Docker image
+
+To build an all-in-one docker image, that contains traefik, run `npm run image:build` from the root project.
+
+> [!NOTE]
+> The Dockerfile is in the root directory because it needs to bind the package-lock.json file, which is only available at root.

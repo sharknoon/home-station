@@ -1,5 +1,5 @@
 import { dev } from '$app/environment';
-import { derived, get } from 'svelte/store';
+import { get } from 'svelte/store';
 import type { RequestHandler } from './$types';
 import { installedApps } from '$lib/server/apps';
 import { db } from '$lib/server/db';
@@ -26,31 +26,19 @@ function generateTLSSection(domains: string[], subdomain?: string): object {
     };
 }
 
-/**
- * Generates an easy to read and globally unique name for a service or a router
- * The subdomain is only needed if there are multiple accessible services on the same app
- * @param appId The id of the app used for creating the name
- * @param subdomain An optional subdomain. Only needed when there are multiple http services by an app
- * @returns A new unique name as string
- */
-function generateName(appId: string, subdomain?: string): string {
-    const [scope, name] = appId.toLowerCase().split(':');
-    const newScope = scope.substring(1).replace(/[^a-z0-9]/g, '_');
-    return subdomain ? `${newScope}-${name}-${subdomain}` : `${newScope}-${name}`;
-}
-
-const configuration = derived(installedApps, async ($installedApps) => {
+async function generateConfiguration() {
+    const apps = get(installedApps);
     const domains = (await db.query.domains.findMany()).map((d) => d.domain);
+    // Dev and https are mutally exclusive
     const httpsEnabled =
+        !dev &&
         (await db.query.settings.findFirst({ where: eq(settings.key, 'httpsEnabled') }))?.value ===
-        'true';
+            'true';
 
     const routers: Record<string, object> = {};
     const services: Record<string, object> = {};
 
-    const subdomains = $installedApps.flatMap(
-        (app) => app.launchOptions?.map((lo) => lo.subdomain) ?? []
-    );
+    const subdomains = apps.flatMap((app) => app.launchOptions?.map((lo) => lo.subdomain) ?? []);
     const duplicateSubdomains = subdomains.filter(
         (value, index, self) => self.indexOf(value) !== index
     );
@@ -59,20 +47,28 @@ const configuration = derived(installedApps, async ($installedApps) => {
         duplicateSubdomainsCounter[subdomain] = 0;
     }
 
-    for (const app of $installedApps) {
-        const needsFurtherNameSpecification = (app.launchOptions?.length ?? 0) > 1;
+    const names = apps.map((app) => app.id.split(':')[1]);
+    const duplicateNames = names.filter((value, index, self) => self.indexOf(value) !== index);
+    const duplicateNamesCounter: Record<string, number> = {};
+    for (const name of duplicateNames) {
+        duplicateNamesCounter[name] = 0;
+    }
+
+    for (const app of apps) {
         for (const lo of app.launchOptions ?? []) {
             let subdomain = lo.subdomain;
+            let name = app.id.split(':')[1];
             // If a subdomain is also used by another app, we need to add a number to the subdomain
             if (duplicateSubdomains.includes(subdomain)) {
                 duplicateSubdomainsCounter[subdomain]++;
                 subdomain = `${subdomain}-${duplicateSubdomainsCounter[subdomain]}`;
             }
+            // Instead of having the whole id as router / service name, we increase the number after the app name
+            if (duplicateNames.includes(name)) {
+                duplicateNamesCounter[name]++;
+                name = `${name}-${duplicateNamesCounter[name]}`;
+            }
 
-            const name = generateName(
-                app.id,
-                needsFurtherNameSpecification ? subdomain : undefined
-            );
             routers[name] = {
                 entryPoints: [httpsEnabled ? 'websecure' : 'web'],
                 service: name,
@@ -125,8 +121,8 @@ const configuration = derived(installedApps, async ($installedApps) => {
             }
         }
     };
-});
+}
 
 export const GET: RequestHandler = async () => {
-    return new Response(JSON.stringify(get(configuration)));
+    return new Response(JSON.stringify(await generateConfiguration()));
 };

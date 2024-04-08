@@ -14,7 +14,6 @@ FROM alpine:${ALPINE_VERSION} as nodejs
 
 ARG NODE_VERSION=21
 ARG NPM_VERSION=10
-ARG TRAEFIK_VERSION=2
 
 # Set working directory for all build stages.
 WORKDIR /app
@@ -63,9 +62,6 @@ RUN npx -w home-station svelte-kit sync && PUBLIC_CONTAINERIZED=true npm -w home
 # where the necessary files are copied from the build stage.
 FROM nodejs as final
 
-# Install traefik
-RUN apk add "traefik>${TRAEFIK_VERSION}"
-
 # Use production node environment by default.
 ENV NODE_ENV=production
 
@@ -79,13 +75,10 @@ COPY --from=deps /app/node_modules node_modules
 COPY --from=build /app/packages/home-station/drizzle drizzle
 # Copy the build output from the build stage.
 COPY --from=build /app/packages/home-station/build build
-# Copy the traefik static configuration file.
-COPY docker/traefik.yml /data/traefik.yml
-# Copy the command script to run the application.
-COPY docker/command.sh /app/command.sh
 
 # 80: HTTP, 443: HTTPS
 EXPOSE 80 443
 
 # Run the application.
-CMD [ "sh", "/app/command.sh" ]
+# Set the default type to module skip a package.json file with { "type": "module" }
+CMD [ "node", "--experimental-default-type=module", "/app/build/index.js" ]

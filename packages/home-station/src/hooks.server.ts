@@ -2,6 +2,7 @@ import { redirect, type Handle } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 import { init as initContainerEngine } from '$lib/server/containerengines';
 import { init as initTasks } from '$lib/server/tasks';
+import { init as initProxy } from '$lib/server/proxy';
 import { db } from '$lib/server/db';
 import { lucia } from '$lib/server/auth';
 import { logger } from '$lib/server/logger';
@@ -13,6 +14,8 @@ try {
     await initContainerEngine();
     // Schedule the tasks
     await initTasks();
+    // Start up the reverse proxy
+    await initProxy();
 } catch (err) {
     thrownError = err;
 }

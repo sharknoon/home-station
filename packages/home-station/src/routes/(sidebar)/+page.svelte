@@ -23,7 +23,7 @@
             goto('/apps/' + encodeURIComponent(id));
         } else if (launchOptions.length === 1) {
             // If the app has only one HTTP route, we open it in a new tab
-            const host = dev ? "localhost" : window.location.host;
+            const host = dev ? 'localhost' : window.location.host;
             window.open(`http://${launchOptions[0].subdomain}.${host}`, '_blank');
         } else {
             modalStore.trigger({
