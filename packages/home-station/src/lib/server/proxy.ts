@@ -66,7 +66,7 @@ export async function startProxy(): Promise<void> {
     const httpPort = env.HOME_STATION_HTTP_PORT ?? '80';
     const httpsPort = env.HOME_STATION_HTTPS_PORT ?? '443';
 
-    containerEngine.run('traefik:3.0', args, dev ? process.stdout : [], {
+    const proxy = await containerEngine.createContainer({
         name: 'home-station-proxy',
         Labels: { 'home-station.proxy': 'true' },
         HostConfig: {
@@ -85,6 +85,10 @@ export async function startProxy(): Promise<void> {
             ...(dev ? { '8080': {} } : {})
         }
     });
+    const stream = await proxy.attach({ stream: true, stdout: true, stderr: true });
+    stream.setEncoding('utf8');
+    stream.pipe(process.stdout);
+    proxy.start();
 }
 
 export async function stopProxy(): Promise<void> {

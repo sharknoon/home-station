@@ -1,10 +1,9 @@
 import { Lucia } from 'lucia';
-import { DrizzleSQLiteAdapter } from '@lucia-auth/adapter-drizzle';
+import { DrizzleSQLiteAdapter } from '$lib/server/auth.adapter';
 import { dev } from '$app/environment';
 import { db } from '$lib/server/db';
 import { sessions, users } from '$lib/server/schema';
 
-// @ts-expect-error Lucia hasn't caught up to the newest versions of Drizzle yet
 const adapter = new DrizzleSQLiteAdapter(db, sessions, users);
 
 export const lucia = new Lucia(adapter, {
