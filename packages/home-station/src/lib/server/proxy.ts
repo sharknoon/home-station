@@ -68,6 +68,19 @@ export async function startProxy(): Promise<void> {
     const httpPort = env.HOME_STATION_HTTP_PORT ?? '80';
     const httpsPort = env.HOME_STATION_HTTPS_PORT ?? '443';
 
+    // Pull image
+    await new Promise<void>((resolve, reject) =>
+        containerEngine.pull('traefik:3.0', (err: Error, stream: NodeJS.ReadableStream) => {
+            if (err) {
+                reject(err);
+            } else {
+                containerEngine.modem.followProgress(stream, (err) =>
+                    err ? reject(err) : resolve()
+                );
+            }
+        })
+    );
+    // Create container
     const proxy = await containerEngine.createContainer({
         Image: 'traefik:3.0',
         Cmd: args,
@@ -89,6 +102,7 @@ export async function startProxy(): Promise<void> {
             ...(!container ? { '8080': {} } : {})
         }
     });
+    // Start container
     await proxy.start();
 }
 
