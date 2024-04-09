@@ -17,13 +17,13 @@ try {
     // Start up the reverse proxy
     await initProxy();
 } catch (err) {
+    logger.error("Error during initialization: " + err);
     thrownError = err;
 }
 
 // This hook sends server initialization errors to the +error page
 const init = (async ({ event, resolve }) => {
     if (thrownError !== undefined && !event.url.pathname.startsWith('/error')) {
-        logger.error(thrownError);
         return redirect(
             302,
             `/error?status=500&message=${encodeURIComponent(String(thrownError))}`
