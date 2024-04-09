@@ -6,8 +6,10 @@ const isWindows = os.platform() === 'win32';
 export async function exec(
     file: string,
     args: string | string[],
-    cwd?: string,
-    dataCallback?: (data: string) => void
+    options: {
+        cwd?: string;
+        dataCallback?: (data: string) => void;
+    } = {}
 ): Promise<number> {
     if (isWindows && !file.endsWith('.exe')) {
         file += '.exe';
@@ -17,10 +19,12 @@ export async function exec(
             name: 'xterm-color',
             cols: 80,
             rows: 30,
-            cwd
+            cwd: options.cwd
         });
 
-        ptyProcess.onData((data) => dataCallback && dataCallback(data));
+        if (options.dataCallback) {
+            ptyProcess.onData((data) => options.dataCallback?.(data));
+        }
 
         ptyProcess.onExit((code) => {
             resolve(code.exitCode);

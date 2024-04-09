@@ -32,14 +32,14 @@ It is a read-only live demo, you can't make any permanent changes.
 ### 🐳 Docker
 
 ```bash
-docker run -d --restart=always -v home-station:/data -v /var/run/docker.sock:/var/run/docker.sock --network home-station --name home-station ghcr.io/home-station-org/home-station
+docker run -d --restart=always -p 80:80 -p 443:443 -v home-station:/data -v /var/run/docker.sock:/var/run/docker.sock --network home-station --name home-station ghcr.io/home-station-org/home-station
 ```
 
 Home Station is now running at [http://home-station.localhost](http://home-station.localhost)
 
 > [!NOTE]
 > If your ports *80* and *443* are already occupied, feel free to test Home Station with other ports:  
-> `-e HOME_STATION_HTTP_PORT=8080 -e HOME_STATION_HTTPS_PORT=8433`
+> `-p 8080:80 -p 8433:443`
 
 ### 🎶 Docker Compose
 
@@ -54,9 +54,9 @@ Home Station is now running at [http://home-station.localhost](http://home-stati
 > If your ports *80* and *443* are already occupied, feel free to test Home Station with other ports by editing the downlaoded compose.yml file:  
 >
 > ```yaml
->environment:
->    - HOME_STATION_HTTP_PORT=8080
->    - HOME_STATION_HTTPS_PORT=8433
+>ports:
+>    - 8080:80
+>    - 8433:443
 > ```
 
 ### 💪🏻 Non-Docker

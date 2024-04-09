@@ -25,12 +25,14 @@ export async function up(
     await exec(
         'docker',
         ['compose', ...customComposeFiles, ...customProjectName, 'up', '-d', '--remove-orphans'],
-        cwd,
-        (data) => {
-            if (!progress) return;
-            const currentProgress = getPullProgress(projectName, data);
-            if (currentProgress !== undefined) {
-                throttledProgress(currentProgress);
+        {
+            cwd,
+            dataCallback: (data) => {
+                if (!progress) return;
+                const currentProgress = getPullProgress(projectName, data);
+                if (currentProgress !== undefined) {
+                    throttledProgress(currentProgress);
+                }
             }
         }
     );
@@ -57,8 +59,7 @@ export async function down(
             '--remove-orphans',
             ...removeVolumesFlag
         ],
-        cwd,
-        (data) => process.stdout.write(data)
+        { cwd, dataCallback: process.stdout.write }
     );
 }
 

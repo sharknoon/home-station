@@ -3,7 +3,7 @@ import { settings } from '$lib/server/schema';
 import { fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { eq } from 'drizzle-orm';
-import { stopProxy, startProxy } from '$lib/server/proxy';
+import { restartProxy } from '$lib/server/proxy';
 
 export const load = (async () => {
     const httpsEnabled =
@@ -37,8 +37,7 @@ export const actions: Actions = {
             .insert(settings)
             .values({ key: 'certificateEmail', value: certificateEmail })
             .onConflictDoUpdate({ target: settings.key, set: { value: certificateEmail } });
-        await stopProxy();
-        await startProxy();
+        await restartProxy()
         return { success: true };
     }
 };
