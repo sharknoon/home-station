@@ -32,14 +32,14 @@ It is a read-only live demo, you can't make any permanent changes.
 ### 🐳 Docker
 
 ```bash
-docker run -d --restart=always -p 80:80 -p 443:443 -v home-station:/data -v /var/run/docker.sock:/var/run/docker.sock --name home-station ghcr.io/home-station-org/home-station
+docker run -d --restart=always -v home-station:/data -v /var/run/docker.sock:/var/run/docker.sock --network home-station --name home-station ghcr.io/home-station-org/home-station
 ```
 
-Home Station is now running at [https://home-station.localhost](https://home-station.localhost)
+Home Station is now running at [http://home-station.localhost](http://home-station.localhost)
 
 > [!NOTE]
 > If your ports *80* and *443* are already occupied, feel free to test Home Station with other ports:  
-> `-p 8080:80 -p 8433:443`
+> `-e HOME_STATION_HTTP_PORT=8080 -e HOME_STATION_HTTPS_PORT=8433`
 
 ### 🎶 Docker Compose
 
@@ -48,20 +48,27 @@ curl -L -o compose.yml https://raw.githubusercontent.com/home-station-org/home-s
 docker compose up -d
 ```
 
-Home Station is now running at [https://home-station.localhost](https://home-station.localhost)
+Home Station is now running at [http://home-station.localhost](http://home-station.localhost)
 
 > [!NOTE]
 > If your ports *80* and *443* are already occupied, feel free to test Home Station with other ports by editing the downlaoded compose.yml file:  
 >
 > ```yaml
->ports:
->    - 8080:80
->    - 8433:443
+>environment:
+>    - HOME_STATION_HTTP_PORT=8080
+>    - HOME_STATION_HTTPS_PORT=8433
 > ```
 
 ### 💪🏻 Non-Docker
 
-TODO
+````bash
+git clone https://github.com/home-station-org/home-station.git
+cd home-station/packages/home-station
+npm run build
+ORIGIN=http://localhost:3000 node build
+```
+
+Home Station is now running at [http://home-station.localhost](http://home-station.localhost)
 
 ## 🚧 Roadmap
 
@@ -85,5 +92,7 @@ app incorporated at least the following steps:
 
 One day I had enough, because I already had installed ~100 compose stacks this way. I wanted to create an opiniated approach
 to installing apps, that just requires one click and is the same for everybody.
+
+The goal with Home Station is to allow you to focus on using the apps, rather than on deploying them.
 
 If you love this project, please consider giving it a ⭐.

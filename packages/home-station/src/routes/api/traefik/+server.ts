@@ -1,3 +1,4 @@
+import { PUBLIC_CONTAINERIZED } from '$env/static/public';
 import { dev } from '$app/environment';
 import { get } from 'svelte/store';
 import type { RequestHandler } from './$types';
@@ -27,6 +28,7 @@ function generateTLSSection(domains: string[], subdomain?: string): object {
 }
 
 async function generateConfiguration() {
+    const container = PUBLIC_CONTAINERIZED === 'true';
     const apps = get(installedApps);
     const domains = (await db.query.domains.findMany()).map((d) => d.domain);
     // Dev and https are mutally exclusive
@@ -110,9 +112,7 @@ async function generateConfiguration() {
                     loadBalancer: {
                         servers: [
                             {
-                                url: dev
-                                    ? 'http://host.docker.internal:5173'
-                                    : 'http://localhost:3000'
+                                url: `http://${container ? 'home-station' : 'host.docker.internal'}:${dev ? '5173' : '3000'}`
                             }
                         ]
                     }

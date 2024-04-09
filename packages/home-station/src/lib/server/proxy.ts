@@ -1,12 +1,14 @@
-import { dev } from '$app/environment';
+import { PUBLIC_CONTAINERIZED } from '$env/static/public';
 import { env } from '$env/dynamic/private';
+import { dev } from '$app/environment';
 import { eq } from 'drizzle-orm';
 import { db } from '$lib/server/db';
 import { settings } from '$lib/server/schema';
 import { logger } from '$lib/server/logger';
 import { containerEngine } from '$lib/server/containerengines';
 
-const API_URL = 'http://localhost:8080/api';
+const container = PUBLIC_CONTAINERIZED === 'true';
+const API_URL = `http://${container ? 'home-station-proxy' : 'localhost'}:8080/api`;
 
 export async function init() {
     logger.info('Starting proxy');
@@ -56,7 +58,7 @@ export async function startProxy(): Promise<void> {
         httpsEnabled ? '--entrypoints.websecure.address=:443' : '',
         httpsEnabled ? '--entrypoints.websecure.http.tls.certresolver=leresolver' : '',
         '--entrypoints.traefik.address=:8080',
-        `--providers.http.endpoint=http://${dev ? 'host.docker.internal:5173' : 'localhost:3000'}/api/traefik`,
+        `--providers.http.endpoint=http://${container ? 'home-station' : 'host.docker.internal'}:${dev ? '5173' : '3000'}/api/traefik`,
         '--api=true',
         httpsEnabled ? `--certificatesresolvers.leresolver.acme.email=${certificateEmail}` : '',
         httpsEnabled ? '--certificatesresolvers.leresolver.acme.tlschallenge=true' : '',
@@ -68,7 +70,7 @@ export async function startProxy(): Promise<void> {
 
     const proxy = await containerEngine.createContainer({
         Image: 'traefik:3.0',
-        Cmd: ['traefik', ...args],
+        Cmd: args,
         name: 'home-station-proxy',
         Labels: { 'home-station.proxy': 'true' },
         HostConfig: {
@@ -76,21 +78,18 @@ export async function startProxy(): Promise<void> {
             PortBindings: {
                 '80': [{ HostPort: httpPort }],
                 ...(httpsEnabled ? { '443': [{ HostPort: httpsPort }] } : {}),
-                ...(dev ? { '8080': [{ HostPort: '8080' }] } : {})
+                ...(!container ? { '8080': [{ HostPort: '8080' }] } : {})
             },
-            Binds: ['/var/run/docker.sock:/var/run/docker.sock', 'home-station:/etc/traefik/acme'],
+            Binds: ['home-station:/etc/traefik/acme'],
             ExtraHosts: ['host.docker.internal:host-gateway']
         },
         ExposedPorts: {
             '80': {},
             ...(httpsEnabled ? { '443': {} } : {}),
-            ...(dev ? { '8080': {} } : {})
+            ...(!container ? { '8080': {} } : {})
         }
     });
-    const stream = await proxy.attach({ stream: true, stdout: true, stderr: true });
-    stream.setEncoding('utf8');
-    stream.pipe(process.stdout);
-    proxy.start();
+    await proxy.start();
 }
 
 export async function stopProxy(): Promise<void> {

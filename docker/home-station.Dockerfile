@@ -65,12 +65,14 @@ FROM nodejs as final
 # Use production node environment by default.
 ENV NODE_ENV=production
 
-# Set the origin for POST form submissions.
+# Set the headers for determining the current url in sveltekit for POST form submissions.
 # https://kit.svelte.dev/docs/adapter-node#environment-variables-origin-protocolheader-hostheader-and-port-header
-ENV ORIGIN=http://localhost:3000
+# https://doc.traefik.io/traefik/getting-started/faq/#what-are-the-forwarded-headers-when-proxying-http-requests
+ENV PROTOCOL_HEADER=X-Forwarded-Proto HOST_HEADER=X-Forwarded-Host PORT_HEADER=X-Forwarded-Port
 
 # Copy the production dependencies from the deps stage.
 COPY --from=deps /app/node_modules node_modules
+COPY --from=deps /app/packages/home-station/node_modules node_modules
 # Copy the db migration files from the build stage.
 COPY --from=build /app/packages/home-station/drizzle drizzle
 # Copy the build output from the build stage.
