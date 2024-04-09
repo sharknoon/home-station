@@ -61,7 +61,7 @@ Home Station is now running at [http://home-station.localhost](http://home-stati
 
 ### 💪🏻 Non-Docker
 
-````bash
+```bash
 git clone https://github.com/home-station-org/home-station.git
 cd home-station/packages/home-station
 npm run build
