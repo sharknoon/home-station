@@ -112,7 +112,7 @@ async function generateConfiguration() {
                     loadBalancer: {
                         servers: [
                             {
-                                url: `http://${container ? 'home-station' : 'host.docker.internal'}:${dev ? '5173' : '3000'}`
+                                url: `http://${container ? 'localhost' : 'host.docker.internal'}:${dev ? '5173' : '3000'}`
                             }
                         ]
                     }
