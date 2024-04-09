@@ -111,7 +111,8 @@ export async function stopProxy(): Promise<void> {
     const proxies = containers.filter((c) => c.Labels['home-station.proxy'] === 'true');
     for (const proxy of proxies) {
         const proxyContainer = containerEngine.getContainer(proxy.Id);
-        await proxyContainer?.stop();
+        const running = (await proxyContainer.inspect()).State.Running;
+        if (running) await proxyContainer?.stop();
         await proxyContainer?.remove();
     }
 }
