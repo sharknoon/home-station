@@ -59,16 +59,9 @@ Home Station is now running at [http://home-station.localhost](http://home-stati
 >    - 8433:443
 > ```
 
-### 💪🏻 Non-Docker
-
-```bash
-git clone https://github.com/home-station-org/home-station.git
-cd home-station/packages/home-station
-npm run build
-ORIGIN=http://localhost:3000 node build
-```
-
-Home Station is now running at [http://home-station.localhost](http://home-station.localhost)
+> [!IMPORTANT]
+> On macOS Safari doesn't resolve *.localhost subdomains. To avoid this issue, use a different browser like Firefox or Chrome.
+> However, accessing a hosted Home Station via a domain works just fine.
 
 ## 🚧 Roadmap
 
