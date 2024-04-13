@@ -1,4 +1,4 @@
-package main
+package db
 
 import (
 	"fmt"
@@ -6,6 +6,7 @@ import (
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"github.com/home-station-org/home-station/engine/internal/data"
 )
 
 type Marketplace struct {
@@ -18,8 +19,8 @@ type Marketplace struct {
 var Db *gorm.DB
 
 func init() {
-	var databasePath = filepath.Join(DataPath, "db.sqlite")
-	fmt.Printf("Connecting to the database %s\n", databasePath)
+	var databasePath = filepath.Join(data.DataPath, "db.sqlite")
+	fmt.Printf("Connecting to the database \"%s\"\n", databasePath)
 	database, err := gorm.Open(sqlite.Open(databasePath), &gorm.Config{})
 	if err != nil {
 		panic(err)
@@ -32,7 +33,7 @@ func init() {
 
 	// Seed the database if it is empty
 	var count int64
-	database.Raw("SELECT name FROM sqlite_master WHERE type='table';").Count(&count)
+	database.Model(&Marketplace{}).Count(&count)
 	if count == 0 {
 		fmt.Println("Seeding the database")
 		database.Create(&Marketplace{

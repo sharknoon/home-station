@@ -1,4 +1,4 @@
-package main
+package data
 
 import (
 	"fmt"
@@ -12,7 +12,7 @@ var DataPath string
 func init() {
 	var path = ""
 	if os.Getenv("CONTAINERIZED") == "true" {
-		path := "/data"
+		path = "/data"
 		if _, err := os.Stat(path); os.IsNotExist(err) {
 			fmt.Println("Running in container, but the data directory isn't mounted. Using a temporary fallback path!")
 			fmt.Println("-----------------------------------------------------")
@@ -26,9 +26,13 @@ func init() {
 		fmt.Printf("Running in container, using \"%s\" as data directory\n", path)
 	} else {
 		// set the data path to the os homedir joined with .home-station
-		dataPath := filepath.Join(os.Getenv("HOME"), "/.home-station")
-		os.MkdirAll(dataPath, os.ModePerm)
-		fmt.Printf("Running on \"%s\", using \"%s\" as data directory\n", runtime.GOOS, dataPath)
+		homedir, err := os.UserHomeDir()
+		if err != nil {
+			panic(err)
+		}
+		path = filepath.Join(homedir, ".home-station")
+		os.MkdirAll(path, os.ModePerm)
+		fmt.Printf("Running on \"%s\", using \"%s\" as data directory\n", runtime.GOOS, path)
 	}
 	DataPath = path
 }
