@@ -6,10 +6,12 @@ To be able to run Home Station, you need to have the following prerequisites ins
 
 -   [Node.js](https://nodejs.org/en/download/current)
 -   [Docker](https://docs.docker.com/engine/install/)
+-   [Traefik](https://doc.traefik.io/traefik/getting-started/install-traefik/) (port 8080, api enabled)
 
 Once you've installed those prerequisites go ahead and install the dependencies and start a development server:
 
 ```bash
+sudo sh dev.sh
 npm install
 npm run dev
 ```

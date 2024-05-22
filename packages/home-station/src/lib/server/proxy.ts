@@ -13,16 +13,21 @@ import { getDataPath } from '$lib/server/data';
 
 const exec = util.promisify(e);
 
-const container = PUBLIC_CONTAINERIZED === 'true';
+const CONTAINER = PUBLIC_CONTAINERIZED === 'true';
 const API_URL = 'http://localhost:8080/api';
+const SUPERVISOR_CONFIG_FILE_CONTAINER = '/data/supervisor/supervisord.conf';
+const SUPERVISOR_CONFIG_FILE_DEV = path.resolve("../../docker/supervisord.conf");
+const SUPERVISOR_CONFIG_FILE = CONTAINER
+    ? SUPERVISOR_CONFIG_FILE_CONTAINER
+    : SUPERVISOR_CONFIG_FILE_DEV;
 
 export async function init() {
-    logger.info('Connecting to reverse proxy');
+    logger.info('Starting reverse proxy');
     try {
-        await getVersion();
-        logger.info('Connected to reverse proxy');
+        await startProxy();
+        logger.info('Started reverse proxy');
     } catch (e) {
-        throw new Error('Could not connect to reverse proxy: ' + e);
+        throw new Error('Could not start reverse proxy: ' + e);
     }
 }
 
@@ -39,10 +44,17 @@ export async function getVersion(): Promise<{
     return await response.json();
 }
 
+export async function startProxy(): Promise<void> {
+    await writeTraefikConfigurationFile();
+    const { stdout, stderr } = await exec(`supervisorctl -c ${SUPERVISOR_CONFIG_FILE} start proxy`);
+    process.stdout.write(stdout);
+    process.stderr.write(stderr);
+}
+
 export async function restartProxy(): Promise<void> {
     await writeTraefikConfigurationFile();
     const { stdout, stderr } = await exec(
-        `supervisorctl -c ${container ? '/etc/supervisord.conf' : 'docker/supervisord.conf'} restart proxy`
+        `supervisorctl -c ${SUPERVISOR_CONFIG_FILE} restart proxy`
     );
     process.stdout.write(stdout);
     process.stderr.write(stderr);

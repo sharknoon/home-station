@@ -83,9 +83,9 @@ COPY --from=build /app/packages/home-station/drizzle drizzle
 # Copy the build output from the build stage.
 COPY --from=build /app/packages/home-station/build build
 # Copy files from the repository directly
-COPY docker/supervisord.conf /etc/supervisord.conf
+COPY docker/supervisord.conf /data/supervisor/supervisord.conf
 
 EXPOSE 80 443
 
 # Run the application.
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
+CMD ["/usr/bin/supervisord", "-c", "/data/supervisor/supervisord.conf"]
