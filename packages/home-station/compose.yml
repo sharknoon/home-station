@@ -2,7 +2,7 @@ name: home-station
 
 services:
     home-station:
-        image: ghcr.io/home-station-org/home-station
+        image: ghcr.io/sharknoon/home-station
         container_name: home-station
         restart: always
         networks:

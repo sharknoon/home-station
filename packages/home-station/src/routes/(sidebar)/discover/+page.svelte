@@ -74,12 +74,12 @@
                     <span>{$i18n.t('discover.add-marketplace')}</span>
                 </button>
                 <!-- TODO make default repo dynamic-->
-                {#if !data.marketplaces.some((marketplace) => marketplace.gitRemoteUrl === 'https://github.com/home-station-org/apps.git')}
+                {#if !data.marketplaces.some((marketplace) => marketplace.gitRemoteUrl === 'https://github.com/sharknoon/home-station-apps.git')}
                     <form method="post" action="?/addMarketplace" use:enhance>
                         <input
                             type="hidden"
                             name="gitRemoteUrl"
-                            value="https://github.com/home-station-org/apps.git"
+                            value="https://github.com/sharknoon/home-station-apps.git"
                         />
                         <!-- TODO remove username and token once public -->
                         <input type="hidden" name="gitUsername" value="Sharknoon" />

@@ -4,9 +4,9 @@ TODO ICON OR FANCY HEADER LOGO
 
 A fancy, easy-to-use, docker compose based app manager for your self-hosted home server.
 
-![GitHub Repo stars](https://img.shields.io/github/stars/home-station-org/home-station)
-![GitHub Release](https://img.shields.io/github/v/release/home-station-org/home-station)
-![GitHub last commit](https://img.shields.io/github/last-commit/home-station-org/home-station)
+![GitHub Repo stars](https://img.shields.io/github/stars/sharknoon/home-station)
+![GitHub Release](https://img.shields.io/github/v/release/sharknoon/home-station)
+![GitHub last commit](https://img.shields.io/github/last-commit/sharknoon/home-station)
 
 TODO SCREENSHOT
 
@@ -32,7 +32,7 @@ It is a read-only live demo, you can't make any permanent changes.
 ### 🐳 Docker
 
 ```bash
-docker run -d --restart=always -p 80:80 -p 443:443 -v home-station:/data -v /var/run/docker.sock:/var/run/docker.sock --network home-station --name home-station ghcr.io/home-station-org/home-station
+docker run -d --restart=always -p 80:80 -p 443:443 -v home-station:/data -v /var/run/docker.sock:/var/run/docker.sock --network home-station --name home-station ghcr.io/sharknoon/home-station
 ```
 
 Home Station is now running at [http://home-station.localhost](http://home-station.localhost)
@@ -44,7 +44,7 @@ Home Station is now running at [http://home-station.localhost](http://home-stati
 ### 🎶 Docker Compose
 
 ```bash
-curl -L -o compose.yml https://raw.githubusercontent.com/home-station-org/home-station/main/packages/home-station/compose.yml
+curl -L -o compose.yml https://raw.githubusercontent.com/sharknoon/home-station/main/packages/home-station/compose.yml
 docker compose up -d
 ```
 

@@ -47,7 +47,7 @@ try {
         // Add the default marketplace
         if (!(await db.query.marketplaces.findFirst())) {
             await db.insert(marketplaces).values({
-                gitRemoteUrl: 'https://github.com/home-station-org/apps.git',
+                gitRemoteUrl: 'https://github.com/sharknoon/home-station-apps.git',
                 // TODO remove username and token once public
                 gitUsername: 'Sharknoon',
                 gitPassword:

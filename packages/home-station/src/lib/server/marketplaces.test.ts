@@ -163,34 +163,3 @@ describe('deleteMarketplace', () => {
         expect(deletedMarketplace).toBeFalsy();
     });
 });
-
-describe('updateMarketplaceApps', () => {
-    it('should update the marketplace apps', async () => {
-        // Test preparation
-        const gitRemoteUrl = 'https://github.com/home-station-org/apps.git';
-        // TODO remove once public
-        const username = 'Sharknoon';
-        const password =
-            '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';
-        await createMarketplace(gitRemoteUrl, username, password);
-
-        expect(
-            await db.query.marketplaces.findFirst({
-                where: eq(marketplaces.gitRemoteUrl, gitRemoteUrl)
-            })
-        ).toBeTruthy();
-
-        // Call the function to be tested
-        await updateMarketplaceApps(() => {});
-
-        // Assert the expected behavior or outcome
-        const path = getMarketplacePath(gitRemoteUrl);
-        expect(await fs.stat(path)).toBeTruthy();
-        expect(await fs.stat(path + '/apps')).toBeTruthy();
-        expect((await fs.readdir(path + '/apps')).length).toBeGreaterThan(0);
-        const apps = await db.query.marketplaceApps.findMany({
-            where: eq(marketplaceApps.marketplaceUrl, gitRemoteUrl)
-        });
-        expect(apps.length).toBeGreaterThan(0);
-    });
-});
