@@ -58,15 +58,6 @@ RUN --mount=type=cache,target=/root/.npm \
 RUN npx -w home-station svelte-kit sync && PUBLIC_CONTAINERIZED=true npm -w home-station run build
 
 ################################################################################
-# Create a stage for downloading additional files to be included in the image.
-FROM deps as artifacts
-
-# Download traefik from GitHub and unpack it
-# TODO move to "apk add traefik" in line 83 once traefik 3.0 is being released
-RUN wget -O traefik.tar.gz https://github.com/traefik/traefik/releases/download/v3.0.0-rc3/traefik_v3.0.0-rc3_linux_amd64.tar.gz
-RUN tar -zxvf traefik.tar.gz
-
-################################################################################
 # Create a new stage to run the application with minimal runtime dependencies
 # where the necessary files are copied from the build stage.
 FROM nodejs as final
@@ -81,6 +72,8 @@ ENV PROTOCOL_HEADER=X-Forwarded-Proto HOST_HEADER=X-Forwarded-Host PORT_HEADER=X
 
 # Install supervisord to manage multiple processes and the docker cli with compose
 RUN apk add supervisor docker-cli-compose
+# Install traefik from edge branch until it is being released in the main branch
+RUN apk add traefik --repository=https://dl-cdn.alpinelinux.org/alpine/edge/community
 
 # Copy the production dependencies from the deps stage.
 COPY --from=deps /app/node_modules node_modules
@@ -89,8 +82,6 @@ COPY --from=deps /app/packages/home-station/node_modules node_modules
 COPY --from=build /app/packages/home-station/drizzle drizzle
 # Copy the build output from the build stage.
 COPY --from=build /app/packages/home-station/build build
-# Copy additional artifacts to the image
-COPY --from=artifacts /app/traefik /usr/local/bin
 # Copy files from the repository directly
 COPY docker/supervisord.conf /etc/supervisord.conf
 
