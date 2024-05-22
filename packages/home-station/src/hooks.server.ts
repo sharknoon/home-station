@@ -14,7 +14,7 @@ try {
     await initContainerEngine();
     // Schedule the tasks
     await initTasks();
-    // Start up the reverse proxy
+    // Checks the connection to the reverse proxy
     await initProxy();
 } catch (err) {
     logger.error("Error during initialization: " + err);

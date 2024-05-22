@@ -17,9 +17,13 @@ const container = PUBLIC_CONTAINERIZED === 'true';
 const API_URL = 'http://localhost:8080/api';
 
 export async function init() {
-    logger.info('Starting proxy');
-    await startProxy();
-    logger.info('Proxy started');
+    logger.info('Connecting to reverse proxy');
+    try {
+        await getVersion();
+        logger.info('Connected to reverse proxy');
+    } catch (e) {
+        throw new Error('Could not connect to reverse proxy: ' + e);
+    }
 }
 
 /**
@@ -35,21 +39,16 @@ export async function getVersion(): Promise<{
     return await response.json();
 }
 
-export async function startProxy(): Promise<void> {
-    await writeConfigurationFile();
-    const { stdout, stderr } = await exec('supervisorctl -c /etc/supervisord.conf start proxy');
-    process.stdout.write(stdout);
-    process.stderr.write(stderr);
-}
-
 export async function restartProxy(): Promise<void> {
-    await writeConfigurationFile();
-    const { stdout, stderr } = await exec('supervisorctl -c /etc/supervisord.conf restart proxy');
+    await writeTraefikConfigurationFile();
+    const { stdout, stderr } = await exec(
+        `supervisorctl -c ${container ? '/etc/supervisord.conf' : 'docker/supervisord.conf'} restart proxy`
+    );
     process.stdout.write(stdout);
     process.stderr.write(stderr);
 }
 
-async function writeConfigurationFile() {
+async function writeTraefikConfigurationFile() {
     const certificateEmail =
         (
             await db.query.settings.findFirst({
@@ -111,7 +110,7 @@ async function writeConfigurationFile() {
         },
         api: {},
         log: {
-            level: dev ? "DEBUG" : "INFO"
+            level: dev ? 'DEBUG' : 'INFO'
         },
         ...(httpsEnabled
             ? {
