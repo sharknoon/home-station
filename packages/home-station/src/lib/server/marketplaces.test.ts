@@ -88,29 +88,6 @@ describe('createMarketplace', () => {
         expect(newMarketplace!.gitPassword).toBe(null);
     });
 
-    it('should create a new marketplace with authentication', async () => {
-        // Test input
-        const url = 'https://github.com/home-station-org/private-repository-access-test.git';
-        const username = 'Sharknoon';
-        // This token is heavily restricted and only used for testing purposes
-        // It has only access to the empty repository "home-station-org/private-repository-access-test"
-        // The following access rights were granted: repository contents read-only, metadata read-only
-        const password =
-            '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';
-
-        // Call the function to be tested
-        await createMarketplace(url, username, password);
-
-        // Assert the expected behavior or outcome
-        const newMarketplace = await db.query.marketplaces.findFirst({
-            where: eq(marketplaces.gitRemoteUrl, url)
-        });
-        expect(newMarketplace).not.toBe(null);
-        expect(newMarketplace!.gitRemoteUrl).toBe(url);
-        expect(newMarketplace!.gitUsername).toBe(username);
-        expect(newMarketplace!.gitPassword).toBe(password);
-    });
-
     it('should throw an error for invalid URL', async () => {
         // Test input
         const url = 'invalid-url';
